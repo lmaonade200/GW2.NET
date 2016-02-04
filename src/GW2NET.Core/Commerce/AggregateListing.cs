@@ -35,6 +35,8 @@ namespace GW2NET.Commerce
         /// <summary>Gets or sets the timestamp.</summary>
         public DateTimeOffset Timestamp { get; set; }
 
+        public DateTimeOffset Expires { get; set; }
+
         /// <summary>Returns a string that represents the current object.</summary>
         /// <returns>A string that represents the current object.</returns>
         public override string ToString()
