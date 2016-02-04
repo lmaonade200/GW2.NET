@@ -15,5 +15,7 @@ namespace GW2NET.Common
     {
         /// <summary>Gets or sets a timestamp.</summary>
         DateTimeOffset Timestamp { get; set; }
+
+        DateTimeOffset Expires { get; set; }
     }
 }

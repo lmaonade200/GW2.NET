@@ -28,6 +28,8 @@ namespace GW2NET.Commerce
         /// <summary>Gets or sets the timestamp.</summary>
         public DateTimeOffset Timestamp { get; set; }
 
+        public DateTimeOffset Expires { get; set; }
+
         /// <summary>Gets a chat link for the value of <see cref="CoinsPerGem"/>.</summary>
         /// <returns>Returns a chat link for the given coins per gem.</returns>
         public CoinChatLink GetCoinChatLink()
