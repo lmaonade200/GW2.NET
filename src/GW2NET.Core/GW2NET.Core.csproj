@@ -41,6 +41,8 @@
     <Compile Include="Accounts\IAccountRepository.cs" />
     <Compile Include="Builds\Build.cs" />
     <Compile Include="Builds\IBuildService.cs" />
+    <Compile Include="Caching\ICache{T}.cs" />
+    <Compile Include="Caching\MemoryCache.cs" />
     <Compile Include="Characters\Character.cs" />
     <Compile Include="Characters\Gender.cs" />
     <Compile Include="Characters\ICharacterRepository.cs" />
