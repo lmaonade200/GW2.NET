@@ -1,4 +1,4 @@
-﻿namespace GW2NET.V2.Colors.newStuff
+﻿namespace GW2NET.Caching
 {
     using System;
     using System.Collections.Generic;
