@@ -7,6 +7,8 @@ namespace GW2NET
     using System;
     using System.Collections.Generic;
     using System.Net.Http;
+    using System.Threading;
+    using System.Threading.Tasks;
 
     using GW2NET.Caching;
     using GW2NET.Colors;
@@ -34,14 +36,38 @@ namespace GW2NET
 
             HttpResponseConverter httpResponseConverter = new HttpResponseConverter(jsonSerializerFactory, gzipInflator);
 
-            ConverterAdapter<IEnumerable<int>> idConverter = new ConverterAdapter<IEnumerable<int>>();
-            var colorConverter = new ColorPaletteConverter(new ColorConverter(), new ColorModelConverter(new ColorConverter()));
+            IConverter<int, int> idConverter = new ConverterAdapter<int>();
+            ColorPaletteConverter colorConverter = new ColorPaletteConverter(new ColorConverter(), new ColorModelConverter(new ColorConverter()));
 
             ColorService service = new ColorService(client, httpResponseConverter, MemoryCache<ColorPalette>.Default(), idConverter, colorConverter);
 
             IEnumerable<int> ids = await service.DiscoverAsync();
-            
+
             Assert.NotEmpty(ids);
+        }
+
+        [Fact]
+        public async void ElementTest()
+        {
+            HttpClient client = new HttpClient(new GW2ApiHandler(), false)
+            {
+                BaseAddress = new Uri("https://api.guildwars2.com/")
+            };
+
+            JsonSerializerFactory jsonSerializerFactory = new JsonSerializerFactory();
+            GzipInflator gzipInflator = new GzipInflator();
+
+            HttpResponseConverter httpResponseConverter = new HttpResponseConverter(jsonSerializerFactory, gzipInflator);
+
+            IConverter<int, int> idConverter = new ConverterAdapter<int>();
+            ColorPaletteConverter colorConverter = new ColorPaletteConverter(new ColorConverter(), new ColorModelConverter(new ColorConverter()));
+
+            ColorService service = new ColorService(client, httpResponseConverter, MemoryCache<ColorPalette>.Default(), idConverter, colorConverter);
+
+            ColorPalette color = await service.GetAsync(10, CancellationToken.None);
+
+            Assert.NotNull(color);
+            Assert.Equal(color.ItemId, 10);
         }
     }
 }
