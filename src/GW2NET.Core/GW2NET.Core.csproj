@@ -73,7 +73,11 @@
     <Compile Include="Common\Converters\CollectionPageResponseConverter.cs" />
     <Compile Include="Common\Converters\CollectionResponseConverter.cs" />
     <Compile Include="Common\Converters\DictionaryRangeResponseConverter.cs" />
+    <Compile Include="Common\Converters\HttpResponseConverter.cs" />
     <Compile Include="Common\Converters\ResponseConverter.cs" />
+    <Compile Include="Common\GW2ApiHandler.cs" />
+    <Compile Include="Common\IApiService.cs" />
+    <Compile Include="Common\IDiscoverService.cs" />
     <Compile Include="Common\KeyUtilities.cs" />
     <Compile Include="Common\Messages\ApiMessageBuilder.cs" />
     <Compile Include="Common\Messages\ApiVersion.cs" />
@@ -82,6 +86,7 @@
     <Compile Include="Common\Messages\IPagedBuilder.cs" />
     <Compile Include="Common\Messages\IParameterizedBuilder.cs" />
     <Compile Include="Common\Messages\IVersionedBuilder.cs" />
+    <Compile Include="Common\ServiceBase.cs" />
     <Compile Include="Common\ServiceClientAuthorized.cs" />
     <Compile Include="Common\BulkRequest.cs" />
     <Compile Include="Common\CollectionPage.cs" />
