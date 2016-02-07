@@ -22,25 +22,21 @@ namespace GW2NET.V2.Colors
     /// <summary>Provides methods and properties to retrive colors from the GW2 api.</summary>
     public class ColorService : ServiceBase<ColorPalette>, IDiscoverService<int>, IApiService<int, ColorPalette>, ILocalizable
     {
-        private readonly IConverter<IEnumerable<int>, IEnumerable<int>> identifiersConverter;
+        private readonly IConverter<int, int> identifiersConverter;
 
-        private readonly IConverter<ColorPaletteDTO, ColorPalette> elementConverter;
-
-        private readonly IConverter<IEnumerable<ColorPaletteDTO>, IEnumerable<ColorPalette>> setConverter;
+        private readonly IConverter<ColorPaletteDTO, ColorPalette> colorConverter;
 
         /// <summary>Initializes a new instance of the <see cref="ColorService"/> class.</summary>
         /// <param name="httpClient">The <see cref="HttpClient"/> used to make requests against the api.</param>
         /// <param name="responseConverter">A instance of the <see cref="HttpResponseConverter"/> class used to convert api responses.</param>
         /// <param name="cache">The cache used to cache results.</param>
         /// <param name="identifiersConverter">The converter used to convert identifiers.</param>
-        /// <param name="elementConverter">The converter to convert single color responses.</param>
-        /// <param name="setConverter">The converter to convert bulk responses.</param>
-        public ColorService(HttpClient httpClient, HttpResponseConverter responseConverter, ICache<ColorPalette> cache, IConverter<IEnumerable<int>, IEnumerable<int>> identifiersConverter, IConverter<ColorPaletteDTO, ColorPalette> elementConverter, IConverter<IEnumerable<ColorPaletteDTO>, IEnumerable<ColorPalette>> setConverter)
+        /// <param name="colorConverter">The converter to convert single color responses.</param>
+        public ColorService(HttpClient httpClient, HttpResponseConverter responseConverter, ICache<ColorPalette> cache, IConverter<int, int> identifiersConverter, IConverter<ColorPaletteDTO, ColorPalette> colorConverter)
             : base(httpClient, responseConverter, cache)
         {
             this.identifiersConverter = identifiersConverter;
-            this.elementConverter = elementConverter;
-            this.setConverter = setConverter;
+            this.colorConverter = colorConverter;
         }
 
         /// <inheritdoc />
@@ -58,7 +54,7 @@ namespace GW2NET.V2.Colors
             HttpRequestMessage request = ApiMessageBuilder.Init().Version(ApiVersion.V2).OnEndpoint("colors").Build();
             HttpResponseMessage response = await this.Client.SendAsync(request, cancellationToken);
 
-            return await this.ResponseConverter.ConvertAsync(response, this.identifiersConverter, cancellationToken);
+            return await this.ResponseConverter.ConvertCollectionAsync(response, this.identifiersConverter, cancellationToken);
         }
 
         /// <inheritdoc />
@@ -74,7 +70,7 @@ namespace GW2NET.V2.Colors
 
             HttpResponseMessage response = await this.Client.SendAsync(request, cancellationToken);
 
-            return await this.ResponseConverter.ConvertAsync(response, this.setConverter, cancellationToken);
+            return await this.ResponseConverter.ConvertCollectionAsync(response, this.colorConverter, cancellationToken);
         }
 
         /// <inheritdoc />
@@ -104,7 +100,7 @@ namespace GW2NET.V2.Colors
 
             HttpResponseMessage response = await this.Client.SendAsync(request, cancellationToken);
 
-            return await this.ResponseConverter.ConvertAsync(response, this.setConverter, cancellationToken);
+            return await this.ResponseConverter.ConvertCollectionAsync(response, this.colorConverter, cancellationToken);
         }
 
         /// <inheritdoc />
@@ -129,7 +125,7 @@ namespace GW2NET.V2.Colors
             HttpResponseMessage response = await this.Client.SendAsync(request, cancellationToken);
 
             // Convert the response and return the object
-            return await this.ResponseConverter.ConvertAsync(response, this.elementConverter, cancellationToken);
+            return await this.ResponseConverter.ConvertElementAsync(response, this.colorConverter, cancellationToken);
         }
 
         /// <inheritdoc />
