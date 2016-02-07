@@ -24,23 +24,23 @@ namespace GW2NET.V2.Colors
     {
         private readonly IConverter<IEnumerable<int>, IEnumerable<int>> identifiersConverter;
 
-        private readonly IConverter<ColorPaletteDTO, ColorPalette> singleResponseConverter;
+        private readonly IConverter<ColorPaletteDTO, ColorPalette> elementConverter;
 
-        private readonly IConverter<IEnumerable<ColorPaletteDTO>, IEnumerable<ColorPalette>> bulkResponseConverter;
+        private readonly IConverter<IEnumerable<ColorPaletteDTO>, IEnumerable<ColorPalette>> setConverter;
 
         /// <summary>Initializes a new instance of the <see cref="ColorService"/> class.</summary>
         /// <param name="httpClient">The <see cref="HttpClient"/> used to make requests against the api.</param>
         /// <param name="responseConverter">A instance of the <see cref="HttpResponseConverter"/> class used to convert api responses.</param>
         /// <param name="cache">The cache used to cache results.</param>
         /// <param name="identifiersConverter">The converter used to convert identifiers.</param>
-        /// <param name="singleResponseConverter">The converter to convert single color responses.</param>
-        /// <param name="bulkResponseConverter">The converter to convert bulk responses.</param>
-        public ColorService(HttpClient httpClient, HttpResponseConverter responseConverter, ICache<ColorPalette> cache, IConverter<IEnumerable<int>, IEnumerable<int>> identifiersConverter, IConverter<ColorPaletteDTO, ColorPalette> singleResponseConverter, IConverter<IEnumerable<ColorPaletteDTO>, IEnumerable<ColorPalette>> bulkResponseConverter)
+        /// <param name="elementConverter">The converter to convert single color responses.</param>
+        /// <param name="setConverter">The converter to convert bulk responses.</param>
+        public ColorService(HttpClient httpClient, HttpResponseConverter responseConverter, ICache<ColorPalette> cache, IConverter<IEnumerable<int>, IEnumerable<int>> identifiersConverter, IConverter<ColorPaletteDTO, ColorPalette> elementConverter, IConverter<IEnumerable<ColorPaletteDTO>, IEnumerable<ColorPalette>> setConverter)
             : base(httpClient, responseConverter, cache)
         {
             this.identifiersConverter = identifiersConverter;
-            this.singleResponseConverter = singleResponseConverter;
-            this.bulkResponseConverter = bulkResponseConverter;
+            this.elementConverter = elementConverter;
+            this.setConverter = setConverter;
         }
 
         /// <inheritdoc />
@@ -74,7 +74,7 @@ namespace GW2NET.V2.Colors
 
             HttpResponseMessage response = await this.Client.SendAsync(request, cancellationToken);
 
-            return await this.ResponseConverter.ConvertAsync(response, this.bulkResponseConverter, cancellationToken);
+            return await this.ResponseConverter.ConvertAsync(response, this.setConverter, cancellationToken);
         }
 
         /// <inheritdoc />
@@ -104,7 +104,7 @@ namespace GW2NET.V2.Colors
 
             HttpResponseMessage response = await this.Client.SendAsync(request, cancellationToken);
 
-            return await this.ResponseConverter.ConvertAsync(response, this.bulkResponseConverter, cancellationToken);
+            return await this.ResponseConverter.ConvertAsync(response, this.setConverter, cancellationToken);
         }
 
         /// <inheritdoc />
@@ -129,7 +129,7 @@ namespace GW2NET.V2.Colors
             HttpResponseMessage response = await this.Client.SendAsync(request, cancellationToken);
 
             // Convert the response and return the object
-            return await this.ResponseConverter.ConvertAsync(response, this.singleResponseConverter, cancellationToken);
+            return await this.ResponseConverter.ConvertAsync(response, this.elementConverter, cancellationToken);
         }
 
         /// <inheritdoc />
