@@ -8,16 +8,18 @@ namespace GW2NET
     using System.Collections.Generic;
     using System.Net.Http;
 
+    using GW2NET.Caching;
     using GW2NET.Colors;
+    using GW2NET.Common;
     using GW2NET.Common.Converters;
     using GW2NET.Common.Serializers;
     using GW2NET.Compression;
+    using GW2NET.V2.Colors;
     using GW2NET.V2.Colors.Converters;
-    using GW2NET.V2.Colors.newStuff;
 
     using Xunit;
 
-    public class Foo
+    public class ColorServiceTests
     {
         [Fact]
         public async void DiscoverTest()
