@@ -54,7 +54,7 @@ namespace GW2NET.V2.Colors
             HttpRequestMessage request = ApiMessageBuilder.Init().Version(ApiVersion.V2).OnEndpoint("colors").Build();
             HttpResponseMessage response = await this.Client.SendAsync(request, cancellationToken);
 
-            return await this.ResponseConverter.ConvertCollectionAsync(response, this.identifiersConverter, cancellationToken);
+            return await this.ResponseConverter.ConvertCollectionAsync(response, this.identifiersConverter);
         }
 
         /// <inheritdoc />
@@ -70,7 +70,7 @@ namespace GW2NET.V2.Colors
 
             HttpResponseMessage response = await this.Client.SendAsync(request, cancellationToken);
 
-            return await this.ResponseConverter.ConvertCollectionAsync(response, this.colorConverter, cancellationToken);
+            return await this.ResponseConverter.ConvertCollectionAsync(response, this.colorConverter);
         }
 
         /// <inheritdoc />
@@ -100,7 +100,7 @@ namespace GW2NET.V2.Colors
 
             HttpResponseMessage response = await this.Client.SendAsync(request, cancellationToken);
 
-            return await this.ResponseConverter.ConvertCollectionAsync(response, this.colorConverter, cancellationToken);
+            return await this.ResponseConverter.ConvertCollectionAsync(response, this.colorConverter);
         }
 
         /// <inheritdoc />
@@ -125,7 +125,7 @@ namespace GW2NET.V2.Colors
             HttpResponseMessage response = await this.Client.SendAsync(request, cancellationToken);
 
             // Convert the response and return the object
-            return await this.ResponseConverter.ConvertElementAsync(response, this.colorConverter, cancellationToken);
+            return await this.ResponseConverter.ConvertElementAsync(response, this.colorConverter);
         }
 
         /// <inheritdoc />
