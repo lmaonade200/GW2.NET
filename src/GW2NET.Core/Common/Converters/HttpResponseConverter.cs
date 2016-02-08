@@ -26,17 +26,20 @@ namespace GW2NET.Common.Converters
 
         public async Task<IEnumerable<TOutput>> ConvertCollectionAsync<TInput, TOutput>(HttpResponseMessage responseMessage, IConverter<TInput, TOutput> innerConverter, CancellationToken cancellationToken, object state = null)
         {
-            var contentStream = await this.GetContent(responseMessage, state);
+            Stream contentStream = await this.GetContent(responseMessage, state);
+            ApiMetadata metadata = this.GetMetadata(responseMessage);
 
             IEnumerable<TInput> response = this.serializerFactory.GetSerializer<IEnumerable<TInput>>().Deserialize(contentStream);
 
             ConcurrentBag<TOutput> items = new ConcurrentBag<TOutput>();
 
-            //ToDo: Implement proper
-            var responseState = new Response<TInput>
+            // Conversion is currently done, so the old converter
+            // infrastructure can be kept intact for now.
+            // This should be changed later down the road.
+            Response<TInput> responseState = new Response<TInput>
             {
-                Culture = CultureInfo.CurrentCulture,
-                Date = new DateTimeOffset(DateTime.Now)
+                Culture = metadata.ContentLanguage,
+                Date = metadata.RequestDate
             };
 
             Parallel.ForEach(response, item =>
@@ -49,15 +52,18 @@ namespace GW2NET.Common.Converters
 
         public async Task<TOutput> ConvertElementAsync<TInput, TOutput>(HttpResponseMessage responseMessage, IConverter<TInput, TOutput> innerConverter, CancellationToken cancellationToken, object state = null)
         {
-            var contentStream = await this.GetContent(responseMessage, state);
+            Stream contentStream = await this.GetContent(responseMessage, state);
+            ApiMetadata metadata = this.GetMetadata(responseMessage);
 
             TInput response = this.serializerFactory.GetSerializer<TInput>().Deserialize(contentStream);
 
-            //ToDo: Implement proper
-            var responseState = new Response<TInput>
+            // Conversion is currently done, so the old converter
+            // infrastructure can be kept intact for now.
+            // This should be changed later down the road.
+            Response<TInput> responseState = new Response<TInput>
             {
-                Culture = CultureInfo.CurrentCulture,
-                Date = new DateTimeOffset(DateTime.Now)
+                Culture = metadata.ContentLanguage,
+                Date = metadata.RequestDate
             };
 
             return innerConverter.Convert(response, responseState);
@@ -83,10 +89,10 @@ namespace GW2NET.Common.Converters
                     throw new ServiceException("Could not read content stream.");
                 }
 
-                var encoding = message.Headers.SingleOrDefault(h => h.Key == "Content-Encoding").Value;
-                if (encoding != null)
+                ICollection<string> contentEncoding = content.Headers.ContentEncoding;
+                if (contentEncoding != null && contentEncoding.Count > 0)
                 {
-                    if (encoding.FirstOrDefault().Equals("gzip", StringComparison.OrdinalIgnoreCase))
+                    if (contentEncoding.FirstOrDefault().Equals("gzip", StringComparison.OrdinalIgnoreCase))
                     {
                         Stream uncompressed = this.gzipInflator.Convert(contentStream, state);
                         if (uncompressed == null)
@@ -102,6 +108,26 @@ namespace GW2NET.Common.Converters
                 contentStream.Position = 0;
                 return contentStream;
             }
+        }
+
+        private ApiMetadata GetMetadata(HttpResponseMessage message)
+        {
+            ApiMetadata metadata = new ApiMetadata();
+
+            using (HttpContent content = message.Content)
+            {
+                metadata.ContentLanguage = new CultureInfo(content.Headers.ContentLanguage.First());
+                metadata.RequestDate = message.Headers.Date ?? default(DateTimeOffset);
+                metadata.ExpireDate = content.Headers.Expires ?? default(DateTimeOffset);
+
+                string resultTotal = message.Headers.SingleOrDefault(h => string.Equals(h.Key, "X-Result-Total", StringComparison.OrdinalIgnoreCase)).Value?.FirstOrDefault();
+                metadata.ResultTotal = !string.IsNullOrEmpty(resultTotal) ? Convert.ToInt32(resultTotal) : -1;
+
+                string resultCount = message.Headers.SingleOrDefault(h => string.Equals(h.Key, "X-Result-Count", StringComparison.OrdinalIgnoreCase)).Value?.FirstOrDefault();
+                metadata.ResultCount = !string.IsNullOrEmpty(resultCount) ? Convert.ToInt32(resultCount) : -1;
+            }
+
+            return metadata;
         }
     }
 }
