@@ -11,6 +11,7 @@ namespace GW2NET.Common.Messages
     using System.Net.Http;
     using System.Text;
 
+    /// <summary>Provides a fluent interface to build a <see cref="HttpRequestMessage"/> for the Guild Wars 2 API.</summary>
     public class ApiMessageBuilder : IMessageBuilder, IVersionedBuilder, IParameterizedBuilder, IPagedBuilder
     {
         private readonly Dictionary<string, string> queryParameters;
@@ -21,17 +22,21 @@ namespace GW2NET.Common.Messages
 
         private string endpoint;
 
+        /// <summary>Prevents a new instance of the <see cref="ApiMessageBuilder"/> to be created.</summary>
         private ApiMessageBuilder()
         {
             this.queryParameters = new Dictionary<string, string>();
             this.identifiers = new HashSet<int>();
         }
 
+        /// <summary>Creates a new instance of the <see cref="ApiMessageBuilder"/>.</summary>
+        /// <returns>The created instance as an <see cref="IVersionedBuilder"/>.</returns>
         public static IVersionedBuilder Init()
         {
             return new ApiMessageBuilder();
         }
 
+        /// <inheritdoc />
         HttpRequestMessage IBaseBuilder.Build()
         {
             Uri uri = new Uri($"{this.apiVersion}/{this.endpoint}{this.BuildQueryString()}", UriKind.Relative);
@@ -39,6 +44,7 @@ namespace GW2NET.Common.Messages
             return new HttpRequestMessage(HttpMethod.Get, uri);
         }
 
+        /// <inheritdoc />
         IBaseBuilder IPagedBuilder.WithSize(int pageSize)
         {
             if (this.queryParameters.ContainsKey("page_size"))
@@ -53,12 +59,14 @@ namespace GW2NET.Common.Messages
             return this;
         }
 
+        /// <inheritdoc />
         IParameterizedBuilder IParameterizedBuilder.WithParameter(string key, string value)
         {
             this.queryParameters.Add(key, value);
             return this;
         }
 
+        /// <inheritdoc />
         IParameterizedBuilder IParameterizedBuilder.ForCulture(CultureInfo culture)
         {
             if (this.queryParameters.ContainsKey("lang"))
@@ -73,6 +81,7 @@ namespace GW2NET.Common.Messages
             return this;
         }
 
+        /// <inheritdoc />
         IBaseBuilder IParameterizedBuilder.WithIdentifier(int identifier)
         {
             this.identifiers.Add(identifier);
@@ -80,6 +89,8 @@ namespace GW2NET.Common.Messages
             return this;
         }
 
+        /// <inheritdoc />
+        // ReSharper disable once ParameterHidesMember
         IBaseBuilder IParameterizedBuilder.WithIdentifiers(IEnumerable<int> identifiers)
         {
             this.identifiers.UnionWith(identifiers);
@@ -87,6 +98,7 @@ namespace GW2NET.Common.Messages
             return this;
         }
 
+        /// <inheritdoc />
         IBaseBuilder IParameterizedBuilder.WithQuantity(int quantity)
         {
             if (this.queryParameters.ContainsKey("quantity"))
@@ -101,6 +113,7 @@ namespace GW2NET.Common.Messages
             return this;
         }
 
+        /// <inheritdoc />
         IPagedBuilder IParameterizedBuilder.OnPage(int pageIndex)
         {
             if (this.queryParameters.ContainsKey("page"))
@@ -115,18 +128,23 @@ namespace GW2NET.Common.Messages
             return this;
         }
 
+        /// <inheritdoc />
         IMessageBuilder IVersionedBuilder.Version(ApiVersion version)
         {
             this.apiVersion = version;
             return this;
         }
 
+        /// <inheritdoc />
+        // ReSharper disable once ParameterHidesMember
         IParameterizedBuilder IMessageBuilder.OnEndpoint(string endpoint)
         {
             this.endpoint = endpoint;
             return this;
         }
 
+        /// <summary>Builds the query string from the stored data.</summary>
+        /// <returns>A <see cref="string"/> representing the parameters of the query.</returns>
         private string BuildQueryString()
         {
             StringBuilder stringBuilder = new StringBuilder();
