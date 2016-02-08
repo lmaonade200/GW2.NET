@@ -8,7 +8,6 @@ namespace GW2NET
     using System.Collections.Generic;
     using System.Net.Http;
     using System.Threading;
-    using System.Threading.Tasks;
 
     using GW2NET.Caching;
     using GW2NET.Colors;
@@ -26,7 +25,7 @@ namespace GW2NET
         [Fact]
         public async void DiscoverTest()
         {
-            HttpClient client = new HttpClient(new GW2ApiHandler(), false)
+            HttpClient client = new HttpClient(new HttpClientHandler(), false)
             {
                 BaseAddress = new Uri("https://api.guildwars2.com/")
             };
@@ -49,7 +48,7 @@ namespace GW2NET
         [Fact]
         public async void ElementTest()
         {
-            HttpClient client = new HttpClient(new GW2ApiHandler(), false)
+            HttpClient client = new HttpClient(new HttpClientHandler(), false)
             {
                 BaseAddress = new Uri("https://api.guildwars2.com/")
             };
@@ -67,7 +66,7 @@ namespace GW2NET
             ColorPalette color = await service.GetAsync(10, CancellationToken.None);
 
             Assert.NotNull(color);
-            Assert.Equal(color.ItemId, 10);
+            Assert.Equal(color.ColorId, 10);
         }
     }
 }
