@@ -7,7 +7,6 @@ namespace GW2NET.Common.Converters
     using System.IO;
     using System.Linq;
     using System.Net.Http;
-    using System.Threading;
     using System.Threading.Tasks;
 
     using GW2NET.Common.Serializers;
@@ -24,9 +23,9 @@ namespace GW2NET.Common.Converters
             this.gzipInflator = gzipInflator;
         }
 
-        public async Task<IEnumerable<TOutput>> ConvertCollectionAsync<TInput, TOutput>(HttpResponseMessage responseMessage, IConverter<TInput, TOutput> innerConverter, CancellationToken cancellationToken, object state = null)
+        public async Task<IEnumerable<TOutput>> ConvertCollectionAsync<TInput, TOutput>(HttpResponseMessage responseMessage, IConverter<TInput, TOutput> innerConverter)
         {
-            Stream contentStream = await this.GetContent(responseMessage, state);
+            Stream contentStream = await this.GetContent(responseMessage);
             ApiMetadata metadata = this.GetMetadata(responseMessage);
 
             IEnumerable<TInput> response = this.serializerFactory.GetSerializer<IEnumerable<TInput>>().Deserialize(contentStream);
@@ -50,9 +49,9 @@ namespace GW2NET.Common.Converters
             return items;
         }
 
-        public async Task<TOutput> ConvertElementAsync<TInput, TOutput>(HttpResponseMessage responseMessage, IConverter<TInput, TOutput> innerConverter, CancellationToken cancellationToken, object state = null)
+        public async Task<TOutput> ConvertElementAsync<TInput, TOutput>(HttpResponseMessage responseMessage, IConverter<TInput, TOutput> innerConverter)
         {
-            Stream contentStream = await this.GetContent(responseMessage, state);
+            Stream contentStream = await this.GetContent(responseMessage);
             ApiMetadata metadata = this.GetMetadata(responseMessage);
 
             TInput response = this.serializerFactory.GetSerializer<TInput>().Deserialize(contentStream);
@@ -69,7 +68,7 @@ namespace GW2NET.Common.Converters
             return innerConverter.Convert(response, responseState);
         }
 
-        private async Task<Stream> GetContent(HttpResponseMessage message, object state = null)
+        private async Task<Stream> GetContent(HttpResponseMessage message)
         {
             if (message == null)
             {
@@ -94,7 +93,7 @@ namespace GW2NET.Common.Converters
                 {
                     if (contentEncoding.FirstOrDefault().Equals("gzip", StringComparison.OrdinalIgnoreCase))
                     {
-                        Stream uncompressed = this.gzipInflator.Convert(contentStream, state);
+                        Stream uncompressed = this.gzipInflator.Convert(contentStream, null);
                         if (uncompressed == null)
                         {
                             throw new InvalidOperationException("Could not read stream.");
