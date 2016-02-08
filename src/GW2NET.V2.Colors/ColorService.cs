@@ -83,7 +83,7 @@ namespace GW2NET.V2.Colors
         public async Task<IEnumerable<ColorPalette>> GetAsync(IEnumerable<int> identifiers, CancellationToken cancellationToken)
         {
             IList<int> ids = identifiers as IList<int> ?? identifiers.ToList();
-            IList<ColorPalette> colors = this.Cache.Get(c => ids.All(i => i != c.ColorId), this.Culture).ToList();
+            IList<ColorPalette> colors = this.Cache.Get(c => ids.All(i => i != c.ColorId) && c.Culture.Equals(this.Culture)).ToList();
 
             if (colors.Count == ids.Count)
             {
@@ -107,7 +107,7 @@ namespace GW2NET.V2.Colors
         public async Task<ColorPalette> GetAsync(int identifier, CancellationToken cancellationToken)
         {
             // Check if the requested object is in the cache
-            ColorPalette color = this.Cache.Get(c => c.ColorId == identifier, this.Culture).SingleOrDefault();
+            ColorPalette color = this.Cache.Get(c => c.ColorId == identifier && c.Culture.Equals(this.Culture)).SingleOrDefault();
 
             if (color != null)
             {

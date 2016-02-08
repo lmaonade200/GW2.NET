@@ -38,7 +38,7 @@ namespace GW2NET
             IConverter<int, int> idConverter = new ConverterAdapter<int>();
             ColorPaletteConverter colorConverter = new ColorPaletteConverter(new ColorConverter(), new ColorModelConverter(new ColorConverter()));
 
-            ColorService service = new ColorService(client, httpResponseConverter, MemoryCache<ColorPalette>.Default(), idConverter, colorConverter);
+            ColorService service = new ColorService(client, httpResponseConverter, new MemoryCache<ColorPalette>(), idConverter, colorConverter);
 
             IEnumerable<int> ids = await service.DiscoverAsync();
 
@@ -61,7 +61,7 @@ namespace GW2NET
             IConverter<int, int> idConverter = new ConverterAdapter<int>();
             ColorPaletteConverter colorConverter = new ColorPaletteConverter(new ColorConverter(), new ColorModelConverter(new ColorConverter()));
 
-            ColorService service = new ColorService(client, httpResponseConverter, MemoryCache<ColorPalette>.Default(), idConverter, colorConverter);
+            ColorService service = new ColorService(client, httpResponseConverter, new MemoryCache<ColorPalette>(), idConverter, colorConverter);
 
             ColorPalette color = await service.GetAsync(10, CancellationToken.None);
 
