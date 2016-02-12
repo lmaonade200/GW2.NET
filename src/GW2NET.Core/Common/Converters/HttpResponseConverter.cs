@@ -7,6 +7,7 @@ namespace GW2NET.Common.Converters
     using System.IO;
     using System.Linq;
     using System.Net.Http;
+    using System.Net.Http.Headers;
     using System.Threading.Tasks;
 
     using GW2NET.Common.Serializers;
@@ -15,20 +16,21 @@ namespace GW2NET.Common.Converters
     {
         private readonly ISerializerFactory serializerFactory;
 
+        private readonly ISerializerFactory errorSerializerFactory;
+
         private readonly IConverter<Stream, Stream> gzipInflator;
 
-        public HttpResponseConverter(ISerializerFactory serializerFactory, IConverter<Stream, Stream> gzipInflator)
+        public HttpResponseConverter(ISerializerFactory serializerFactory, ISerializerFactory errorSerializerFactory, IConverter<Stream, Stream> gzipInflator)
         {
             this.serializerFactory = serializerFactory;
             this.gzipInflator = gzipInflator;
+            this.errorSerializerFactory = errorSerializerFactory;
         }
 
         public async Task<IEnumerable<TOutput>> ConvertCollectionAsync<TInput, TOutput>(HttpResponseMessage responseMessage, IConverter<TInput, TOutput> innerConverter)
         {
-            Stream contentStream = await this.GetContent(responseMessage);
+            IEnumerable<TInput> response = await this.GetContentAsync<IEnumerable<TInput>>(responseMessage);
             ApiMetadata metadata = this.GetMetadata(responseMessage);
-
-            IEnumerable<TInput> response = this.serializerFactory.GetSerializer<IEnumerable<TInput>>().Deserialize(contentStream);
 
             ConcurrentBag<TOutput> items = new ConcurrentBag<TOutput>();
 
@@ -51,10 +53,8 @@ namespace GW2NET.Common.Converters
 
         public async Task<TOutput> ConvertElementAsync<TInput, TOutput>(HttpResponseMessage responseMessage, IConverter<TInput, TOutput> innerConverter)
         {
-            Stream contentStream = await this.GetContent(responseMessage);
+            TInput response = await this.GetContentAsync<TInput>(responseMessage);
             ApiMetadata metadata = this.GetMetadata(responseMessage);
-
-            TInput response = this.serializerFactory.GetSerializer<TInput>().Deserialize(contentStream);
 
             // Conversion is currently done, so the old converter
             // infrastructure can be kept intact for now.
@@ -68,7 +68,35 @@ namespace GW2NET.Common.Converters
             return innerConverter.Convert(response, responseState);
         }
 
-        private async Task<Stream> GetContent(HttpResponseMessage message)
+        private async Task<TResult> DeserializeAsync<TResult>(HttpContent content, ISerializerFactory serializer, IConverter<Stream, Stream> compressionConverter)
+        {
+            byte[] buffer = new byte[4096];
+
+            Stream contentStream = new MemoryStream(buffer, true);
+
+            await content.CopyToAsync(contentStream);
+
+            ICollection<string> contentEncoding = content.Headers.ContentEncoding;
+            if (contentEncoding != null && contentEncoding.Count > 0)
+            {
+                if (contentEncoding.FirstOrDefault().Equals("gzip", StringComparison.OrdinalIgnoreCase))
+                {
+                    Stream uncompressed = compressionConverter.Convert(contentStream, null);
+                    if (uncompressed == null)
+                    {
+                        throw new InvalidOperationException("Could not read stream.");
+                    }
+
+                    contentStream = uncompressed;
+                }
+            }
+
+            await contentStream.FlushAsync();
+            contentStream.Position = 0;
+            return serializer.GetSerializer<TResult>().Deserialize(contentStream);
+        }
+
+        private async Task<TContent> GetContentAsync<TContent>(HttpResponseMessage message)
         {
             if (message == null)
             {
@@ -77,35 +105,22 @@ namespace GW2NET.Common.Converters
 
             using (HttpContent content = message.Content)
             {
-                byte[] buffer = new byte[4096];
-
-                Stream contentStream = new MemoryStream(buffer, true);
-
-                await content.CopyToAsync(contentStream);
-
-                if (contentStream.Length == 0)
+                if (!message.IsSuccessStatusCode)
                 {
-                    throw new ServiceException("Could not read content stream.");
-                }
+                    MediaTypeHeaderValue contentType = content.Headers.ContentType;
 
-                ICollection<string> contentEncoding = content.Headers.ContentEncoding;
-                if (contentEncoding != null && contentEncoding.Count > 0)
-                {
-                    if (contentEncoding.FirstOrDefault().Equals("gzip", StringComparison.OrdinalIgnoreCase))
+                    if (contentType != null
+                        && contentType.MediaType.Equals("application/json", StringComparison.OrdinalIgnoreCase))
                     {
-                        Stream uncompressed = this.gzipInflator.Convert(contentStream, null);
-                        if (uncompressed == null)
-                        {
-                            throw new InvalidOperationException("Could not read stream.");
-                        }
+                        // Get the response content
+                        ErrorResult errorResult = await this.DeserializeAsync<ErrorResult>(content, this.errorSerializerFactory, this.gzipInflator);
 
-                        contentStream = uncompressed;
+                        // Get the error description, or null if none was returned
+                        throw new ServiceException(errorResult?.Text);
                     }
                 }
 
-                await contentStream.FlushAsync();
-                contentStream.Position = 0;
-                return contentStream;
+                return await this.DeserializeAsync<TContent>(content, this.serializerFactory, this.gzipInflator);
             }
         }
 

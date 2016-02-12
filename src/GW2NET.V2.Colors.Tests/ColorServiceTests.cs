@@ -33,7 +33,7 @@ namespace GW2NET
             JsonSerializerFactory jsonSerializerFactory = new JsonSerializerFactory();
             GzipInflator gzipInflator = new GzipInflator();
 
-            HttpResponseConverter httpResponseConverter = new HttpResponseConverter(jsonSerializerFactory, gzipInflator);
+            HttpResponseConverter httpResponseConverter = new HttpResponseConverter(jsonSerializerFactory, jsonSerializerFactory, gzipInflator);
 
             IConverter<int, int> idConverter = new ConverterAdapter<int>();
             ColorPaletteConverter colorConverter = new ColorPaletteConverter(new ColorConverter(), new ColorModelConverter(new ColorConverter()));
