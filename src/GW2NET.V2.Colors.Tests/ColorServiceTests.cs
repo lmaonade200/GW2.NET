@@ -33,12 +33,12 @@ namespace GW2NET
             JsonSerializerFactory jsonSerializerFactory = new JsonSerializerFactory();
             GzipInflator gzipInflator = new GzipInflator();
 
-            HttpResponseConverter httpResponseConverter = new HttpResponseConverter(jsonSerializerFactory, jsonSerializerFactory, gzipInflator);
+            HttpResponseConverter responseConverter = new HttpResponseConverter(jsonSerializerFactory, jsonSerializerFactory, gzipInflator);
 
             IConverter<int, int> idConverter = new ConverterAdapter<int>();
             ColorPaletteConverter colorConverter = new ColorPaletteConverter(new ColorConverter(), new ColorModelConverter(new ColorConverter()));
 
-            ColorService service = new ColorService(client, httpResponseConverter, new MemoryCache<ColorPalette>(), idConverter, colorConverter);
+            ColorService service = new ColorService(client, responseConverter, new MemoryCache<ColorPalette>(), idConverter, colorConverter);
 
             IEnumerable<int> ids = await service.DiscoverAsync();
 
@@ -56,12 +56,12 @@ namespace GW2NET
             JsonSerializerFactory jsonSerializerFactory = new JsonSerializerFactory();
             GzipInflator gzipInflator = new GzipInflator();
 
-            HttpResponseConverter httpResponseConverter = new HttpResponseConverter(jsonSerializerFactory, gzipInflator);
+            ResponseConverterBase responseConverter = new HttpResponseConverter(jsonSerializerFactory, jsonSerializerFactory, gzipInflator);
 
             IConverter<int, int> idConverter = new ConverterAdapter<int>();
             ColorPaletteConverter colorConverter = new ColorPaletteConverter(new ColorConverter(), new ColorModelConverter(new ColorConverter()));
 
-            ColorService service = new ColorService(client, httpResponseConverter, new MemoryCache<ColorPalette>(), idConverter, colorConverter);
+            ColorService service = new ColorService(client, responseConverter, new MemoryCache<ColorPalette>(), idConverter, colorConverter);
 
             ColorPalette color = await service.GetAsync(10, CancellationToken.None);
 

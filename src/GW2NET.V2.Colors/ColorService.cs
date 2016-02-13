@@ -32,7 +32,7 @@ namespace GW2NET.V2.Colors
         /// <param name="cache">The cache used to cache results.</param>
         /// <param name="identifiersConverter">The converter used to convert identifiers.</param>
         /// <param name="colorConverter">The converter to convert single color responses.</param>
-        public ColorService(HttpClient httpClient, HttpResponseConverter responseConverter, ICache<ColorPalette> cache, IConverter<int, int> identifiersConverter, IConverter<ColorPaletteDTO, ColorPalette> colorConverter)
+        public ColorService(HttpClient httpClient, ResponseConverterBase responseConverter, ICache<ColorPalette> cache, IConverter<int, int> identifiersConverter, IConverter<ColorPaletteDTO, ColorPalette> colorConverter)
             : base(httpClient, responseConverter, cache)
         {
             this.identifiersConverter = identifiersConverter;
@@ -54,7 +54,7 @@ namespace GW2NET.V2.Colors
             HttpRequestMessage request = ApiMessageBuilder.Init().Version(ApiVersion.V2).OnEndpoint("colors").Build();
             HttpResponseMessage response = await this.Client.SendAsync(request, cancellationToken);
 
-            return await this.ResponseConverter.ConvertCollectionAsync(response, this.identifiersConverter);
+            return await this.ResponseConverter.ConvertSetAsync(response, this.identifiersConverter);
         }
 
         /// <inheritdoc />
@@ -70,7 +70,7 @@ namespace GW2NET.V2.Colors
 
             HttpResponseMessage response = await this.Client.SendAsync(request, cancellationToken);
 
-            return await this.ResponseConverter.ConvertCollectionAsync(response, this.colorConverter);
+            return await this.ResponseConverter.ConvertSetAsync(response, this.colorConverter);
         }
 
         /// <inheritdoc />
@@ -100,7 +100,7 @@ namespace GW2NET.V2.Colors
 
             HttpResponseMessage response = await this.Client.SendAsync(request, cancellationToken);
 
-            return await this.ResponseConverter.ConvertCollectionAsync(response, this.colorConverter);
+            return await this.ResponseConverter.ConvertSetAsync(response, this.colorConverter);
         }
 
         /// <inheritdoc />

@@ -12,7 +12,7 @@ namespace GW2NET.Common.Converters
 
     using GW2NET.Common.Serializers;
 
-    public class HttpResponseConverter
+    public class HttpResponseConverter : ResponseConverterBase
     {
         private readonly ISerializerFactory serializerFactory;
 
@@ -27,7 +27,7 @@ namespace GW2NET.Common.Converters
             this.errorSerializerFactory = errorSerializerFactory;
         }
 
-        public async Task<IEnumerable<TOutput>> ConvertCollectionAsync<TInput, TOutput>(HttpResponseMessage responseMessage, IConverter<TInput, TOutput> innerConverter)
+        public override async Task<IEnumerable<TOutput>> ConvertSetAsync<TInput, TOutput>(HttpResponseMessage responseMessage, IConverter<TInput, TOutput> innerConverter)
         {
             IEnumerable<TInput> response = await this.GetContentAsync<IEnumerable<TInput>>(responseMessage);
             ApiMetadata metadata = this.GetMetadata(responseMessage);
@@ -51,7 +51,7 @@ namespace GW2NET.Common.Converters
             return items;
         }
 
-        public async Task<TOutput> ConvertElementAsync<TInput, TOutput>(HttpResponseMessage responseMessage, IConverter<TInput, TOutput> innerConverter)
+        public override async Task<TOutput> ConvertElementAsync<TInput, TOutput>(HttpResponseMessage responseMessage, IConverter<TInput, TOutput> innerConverter)
         {
             TInput response = await this.GetContentAsync<TInput>(responseMessage);
             ApiMetadata metadata = this.GetMetadata(responseMessage);

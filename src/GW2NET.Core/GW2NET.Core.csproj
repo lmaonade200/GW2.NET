@@ -70,6 +70,7 @@
     <Compile Include="Commerce\Listing.cs" />
     <Compile Include="Commerce\Offer.cs" />
     <Compile Include="Common\Converters\ApiMetadata.cs" />
+    <Compile Include="Common\Converters\ResponseConverterBase.cs" />
     <Compile Include="Common\Converters\Base64Converter.cs" />
     <Compile Include="Common\Converters\CollectionPageResponseConverter.cs" />
     <Compile Include="Common\Converters\CollectionResponseConverter.cs" />
