@@ -9,7 +9,6 @@ namespace GW2NET.Common.Messages
     using System.Globalization;
     using System.Linq;
     using System.Net.Http;
-    using System.Text;
 
     /// <summary>Provides a fluent interface to build a <see cref="HttpRequestMessage"/> for the Guild Wars 2 API.</summary>
     public class ApiMessageBuilder : IMessageBuilder, IVersionedBuilder, IParameterizedBuilder, IPagedBuilder
@@ -39,9 +38,14 @@ namespace GW2NET.Common.Messages
         /// <inheritdoc />
         HttpRequestMessage IBaseBuilder.Build()
         {
-            Uri uri = new Uri($"{this.apiVersion}/{this.endpoint}{this.BuildQueryString()}", UriKind.Relative);
+            Uri uri = new Uri($"{this.apiVersion}/{this.endpoint}{this.BuildParameterString()}", UriKind.Relative);
 
-            return new HttpRequestMessage(HttpMethod.Get, uri);
+            HttpRequestMessage message = new HttpRequestMessage(HttpMethod.Get, uri);
+
+            string language = this.queryParameters.SingleOrDefault(k => k.Key == "lang").Value;
+            message.Headers.Add("Accept-Language", string.Equals(language, "iv") ? "en" : language);
+
+            return message;
         }
 
         /// <inheritdoc />
@@ -75,7 +79,14 @@ namespace GW2NET.Common.Messages
             }
             else
             {
-                this.queryParameters.Add("lang", culture.TwoLetterISOLanguageName);
+                // If there was no culture passed we should
+                // assume that nothing should happen.
+                if (culture == null)
+                {
+                    return this;
+                }
+
+                this.queryParameters.Add("lang", culture.TwoLetterISOLanguageName == "iv" ? "en" : culture.TwoLetterISOLanguageName);
             }
 
             return this;
@@ -143,45 +154,19 @@ namespace GW2NET.Common.Messages
             return this;
         }
 
-        /// <summary>Builds the query string from the stored data.</summary>
-        /// <returns>A <see cref="string"/> representing the parameters of the query.</returns>
-        private string BuildQueryString()
+        /// <summary>Builds the parameter url string.</summary>
+        /// <returns>The url string.</returns>
+        private string BuildParameterString()
         {
-            StringBuilder stringBuilder = new StringBuilder();
-
-            if (this.identifiers.Count == 1)
+            switch (this.identifiers.Count)
             {
-                stringBuilder.Append($"/{this.identifiers.First()}");
+                case 0:
+                    return string.Empty;
+                case 1:
+                    return $"/{this.identifiers.First()}";
             }
 
-            stringBuilder.Append("?");
-
-            if (this.identifiers.Count > 1)
-            {
-                stringBuilder.Append($"ids={string.Join(",", this.identifiers)}&");
-            }
-
-            foreach (KeyValuePair<string, string> valuePair in this.queryParameters.Where(pair => pair.Key != "ids"))
-            {
-                if (valuePair.Key == "lang")
-                {
-                    if (valuePair.Value == "iv")
-                    {
-                        continue;
-                    }
-
-                    stringBuilder.Append($"{valuePair.Key}={valuePair.Value}&");
-                }
-
-                stringBuilder.Append($"{valuePair.Key}={valuePair.Value}&");
-            }
-
-            if (stringBuilder.ToString().EndsWith("&"))
-            {
-                stringBuilder.Remove(stringBuilder.Length - 1, 1);
-            }
-
-            return stringBuilder.Length == 1 ? string.Empty : stringBuilder.ToString();
+            return $"?ids={string.Join(",", this.identifiers)}";
         }
     }
 }
