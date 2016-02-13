@@ -37,6 +37,8 @@ namespace GW2NET.V2.Colors
         {
             this.identifiersConverter = identifiersConverter;
             this.colorConverter = colorConverter;
+
+            this.Culture = new CultureInfo("iv");
         }
 
         /// <inheritdoc />
@@ -65,6 +67,7 @@ namespace GW2NET.V2.Colors
             HttpRequestMessage request = ApiMessageBuilder.Init()
                 .Version(ApiVersion.V2)
                 .OnEndpoint("colors")
+                .ForCulture(this.Culture)
                 .WithIdentifiers(ids)
                 .Build();
 
@@ -95,6 +98,7 @@ namespace GW2NET.V2.Colors
             HttpRequestMessage request = ApiMessageBuilder.Init()
                 .Version(ApiVersion.V2)
                 .OnEndpoint("colors")
+                .ForCulture(this.Culture)
                 .WithIdentifiers(idsToQuery)
                 .Build();
 
@@ -118,6 +122,7 @@ namespace GW2NET.V2.Colors
             HttpRequestMessage request = ApiMessageBuilder.Init()
                 .Version(ApiVersion.V2)
                 .OnEndpoint("colors")
+                .ForCulture(this.Culture)
                 .WithIdentifier(identifier)
                 .Build();
 
