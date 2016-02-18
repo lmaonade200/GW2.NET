@@ -51,6 +51,12 @@ namespace GW2NET.Caching
         }
 
         /// <inheritdoc />
+        public void Remove(Func<T, bool> selector)
+        {
+            this.items.RemoveWhere(new Predicate<T>(selector));
+        }
+
+        /// <inheritdoc />
         public IEnumerable<T> Get(Func<T, bool> selector)
         {
             return this.items.Where(item => selector(item) && !this.CheckIfStale(item));

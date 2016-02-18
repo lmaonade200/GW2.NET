@@ -21,6 +21,10 @@
         /// <summary>Clears the cache of all items.</summary>
         void Clear();
 
+        /// <summary>Removes the specified items from the cache.</summary>
+        /// <param name="selector">A <see cref="Func{T, TResult}"/> selecting the items to be removed.</param>
+        void Remove(Func<T, bool> selector);
+
         /// <summary>Gets a set of items from the cache.</summary>
         /// <param name="selector">A <see cref="Func{T,TResult}"/> to filter the items to return.</param>
         /// <returns>An <see cref="IEnumerable{T}"/> of type <see cref="T"/> containing the requested items.</returns>
