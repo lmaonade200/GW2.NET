@@ -70,9 +70,7 @@ namespace GW2NET.Common.Converters
 
         private async Task<TResult> DeserializeAsync<TResult>(HttpContent content, ISerializerFactory serializer, IConverter<Stream, Stream> compressionConverter)
         {
-            byte[] buffer = new byte[4096];
-
-            Stream contentStream = new MemoryStream(buffer, true);
+            Stream contentStream = new MemoryStream();
 
             await content.CopyToAsync(contentStream);
 
