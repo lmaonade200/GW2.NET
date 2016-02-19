@@ -61,6 +61,10 @@
       <Project>{ca6d86a9-f12e-45d4-a878-57f2714a0a51}</Project>
       <Name>GW2NET.V2.Commerce.Listings</Name>
     </ProjectReference>
+    <ProjectReference Include="..\GW2NET\GW2NET.csproj">
+      <Project>{48C94F34-B6BD-4BDD-A0D5-36403A86FB78}</Project>
+      <Name>GW2NET</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />

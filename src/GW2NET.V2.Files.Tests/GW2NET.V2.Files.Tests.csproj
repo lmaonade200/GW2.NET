@@ -54,6 +54,10 @@
       <Project>{7376bf02-3192-479b-82e8-ec0b15da55c1}</Project>
       <Name>GW2NET.V2.Files</Name>
     </ProjectReference>
+    <ProjectReference Include="..\GW2NET\GW2NET.csproj">
+      <Project>{48C94F34-B6BD-4BDD-A0D5-36403A86FB78}</Project>
+      <Name>GW2NET</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Converters\AssetConverterTests.cs" />

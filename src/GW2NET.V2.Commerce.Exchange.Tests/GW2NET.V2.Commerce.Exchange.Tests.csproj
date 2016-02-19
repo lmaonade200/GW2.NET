@@ -61,6 +61,10 @@
       <Project>{40a8f55c-97bc-4652-a60e-9f4ea5d49fda}</Project>
       <Name>GW2NET.V2.Commerce.Exchange</Name>
     </ProjectReference>
+    <ProjectReference Include="..\GW2NET\GW2NET.csproj">
+      <Project>{48C94F34-B6BD-4BDD-A0D5-36403A86FB78}</Project>
+      <Name>GW2NET</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
