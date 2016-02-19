@@ -5,9 +5,11 @@
 namespace GW2NET.V2.Colors
 {
     using System;
+    using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.Globalization;
     using System.Linq;
+    using System.Linq.Expressions;
     using System.Net.Http;
     using System.Threading;
     using System.Threading.Tasks;
@@ -17,14 +19,13 @@ namespace GW2NET.V2.Colors
     using GW2NET.Common;
     using GW2NET.Common.Converters;
     using GW2NET.Common.Messages;
-    using GW2NET.V2.Colors.Json;
 
     /// <summary>Provides methods and properties to retrive colors from the GW2 api.</summary>
     public class ColorService : ServiceBase<ColorPalette>, IDiscoverService<int>, IApiService<int, ColorPalette>, ILocalizable
     {
         private readonly IConverter<int, int> identifiersConverter;
 
-        private readonly IConverter<ColorPaletteDTO, ColorPalette> colorConverter;
+        private readonly IConverter<ColorPaletteDataContract, ColorPalette> colorConverter;
 
         /// <summary>Initializes a new instance of the <see cref="ColorService"/> class.</summary>
         /// <param name="httpClient">The <see cref="HttpClient"/> used to make requests against the api.</param>
@@ -32,7 +33,7 @@ namespace GW2NET.V2.Colors
         /// <param name="cache">The cache used to cache results.</param>
         /// <param name="identifiersConverter">The converter used to convert identifiers.</param>
         /// <param name="colorConverter">The converter to convert single color responses.</param>
-        public ColorService(HttpClient httpClient, ResponseConverterBase responseConverter, ICache<ColorPalette> cache, IConverter<int, int> identifiersConverter, IConverter<ColorPaletteDTO, ColorPalette> colorConverter)
+        public ColorService(HttpClient httpClient, ResponseConverterBase responseConverter, ICache<ColorPalette> cache, IConverter<int, int> identifiersConverter, IConverter<ColorPaletteDataContract, ColorPalette> colorConverter)
             : base(httpClient, responseConverter, cache)
         {
             this.identifiersConverter = identifiersConverter;
@@ -62,18 +63,29 @@ namespace GW2NET.V2.Colors
         /// <inheritdoc />
         public async Task<IEnumerable<ColorPalette>> GetAsync(CancellationToken cancellationToken)
         {
-            IEnumerable<int> ids = await this.DiscoverAsync(cancellationToken);
+            IEnumerable<ColorPalette> cacheColors = this.Cache.Get(cp => cp.Culture.Equals(this.Culture));
 
-            HttpRequestMessage request = ApiMessageBuilder.Init()
-                .Version(ApiVersion.V2)
-                .OnEndpoint("colors")
-                .ForCulture(this.Culture)
-                .WithIdentifiers(ids)
-                .Build();
+            IEnumerable<IEnumerable<int>> idListList = this.CalculatePages((await this.DiscoverAsync(cancellationToken)).SymmetricExcept(cacheColors.Select(c => c.ColorId)));
 
-            HttpResponseMessage response = await this.Client.SendAsync(request, cancellationToken);
+            ConcurrentBag<ColorPalette> colors = new ConcurrentBag<ColorPalette>();
+            Parallel.ForEach(idListList,
+                             async idList =>
+                             {
+                                 HttpRequestMessage request = ApiMessageBuilder.Init()
+                                                      .Version(ApiVersion.V2)
+                                                      .OnEndpoint("colors")
+                                                      .ForCulture(this.Culture)
+                                                      .WithIdentifiers(idList)
+                                                      .Build();
+                                 HttpResponseMessage response = await this.Client.SendAsync(request, cancellationToken);
 
-            return await this.ResponseConverter.ConvertSetAsync(response, this.colorConverter);
+                                 foreach (ColorPalette color in await this.ResponseConverter.ConvertSetAsync(response, this.colorConverter))
+                                 {
+                                     colors.Add(color);
+                                 }
+                             });
+
+            return colors;
         }
 
         /// <inheritdoc />
@@ -86,25 +98,38 @@ namespace GW2NET.V2.Colors
         public async Task<IEnumerable<ColorPalette>> GetAsync(IEnumerable<int> identifiers, CancellationToken cancellationToken)
         {
             IList<int> ids = identifiers as IList<int> ?? identifiers.ToList();
-            IList<ColorPalette> colors = this.Cache.Get(c => ids.All(i => i != c.ColorId) && c.Culture.Equals(this.Culture)).ToList();
+            IList<ColorPalette> cacheColors = this.Cache.Get(c => ids.All(i => i != c.ColorId) && c.Culture.Equals(this.Culture)).ToList();
 
-            if (colors.Count == ids.Count)
+            if (cacheColors.Count == ids.Count)
             {
-                return colors;
+                return cacheColors;
             }
 
-            IEnumerable<int> idsToQuery = ids.Where(x => colors.All(i => i.ItemId != x)).ToList();
+            // If the id count is greater than 200 we need to partitionate
+            IEnumerable<IEnumerable<int>> idsToQuery = this.CalculatePages(ids.Where(x => cacheColors.All(i => i.ItemId != x)));
 
-            HttpRequestMessage request = ApiMessageBuilder.Init()
-                .Version(ApiVersion.V2)
-                .OnEndpoint("colors")
-                .ForCulture(this.Culture)
-                .WithIdentifiers(idsToQuery)
-                .Build();
+            ConcurrentBag<ColorPalette> colors = new ConcurrentBag<ColorPalette>(cacheColors);
 
-            HttpResponseMessage response = await this.Client.SendAsync(request, cancellationToken);
+            Parallel.ForEach(idsToQuery,
+                async idList =>
+                {
+                    HttpRequestMessage request =
+                        ApiMessageBuilder.Init()
+                                         .Version(ApiVersion.V2)
+                                         .OnEndpoint("colors")
+                                         .ForCulture(this.Culture)
+                                         .WithIdentifiers(idList)
+                                         .Build();
 
-            return await this.ResponseConverter.ConvertSetAsync(response, this.colorConverter);
+                    HttpResponseMessage response = await this.Client.SendAsync(request, cancellationToken);
+
+                    foreach (ColorPalette color in await this.ResponseConverter.ConvertSetAsync(response, this.colorConverter))
+                    {
+                        colors.Add(color);
+                    }
+                });
+
+            return colors;
         }
 
         /// <inheritdoc />
@@ -136,7 +161,36 @@ namespace GW2NET.V2.Colors
         /// <inheritdoc />
         public async Task<IEnumerable<ColorPalette>> GetAsync(Func<ColorPalette, bool> selector, CancellationToken cancellationToken)
         {
-            return (await this.GetAsync(cancellationToken)).Where(selector);
+            var cacheColors = this.Cache.Get(selector);
+
+            var colorIdListList = this.CalculatePages((await this.DiscoverAsync(cancellationToken)).SymmetricExcept(cacheColors.Select(c => c.ColorId)));
+
+            ConcurrentBag<ColorPalette> colors = new ConcurrentBag<ColorPalette>();
+            Parallel.ForEach(
+                             colorIdListList,
+                             async colorIdList =>
+                             {
+                                 foreach (var message in typeof(ApiCultures)
+                                    .AsEnumerable<CultureInfo>()
+                                    .Select(culture => ApiMessageBuilder.Init()
+                                        .Version(ApiVersion.V2)
+                                        .OnEndpoint("colors")
+                                        .ForCulture(culture)
+                                        .WithIdentifiers(colorIdList)
+                                        .Build()))
+                                 {
+                                     HttpResponseMessage response = await this.Client.SendAsync(message, cancellationToken);
+
+                                     IEnumerable<ColorPalette> responseColors = await this.ResponseConverter.ConvertSetAsync(response, this.colorConverter);
+
+                                     foreach (ColorPalette color in responseColors.Where(selector))
+                                     {
+                                         colors.Add(color);
+                                     }
+                                 }
+                             });
+
+            return colors;
         }
     }
 }

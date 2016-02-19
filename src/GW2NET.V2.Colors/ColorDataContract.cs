@@ -7,14 +7,14 @@
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace GW2NET.V2.Colors.Json
+namespace GW2NET.V2.Colors
 {
     using System.Diagnostics.CodeAnalysis;
     using System.Runtime.Serialization;
 
     [DataContract]
     [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1600:ElementsMustBeDocumented", Justification = "http://wiki.guildwars2.com/wiki/API:2/colors")]
-    public sealed class ColorModelDTO
+    public sealed class ColorDataContract
     {
         [DataMember(Name = "brightness", Order = 0)]
         public int Brightness { get; set; }

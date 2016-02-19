@@ -7,7 +7,7 @@
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace GW2NET.V2.Colors.Converters
+namespace GW2NET.V2.Colors
 {
     using System;
 

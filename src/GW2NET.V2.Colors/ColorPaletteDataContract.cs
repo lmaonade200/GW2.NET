@@ -2,12 +2,12 @@
 // This product is licensed under the GNU General Public License version 2 (GPLv2). See the License in the project root folder or the following page: http://www.gnu.org/licenses/gpl-2.0.html
 // </copyright>
 
-namespace GW2NET.V2.Colors.Json
+namespace GW2NET.V2.Colors
 {
     using System.Runtime.Serialization;
 
     [DataContract]
-    public sealed class ColorPaletteDTO
+    public sealed class ColorPaletteDataContract
     {
         [DataMember(Name = "id", Order = 0)]
         public int Id { get; set; }
@@ -19,13 +19,13 @@ namespace GW2NET.V2.Colors.Json
         public int[] BaseRgb { get; set; }
 
         [DataMember(Name = "cloth", Order = 3)]
-        public ColorModelDTO Cloth { get; set; }
+        public ColorDataContract Cloth { get; set; }
 
         [DataMember(Name = "leather", Order = 4)]
-        public ColorModelDTO Leather { get; set; }
+        public ColorDataContract Leather { get; set; }
 
         [DataMember(Name = "metal", Order = 4)]
-        public ColorModelDTO Metal { get; set; }
+        public ColorDataContract Metal { get; set; }
 
         [DataMember(Name = "item", Order = 5)]
         public int ItemId { get; set; }

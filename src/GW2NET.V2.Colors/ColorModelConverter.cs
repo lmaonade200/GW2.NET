@@ -7,16 +7,15 @@
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace GW2NET.V2.Colors.Converters
+namespace GW2NET.V2.Colors
 {
     using System;
 
     using GW2NET.Colors;
     using GW2NET.Common;
-    using GW2NET.V2.Colors.Json;
 
-    /// <summary>Converts objects of type <see cref="ColorModelDTO"/> to objects of type <see cref="ColorModel"/>.</summary>
-    public sealed class ColorModelConverter : IConverter<ColorModelDTO, ColorModel>
+    /// <summary>Converts objects of type <see cref="ColorDataContract"/> to objects of type <see cref="ColorModel"/>.</summary>
+    public sealed class ColorModelConverter : IConverter<ColorDataContract, ColorModel>
     {
         private readonly IConverter<int[], Color> colorConverter;
 
@@ -33,7 +32,7 @@ namespace GW2NET.V2.Colors.Converters
         }
 
         /// <inheritdoc />
-        public ColorModel Convert(ColorModelDTO value, object state)
+        public ColorModel Convert(ColorDataContract value, object state)
         {
             if (value == null)
             {

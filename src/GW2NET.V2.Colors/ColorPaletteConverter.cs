@@ -4,25 +4,25 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace GW2NET.V2.Colors.Converters
+namespace GW2NET.V2.Colors
 {
     using System;
     using System.Collections.Generic;
+
     using GW2NET.Colors;
     using GW2NET.Common;
-    using GW2NET.V2.Colors.Json;
 
-    /// <summary>Converts objects of type <see cref="ColorModelDTO"/> to objects of type <see cref="ColorPalette"/>.</summary>
-    public sealed class ColorPaletteConverter : IConverter<ColorPaletteDTO, ColorPalette>
+    /// <summary>Converts objects of type <see cref="ColorDataContract"/> to objects of type <see cref="ColorPalette"/>.</summary>
+    public sealed class ColorPaletteConverter : IConverter<ColorPaletteDataContract, ColorPalette>
     {
         private readonly IConverter<int[], Color> colorConverter;
 
-        private readonly IConverter<ColorModelDTO, ColorModel> colorModelConverter;
+        private readonly IConverter<ColorDataContract, ColorModel> colorModelConverter;
 
         /// <summary>Initializes a new instance of the <see cref="ColorPaletteConverter"/> class.</summary>
         /// <param name="colorConverter">The converter for <see cref="Color"/>.</param>
         /// <param name="colorModelConverter">The converter for <see cref="ColorModel"/>.</param>
-        public ColorPaletteConverter(IConverter<int[], Color> colorConverter, IConverter<ColorModelDTO, ColorModel> colorModelConverter)
+        public ColorPaletteConverter(IConverter<int[], Color> colorConverter, IConverter<ColorDataContract, ColorModel> colorModelConverter)
         {
             if (colorConverter == null)
             {
@@ -39,7 +39,7 @@ namespace GW2NET.V2.Colors.Converters
         }
 
         /// <inheritdoc />
-        public ColorPalette Convert(ColorPaletteDTO value, object state)
+        public ColorPalette Convert(ColorPaletteDataContract value, object state)
         {
             if (value == null)
             {
