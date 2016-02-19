@@ -40,5 +40,26 @@ namespace GW2NET.Common
 
             return new List<int> { 200 }.Concat(this.CalculatePageSizes(queryCount - 200));
         }
+
+        protected IEnumerable<IEnumerable<int>> CalculatePages(IEnumerable<int> identifiers)
+        {
+            IList<int> idList = identifiers.ToList();
+            IList<IEnumerable<int>> returnList = new List<IEnumerable<int>>();
+
+            int setCount = idList.Count / 200;
+            int setRemainder = idList.Count % 200;
+
+            for (int i = 0; i < setCount; i++)
+            {
+                returnList.Add(idList.Skip(200 * i).Take(200));
+            }
+
+            if (setRemainder > 0)
+            {
+                returnList.Add(idList.Skip(200 * setCount).Take(setRemainder));
+            }
+
+            return returnList;
+        } 
     }
 }

@@ -21,7 +21,7 @@ namespace GW2NET.Common.Messages
 
         private string endpoint;
 
-        /// <summary>Prevents a new instance of the <see cref="ApiMessageBuilder"/> to be created.</summary>
+        /// <summary>Initializes a new instance of the <see cref="ApiMessageBuilder"/> class.</summary>
         private ApiMessageBuilder()
         {
             this.queryParameters = new Dictionary<string, string>();
@@ -158,6 +158,11 @@ namespace GW2NET.Common.Messages
         /// <returns>The url string.</returns>
         private string BuildParameterString()
         {
+            if (this.queryParameters.ContainsKey("page"))
+            {
+                return $"?page={this.queryParameters["page"]}&page_size={this.queryParameters["page_size"]}";
+            }
+
             switch (this.identifiers.Count)
             {
                 case 0:

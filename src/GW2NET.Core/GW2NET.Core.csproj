@@ -80,6 +80,7 @@
     <Compile Include="Common\IApiService.cs" />
     <Compile Include="Common\IDiscoverService.cs" />
     <Compile Include="Common\KeyUtilities.cs" />
+    <Compile Include="Common\LinqExtensions.cs" />
     <Compile Include="Common\Messages\ApiCultures.cs" />
     <Compile Include="Common\Messages\ApiMessageBuilder.cs" />
     <Compile Include="Common\Messages\ApiVersion.cs" />
