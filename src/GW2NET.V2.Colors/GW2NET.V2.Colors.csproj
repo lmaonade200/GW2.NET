@@ -54,7 +54,7 @@
     <Compile Include="ColorPaletteDataContract.cs" />
     <Compile Include="ColorDataContract.cs" />
     <Compile Include="ColorPaletteConverter.cs" />
-    <Compile Include="ColorService.cs" />
+    <Compile Include="ColorRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="$(SolutionDir)SharedAssemblyInfo.cs">
       <Link>Properties\SharedAssemblyInfo.cs</Link>

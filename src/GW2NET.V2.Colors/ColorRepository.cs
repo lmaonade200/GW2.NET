@@ -21,19 +21,19 @@ namespace GW2NET.V2.Colors
     using GW2NET.Common.Messages;
 
     /// <summary>Provides methods and properties to retrive colors from the GW2 api.</summary>
-    public class ColorService : ServiceBase<ColorPalette>, IDiscoverService<int>, IApiService<int, ColorPalette>, ILocalizable
+    public class ColorRepository : RepositoryBase<ColorPalette>, IDiscoverService<int>, IApiService<int, ColorPalette>, ILocalizable
     {
         private readonly IConverter<int, int> identifiersConverter;
 
         private readonly IConverter<ColorPaletteDataContract, ColorPalette> colorConverter;
 
-        /// <summary>Initializes a new instance of the <see cref="ColorService"/> class.</summary>
+        /// <summary>Initializes a new instance of the <see cref="ColorRepository"/> class.</summary>
         /// <param name="httpClient">The <see cref="HttpClient"/> used to make requests against the api.</param>
         /// <param name="responseConverter">A instance of the <see cref="HttpResponseConverter"/> class used to convert api responses.</param>
         /// <param name="cache">The cache used to cache results.</param>
         /// <param name="identifiersConverter">The converter used to convert identifiers.</param>
         /// <param name="colorConverter">The converter to convert single color responses.</param>
-        public ColorService(HttpClient httpClient, ResponseConverterBase responseConverter, ICache<ColorPalette> cache, IConverter<int, int> identifiersConverter, IConverter<ColorPaletteDataContract, ColorPalette> colorConverter)
+        public ColorRepository(HttpClient httpClient, ResponseConverterBase responseConverter, ICache<ColorPalette> cache, IConverter<int, int> identifiersConverter, IConverter<ColorPaletteDataContract, ColorPalette> colorConverter)
             : base(httpClient, responseConverter, cache)
         {
             this.identifiersConverter = identifiersConverter;
