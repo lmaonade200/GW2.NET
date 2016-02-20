@@ -9,13 +9,13 @@ namespace GW2NET.Common
 
     /// <summary>Contains methods and properties for repositories.</summary>
     /// <typeparam name="T">The type of objects used in the service.</typeparam>
-    public abstract class ServiceBase<T>
+    public abstract class RepositoryBase<T>
     {
-        /// <summary>Initializes a new instance of the <see cref="ServiceBase{T}"/> class.</summary>
+        /// <summary>Initializes a new instance of the <see cref="RepositoryBase{T}"/> class.</summary>
         /// <param name="client">The <see cref="HttpClient"/> to make connections with the GW2 api.</param>
         /// <param name="responseConverter">The <see cref="ResponseConverterBase"/> converting an <see cref="HttpResponseMessage"/> for further processing.</param>
         /// <param name="cache">The cache used to store objects.</param>
-        protected ServiceBase(HttpClient client, ResponseConverterBase responseConverter, ICache<T> cache)
+        protected RepositoryBase(HttpClient client, ResponseConverterBase responseConverter, ICache<T> cache)
         {
             this.Client = client;
             this.ResponseConverter = responseConverter;
