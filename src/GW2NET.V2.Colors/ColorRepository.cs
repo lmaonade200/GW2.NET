@@ -9,7 +9,6 @@ namespace GW2NET.V2.Colors
     using System.Collections.Generic;
     using System.Globalization;
     using System.Linq;
-    using System.Linq.Expressions;
     using System.Net.Http;
     using System.Threading;
     using System.Threading.Tasks;
@@ -61,6 +60,12 @@ namespace GW2NET.V2.Colors
         }
 
         /// <inheritdoc />
+        public Task<IEnumerable<ColorPalette>> GetAsync()
+        {
+            return this.GetAsync(CancellationToken.None);
+        }
+
+        /// <inheritdoc />
         public async Task<IEnumerable<ColorPalette>> GetAsync(CancellationToken cancellationToken)
         {
             IEnumerable<ColorPalette> cacheColors = this.Cache.Get(cp => cp.Culture.Equals(this.Culture));
@@ -89,9 +94,15 @@ namespace GW2NET.V2.Colors
         }
 
         /// <inheritdoc />
-        public Task<IEnumerable<ColorPalette>> GetAsync(CancellationToken cancellationToken, params int[] identifiers)
+        public Task<IEnumerable<ColorPalette>> GetAsync(IEnumerable<int> identifiers)
         {
-            return this.GetAsync(identifiers, cancellationToken);
+            return this.GetAsync(identifiers, CancellationToken.None);
+        }
+
+        /// <inheritdoc />
+        public Task<IEnumerable<ColorPalette>> GetAsync(Func<ColorPalette, bool> selector)
+        {
+            return this.GetAsync(selector, CancellationToken.None);
         }
 
         /// <inheritdoc />
@@ -130,6 +141,12 @@ namespace GW2NET.V2.Colors
                 });
 
             return colors;
+        }
+
+        /// <inheritdoc />
+        public Task<ColorPalette> GetAsync(int identifier)
+        {
+            return this.GetAsync(identifier, CancellationToken.None);
         }
 
         /// <inheritdoc />
