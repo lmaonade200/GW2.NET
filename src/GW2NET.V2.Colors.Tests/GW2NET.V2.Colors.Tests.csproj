@@ -9,7 +9,7 @@
     <ProjectGuid>{015D5CB4-B8F3-4197-AD37-B3CBDC571EA4}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>GW2NET.V2.Colors</RootNamespace>
+    <RootNamespace>GW2NET.V2.Colors.Tests</RootNamespace>
     <AssemblyName>GW2NET.V2.Colors.Tests</AssemblyName>
     <DefaultLanguage>en-US</DefaultLanguage>
     <FileAlignment>512</FileAlignment>
@@ -73,6 +73,10 @@
     <ProjectReference Include="..\GW2NET.V2.Colors\GW2NET.V2.Colors.csproj">
       <Project>{d5fd21bd-9d1f-4129-b3dd-fcdc0afd0830}</Project>
       <Name>GW2NET.V2.Colors</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\GW2NET\GW2NET.csproj">
+      <Project>{48C94F34-B6BD-4BDD-A0D5-36403A86FB78}</Project>
+      <Name>GW2NET</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

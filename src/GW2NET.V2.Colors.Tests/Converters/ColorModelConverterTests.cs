@@ -2,10 +2,8 @@
 // This product is licensed under the GNU General Public License version 2 (GPLv2). See the License in the project root folder or the following page: http://www.gnu.org/licenses/gpl-2.0.html
 // </copyright>
 
-namespace GW2NET.V2.Colors.Converters
+namespace GW2NET.V2.Colors.Tests.Converters
 {
-    using GW2NET.V2.Colors.Json;
-
     using Xunit;
 
     public class ColorModelConverterTests
@@ -26,7 +24,7 @@ namespace GW2NET.V2.Colors.Converters
         [InlineData(5, 1.05469, 38, 0.101563, 1.36719, new[] { 96, 91, 83 })]
         public void CanConvert(int brightness, double contrast, int hue, double saturation, double lightness, int[] rgb)
         {
-            var value = new ColorModelDTO
+            var value = new ColorDataContract
             {
                 Brightness = brightness,
                 Contrast = contrast,

@@ -2,12 +2,11 @@
 // This product is licensed under the GNU General Public License version 2 (GPLv2). See the License in the project root folder or the following page: http://www.gnu.org/licenses/gpl-2.0.html
 // </copyright>
 
-namespace GW2NET.V2.Colors.Converters
+namespace GW2NET.V2.Colors.Tests.Converters
 {
     using System.Globalization;
 
     using GW2NET.Common;
-    using GW2NET.V2.Colors.Json;
 
     using Xunit;
 
@@ -31,17 +30,17 @@ namespace GW2NET.V2.Colors.Converters
         [InlineData("fr", 1, "Dissolvant pour teinture", new[] { 128, 26, 26 })]
         public void CanConvert(string lang, int id, string name, int[] baseRgb)
         {
-            var value = new ColorPaletteDTO
+            var value = new ColorPaletteDataContract
             {
                 Id = id,
                 Name = name,
                 BaseRgb = baseRgb,
-                Cloth = new ColorModelDTO(),
-                Leather = new ColorModelDTO(),
-                Metal = new ColorModelDTO()
+                Cloth = new ColorDataContract(),
+                Leather = new ColorDataContract(),
+                Metal = new ColorDataContract()
             };
 
-            var state = new Response<ColorPaletteDTO>
+            var state = new Response<ColorPaletteDataContract>
             {
                 Content = value,
                 Culture = new CultureInfo(lang)
