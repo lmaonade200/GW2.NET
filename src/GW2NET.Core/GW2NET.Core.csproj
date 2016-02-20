@@ -84,13 +84,14 @@
     <Compile Include="Common\Messages\ApiCultures.cs" />
     <Compile Include="Common\Messages\ApiMessageBuilder.cs" />
     <Compile Include="Common\Messages\ApiVersion.cs" />
+    <Compile Include="Common\Messages\AuthenticatedMessageHandler.cs" />
     <Compile Include="Common\Messages\IBaseBuilder.cs" />
     <Compile Include="Common\Messages\IMessageBuilder.cs" />
     <Compile Include="Common\Messages\IPagedBuilder.cs" />
     <Compile Include="Common\Messages\IParameterizedBuilder.cs" />
     <Compile Include="Common\Messages\IVersionedBuilder.cs" />
     <Compile Include="Common\TypeExtensions.cs" />
-    <Compile Include="Common\ServiceBase.cs" />
+    <Compile Include="Common\RepositoryBase.cs" />
     <Compile Include="Common\ServiceClientAuthorized.cs" />
     <Compile Include="Common\BulkRequest.cs" />
     <Compile Include="Common\CollectionPage.cs" />
