@@ -41,10 +41,10 @@ namespace GW2NET.Common
             return new List<int> { 200 }.Concat(this.CalculatePageSizes(queryCount - 200));
         }
 
-        protected IEnumerable<IEnumerable<int>> CalculatePages(IEnumerable<int> identifiers)
+        protected IEnumerable<IEnumerable<TKey>> CalculatePages<TKey>(IEnumerable<TKey> identifiers)
         {
-            IList<int> idList = identifiers.ToList();
-            IList<IEnumerable<int>> returnList = new List<IEnumerable<int>>();
+            IList<TKey> idList = identifiers.ToList();
+            IList<IEnumerable<TKey>> returnList = new List<IEnumerable<TKey>>();
 
             int setCount = idList.Count / 200;
             int setRemainder = idList.Count % 200;
