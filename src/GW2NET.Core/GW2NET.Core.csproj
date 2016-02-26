@@ -60,7 +60,6 @@
     <Compile Include="Colors\Color.cs" />
     <Compile Include="Colors\ColorModel.cs" />
     <Compile Include="Colors\ColorPalette.cs" />
-    <Compile Include="Colors\IColorRepository.cs" />
     <Compile Include="Commerce\AggregateListing.cs" />
     <Compile Include="Commerce\AggregateOffer.cs" />
     <Compile Include="Commerce\Exchange.cs" />
@@ -378,10 +377,11 @@
     <Compile Include="Recipes\UnknownRecipe.cs" />
     <Compile Include="Recipes\UpgradeComponentRecipe.cs" />
     <Compile Include="Recipes\WarHornRecipe.cs" />
+    <Compile Include="Rendering\IRenderRepository.cs" />
     <Compile Include="Rendering\IRenderRequest.cs" />
     <Compile Include="Rendering\IRenderService.cs" />
     <Compile Include="Rendering\RenderRequest.cs" />
-    <Compile Include="Rendering\RenderService.cs" />
+    <Compile Include="Rendering\RenderRepository.cs" />
     <Compile Include="Skins\ArmorSkin.cs" />
     <Compile Include="Skins\AxeSkin.cs" />
     <Compile Include="Skins\ForagingToolSkin.cs" />
