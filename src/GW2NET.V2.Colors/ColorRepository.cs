@@ -1,10 +1,9 @@
-﻿// <copyright file="ColorService.cs" company="GW2.NET Coding Team">
+﻿// <copyright file="ColorRepository.cs" company="GW2.NET Coding Team">
 // This product is licensed under the GNU General Public License version 2 (GPLv2). See the License in the project root folder or the following page: http://www.gnu.org/licenses/gpl-2.0.html
 // </copyright>
 
 namespace GW2NET.V2.Colors
 {
-    using System;
     using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.Globalization;
@@ -100,12 +99,6 @@ namespace GW2NET.V2.Colors
         }
 
         /// <inheritdoc />
-        public Task<IEnumerable<ColorPalette>> GetAsync(Func<ColorPalette, bool> selector)
-        {
-            return this.GetAsync(selector, CancellationToken.None);
-        }
-
-        /// <inheritdoc />
         public async Task<IEnumerable<ColorPalette>> GetAsync(IEnumerable<int> identifiers, CancellationToken cancellationToken)
         {
             IList<int> ids = identifiers as IList<int> ?? identifiers.ToList();
@@ -173,41 +166,6 @@ namespace GW2NET.V2.Colors
 
             // Convert the response and return the object
             return await this.ResponseConverter.ConvertElementAsync(response, this.colorConverter);
-        }
-
-        /// <inheritdoc />
-        public async Task<IEnumerable<ColorPalette>> GetAsync(Func<ColorPalette, bool> selector, CancellationToken cancellationToken)
-        {
-            var cacheColors = this.Cache.Get(selector);
-
-            var colorIdListList = this.CalculatePages((await this.DiscoverAsync(cancellationToken)).SymmetricExcept(cacheColors.Select(c => c.ColorId)));
-
-            ConcurrentBag<ColorPalette> colors = new ConcurrentBag<ColorPalette>();
-            Parallel.ForEach(
-                             colorIdListList,
-                             async colorIdList =>
-                             {
-                                 foreach (var message in typeof(ApiCultures)
-                                    .AsEnumerable<CultureInfo>()
-                                    .Select(culture => ApiMessageBuilder.Init()
-                                        .Version(ApiVersion.V2)
-                                        .OnEndpoint("colors")
-                                        .ForCulture(culture)
-                                        .WithIdentifiers(colorIdList)
-                                        .Build()))
-                                 {
-                                     HttpResponseMessage response = await this.Client.SendAsync(message, cancellationToken);
-
-                                     IEnumerable<ColorPalette> responseColors = await this.ResponseConverter.ConvertSetAsync(response, this.colorConverter);
-
-                                     foreach (ColorPalette color in responseColors.Where(selector))
-                                     {
-                                         colors.Add(color);
-                                     }
-                                 }
-                             });
-
-            return colors;
         }
     }
 }

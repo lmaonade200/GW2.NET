@@ -18,9 +18,5 @@
         Task<IEnumerable<TValue>> GetAsync(IEnumerable<TKey> identifiers);
 
         Task<IEnumerable<TValue>> GetAsync(IEnumerable<TKey> identifiers, CancellationToken cancellationToken);
-
-        Task<IEnumerable<TValue>> GetAsync(Func<TValue, bool> selector);
-
-        Task<IEnumerable<TValue>> GetAsync(Func<TValue, bool> selector, CancellationToken cancellationToken);
     }
 }
