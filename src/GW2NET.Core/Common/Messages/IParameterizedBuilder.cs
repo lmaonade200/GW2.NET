@@ -21,12 +21,12 @@
         /// <summary>Sets a single identifier for the request.</summary>
         /// <param name="identifier">The identifier toi set.</param>
         /// <returns>A <see cref="IBaseBuilder"/> used to build the request.</returns>
-        IBaseBuilder WithIdentifier(int identifier);
+        IBaseBuilder WithIdentifier<TKey>(TKey identifier);
 
         /// <summary>Sets a set of identifiers for the request.</summary>
         /// <param name="identifiers">An <see cref="IEnumerable{T}"/> of type <see cref="int"/> use as identifiers.</param>
         /// <returns>A <see cref="IBaseBuilder"/> used to build the request.</returns>
-        IBaseBuilder WithIdentifiers(IEnumerable<int> identifiers);
+        IBaseBuilder WithIdentifiers<TKey>(IEnumerable<TKey> identifiers);
 
         /// <summary>Sets a quantity used in the request.</summary>
         /// <param name="quantity">The quantity.</param>

@@ -15,7 +15,7 @@ namespace GW2NET.Common.Messages
     {
         private readonly Dictionary<string, string> queryParameters;
 
-        private readonly HashSet<int> identifiers;
+        private readonly List<string> identifiers;
 
         private ApiVersion apiVersion;
 
@@ -25,7 +25,7 @@ namespace GW2NET.Common.Messages
         private ApiMessageBuilder()
         {
             this.queryParameters = new Dictionary<string, string>();
-            this.identifiers = new HashSet<int>();
+            this.identifiers = new List<string>();
         }
 
         /// <summary>Creates a new instance of the <see cref="ApiMessageBuilder"/>.</summary>
@@ -93,18 +93,18 @@ namespace GW2NET.Common.Messages
         }
 
         /// <inheritdoc />
-        IBaseBuilder IParameterizedBuilder.WithIdentifier(int identifier)
+        IBaseBuilder IParameterizedBuilder.WithIdentifier<TKey>(TKey identifier)
         {
-            this.identifiers.Add(identifier);
+            this.identifiers.Add(identifier.ToString());
 
             return this;
         }
 
         /// <inheritdoc />
         // ReSharper disable once ParameterHidesMember
-        IBaseBuilder IParameterizedBuilder.WithIdentifiers(IEnumerable<int> identifiers)
+        IBaseBuilder IParameterizedBuilder.WithIdentifiers<TKey>(IEnumerable<TKey> identifiers)
         {
-            this.identifiers.UnionWith(identifiers);
+            this.identifiers.AddRange(this.identifiers.Select(i => i.ToString()));
 
             return this;
         }
