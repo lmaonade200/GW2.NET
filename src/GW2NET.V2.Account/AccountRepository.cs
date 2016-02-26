@@ -1,60 +1,47 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="AccountRepository.cs" company="GW2.NET Coding Team">
-//   This product is licensed under the GNU General Public License version 2 (GPLv2). See the License in the project root folder or the following page: http://www.gnu.org/licenses/gpl-2.0.html
+﻿// <copyright file="AccountRepository.cs" company="GW2.NET Coding Team">
+// This product is licensed under the GNU General Public License version 2 (GPLv2). See the License in the project root folder or the following page: http://www.gnu.org/licenses/gpl-2.0.html
 // </copyright>
-// <summary>
-//   Represents a repository that retrieves data from the authorized /va/account interface.
-// </summary>
-// --------------------------------------------------------------------------------------------------------------------
 
 namespace GW2NET.V2.Accounts
 {
-    using System.Diagnostics;
+    using System.Net.Http;
     using System.Threading;
     using System.Threading.Tasks;
     using GW2NET.Accounts;
+    using GW2NET.Caching;
     using GW2NET.Common;
     using GW2NET.Common.Converters;
-    using GW2NET.V2.Accounts.Json;
+    using GW2NET.Common.Messages;
 
     /// <summary>Represents a repository that retrieves data from the authorized /v2/account interface.</summary>
-    public class AccountRepository : IAccountRepository
+    public class AccountRepository : RepositoryBase<Account>, IAccountRepository
     {
-        private readonly IServiceClient serviceClient;
-
-        /// <summary>Infrastructure. Holds a reference to the response converter.
-        /// </summary>
-        private readonly IConverter<IResponse<AccountDTO>, Account> responseConverter;
+        /// <summary>Converts an account data contract into an account model.</summary>
+        private readonly IConverter<AccountDataContract, Account> accountConverter;
 
         /// <summary>Initializes a new instance of the <see cref="AccountRepository"/> class.</summary>
-        /// <param name="serviceClient"></param>
+        /// <param name="httpClient">The client used to make requests against the api.</param>
         /// <param name="responseConverter">The response converter.</param>
-        public AccountRepository(IServiceClient serviceClient, IConverter<AccountDTO, Account> responseConverter)
+        /// <param name="cache">The cache used to cache results.</param>
+        /// <param name="accountConverter">The converter to convert the data contract into the appropriate model.</param>
+        public AccountRepository(HttpClient httpClient, ResponseConverterBase responseConverter, ICache<Account> cache, IConverter<AccountDataContract, Account> accountConverter)
+            : base(httpClient, responseConverter, cache)
         {
-            this.serviceClient = serviceClient;
-            this.responseConverter = new ResponseConverter<AccountDTO, Account>(responseConverter);
+            this.accountConverter = accountConverter;
         }
 
         /// <inheritdoc />
-        Account IAccountRepository.GetInformation()
+        public Task<Account> GetInformationAsync()
         {
-            IRequest request = new AccountRequest();
-            IResponse<AccountDTO> response = this.serviceClient.Send<AccountDTO>(request);
-            return this.responseConverter.Convert(response, null);
+            return this.GetInformationAsync(CancellationToken.None);
         }
 
         /// <inheritdoc />
-        Task<Account> IAccountRepository.GetInformationAsync()
+        public async Task<Account> GetInformationAsync(CancellationToken cancellationToken)
         {
-            return ((IAccountRepository)this).GetInformationAsync(CancellationToken.None);
-        }
+            HttpRequestMessage request = ApiMessageBuilder.Init().Version(ApiVersion.V2).OnEndpoint("account").Build();
 
-        /// <inheritdoc />
-        async Task<Account> IAccountRepository.GetInformationAsync(CancellationToken cancellationToken)
-        {
-            var request = new AccountRequest();
-            var response = await this.serviceClient.SendAsync<AccountDTO>(request, cancellationToken).ConfigureAwait(false);
-            return this.responseConverter.Convert(response, null);
+            return await this.ResponseConverter.ConvertElementAsync(await this.Client.SendAsync(request, cancellationToken), this.accountConverter);
         }
     }
 }
