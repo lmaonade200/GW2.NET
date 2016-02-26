@@ -1,22 +1,16 @@
-// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="CharacterConverter.cs" company="GW2.NET Coding Team">
-//   This product is licensed under the GNU General Public License version 2 (GPLv2). See the License in the project root folder or the following page: http://www.gnu.org/licenses/gpl-2.0.html
+// This product is licensed under the GNU General Public License version 2 (GPLv2). See the License in the project root folder or the following page: http://www.gnu.org/licenses/gpl-2.0.html
 // </copyright>
-// <summary>
-//   Converts objects of type <see cref="CharacterDTO" /> to objects of type <see cref="Character" />.
-// </summary>
-// --------------------------------------------------------------------------------------------------------------------
 
-namespace GW2NET.V2.Accounts.Characters.Converter
+namespace GW2NET.V2.Accounts.Characters
 {
     using System;
 
     using GW2NET.Characters;
     using GW2NET.Common;
-    using GW2NET.V2.Accounts.Characters.Json;
 
-    /// <summary>Converts objects of type <see cref="CharacterDTO" /> to objects of type <see cref="Character" />.</summary>
-    public sealed class CharacterConverter : IConverter<CharacterDTO, Character>
+    /// <summary>Converts objects of type <see cref="CharacterDataContract" /> to objects of type <see cref="Character" />.</summary>
+    public sealed class CharacterConverter : IConverter<CharacterDataContract, Character>
     {
         private readonly IConverter<string, Gender> genderConverter;
 
@@ -54,7 +48,7 @@ namespace GW2NET.V2.Accounts.Characters.Converter
         }
 
         /// <inheritdoc />
-        public Character Convert(CharacterDTO value, object state)
+        public Character Convert(CharacterDataContract value, object state)
         {
             if (value == null)
             {
