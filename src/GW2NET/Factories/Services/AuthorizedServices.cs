@@ -1,35 +1,34 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="FactoryForV2Authorized.cs" company="GW2.NET Coding Team">
-//   This product is licensed under the GNU General Public License version 2 (GPLv2). See the License in the project root folder or the following page: http://www.gnu.org/licenses/gpl-2.0.html
+﻿// <copyright file="AuthorizedServices.cs" company="GW2.NET Coding Team">
+// This product is licensed under the GNU General Public License version 2 (GPLv2). See the License in the project root folder or the following page: http://www.gnu.org/licenses/gpl-2.0.html
 // </copyright>
-// <summary>
-//   Provides access to the authorized part of the version 2 API.
-// </summary>
-// --------------------------------------------------------------------------------------------------------------------
 
-namespace GW2NET.Factories.V2
+namespace GW2NET.Factories.Services
 {
     using System;
 
-    using GW2NET.Common;
+    using DryIoc;
+
+    using GW2NET.V2.Accounts;
 
     /// <summary>Provides access to the authorized part of the version 2 API.</summary>
-    public class AuthorizedServices : ServiceFactoryBase
+    public class AuthorizedServices
     {
+        private readonly Container container;
+
         /// <summary>Initializes a new instance of the <see cref="AuthorizedServices"/> class.</summary>
-        /// <param name="serviceClient"></param>
-        /// <exception cref="ArgumentNullException">The value of <paramref name="serviceClient"/> is a null reference.</exception>
-        public AuthorizedServices(IServiceClient serviceClient)
-            : base(serviceClient)
+        /// <param name="container"></param>
+        /// <exception cref="ArgumentNullException">The value of <paramref name="container"/> is a null reference.</exception>
+        public AuthorizedServices(Container container)
         {
+            this.container = container;
         }
 
         /// <summary>Gets access to the accounts endpoint.</summary>
-        public AccountRepositoryFactory Accounts
+        public AccountRepository Accounts
         {
             get
             {
-                return new AccountRepositoryFactory(this.ServiceClient);
+                return this.container.Resolve<AccountRepository>();
             }
         }
     }
