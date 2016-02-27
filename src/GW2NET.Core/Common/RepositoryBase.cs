@@ -1,5 +1,6 @@
 namespace GW2NET.Common
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Net.Http;
@@ -17,6 +18,21 @@ namespace GW2NET.Common
         /// <param name="cache">The cache used to store objects.</param>
         protected RepositoryBase(HttpClient client, ResponseConverterBase responseConverter, ICache<T> cache)
         {
+            if (client == null)
+            {
+                throw new ArgumentNullException(nameof(client));
+            }
+
+            if (responseConverter == null)
+            {
+                throw new ArgumentNullException(nameof(responseConverter));
+            }
+
+            if (cache == null)
+            {
+                throw new ArgumentNullException(nameof(cache));
+            }
+
             this.Client = client;
             this.ResponseConverter = responseConverter;
             this.Cache = cache;
