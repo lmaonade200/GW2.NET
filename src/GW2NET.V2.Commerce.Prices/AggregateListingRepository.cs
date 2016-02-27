@@ -1,24 +1,23 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="AggregateListingRepository.cs" company="GW2.NET Coding Team">
-//   This product is licensed under the GNU General Public License version 2 (GPLv2). See the License in the project root folder or the following page: http://www.gnu.org/licenses/gpl-2.0.html
+﻿// <copyright file="AggregateListingRepository.cs" company="GW2.NET Coding Team">
+// This product is licensed under the GNU General Public License version 2 (GPLv2). See the License in the project root folder or the following page: http://www.gnu.org/licenses/gpl-2.0.html
 // </copyright>
-// <summary>
-//   Represents a repository that retrieves data from the /v2/commerce/prices interface. See the remarks section for important limitations regarding this implementation.
-// </summary>
-// --------------------------------------------------------------------------------------------------------------------
+
 namespace GW2NET.V2.Commerce.Prices
 {
     using System;
+    using System.Collections.Concurrent;
     using System.Collections.Generic;
-    using System.Globalization;
     using System.Linq;
+    using System.Net.Http;
     using System.Threading;
     using System.Threading.Tasks;
 
+    using GW2NET.Caching;
     using GW2NET.Commerce;
     using GW2NET.Common;
+    using GW2NET.Common.Converters;
+    using GW2NET.Common.Messages;
     using GW2NET.Items;
-    using GW2NET.V2.Commerce.Prices.Json;
 
     /// <summary>Represents a repository that retrieves data from the /v2/commerce/prices interface. See the remarks section for important limitations regarding this implementation.</summary>
     /// <remarks>
@@ -30,225 +29,131 @@ namespace GW2NET.V2.Commerce.Prices
     ///     </item>
     /// </list>
     /// </remarks>
-    public class AggregateListingRepository : IAggregateListingRepository
+    public class AggregateListingRepository : CachedRepository<AggregateListing>, IApiService<int, AggregateListing>, IDiscoverService<int>
     {
-        private readonly IConverter<IResponse<ICollection<AggregateListingDTO>>, IDictionaryRange<int, AggregateListing>> bulkResponseConverter;
+        private readonly IConverter<int, int> identifiersConverter;
 
-        private readonly IConverter<IResponse<ICollection<int>>, ICollection<int>> identifiersResponseConverter;
+        private readonly IConverter<AggregateListingDataContract, AggregateListing> aggregateListingConverter;
 
-        private readonly IConverter<IResponse<ICollection<AggregateListingDTO>>, ICollectionPage<AggregateListing>> pageResponseConverter;
-
-        private readonly IConverter<IResponse<AggregateListingDTO>, AggregateListing> responseConverter;
-
-        private readonly IServiceClient serviceClient;
 
         /// <summary>Initializes a new instance of the <see cref="AggregateListingRepository"/> class.</summary>
-        /// <param name="serviceClient"></param>
-        /// <param name="identifiersResponseConverter"></param>
-        /// <param name="responseConverter"></param>
-        /// <param name="bulkResponseConverter"></param>
-        /// <param name="pageResponseConverter"></param>
+        /// <param name="httpClient"></param>
+        /// <param name="cache"></param>
+        /// <param name="identifiersConverter"></param>
+        /// <param name="aggregateListingConverter"></param>
+        /// <param name="httpResponseConverter"></param>
         public AggregateListingRepository(
-            IServiceClient serviceClient,
-            IConverter<IResponse<ICollection<int>>, ICollection<int>> identifiersResponseConverter,
-            IConverter<IResponse<AggregateListingDTO>, AggregateListing> responseConverter,
-            IConverter<IResponse<ICollection<AggregateListingDTO>>, IDictionaryRange<int, AggregateListing>> bulkResponseConverter,
-            IConverter<IResponse<ICollection<AggregateListingDTO>>, ICollectionPage<AggregateListing>> pageResponseConverter)
+            HttpClient httpClient,
+            ResponseConverterBase httpResponseConverter,
+            ICache<AggregateListing> cache,
+            IConverter<int, int> identifiersConverter,
+            IConverter<AggregateListingDataContract, AggregateListing> aggregateListingConverter)
+            : base(httpClient, httpResponseConverter, cache)
         {
-            if (serviceClient == null)
+            if (identifiersConverter == null)
             {
-                throw new ArgumentNullException("serviceClient");
+                throw new ArgumentNullException(nameof(identifiersConverter));
             }
 
-            if (identifiersResponseConverter == null)
+            if (aggregateListingConverter == null)
             {
-                throw new ArgumentNullException("identifiersResponseConverter");
+                throw new ArgumentNullException(nameof(aggregateListingConverter));
             }
 
-            if (responseConverter == null)
+            this.identifiersConverter = identifiersConverter;
+            this.aggregateListingConverter = aggregateListingConverter;
+        }
+
+        /// <inheritdoc />
+        public Task<IEnumerable<int>> DiscoverAsync()
+        {
+            return this.DiscoverAsync(CancellationToken.None);
+        }
+
+        /// <inheritdoc />
+        public async Task<IEnumerable<int>> DiscoverAsync(CancellationToken cancellationToken)
+        {
+            HttpRequestMessage request = ApiMessageBuilder.Init().Version(ApiVersion.V2).OnEndpoint("commerce/prices").Build();
+            return await this.ResponseConverter.ConvertSetAsync(await this.Client.SendAsync(request, cancellationToken), this.identifiersConverter);
+        }
+
+        /// <inheritdoc />
+        public Task<AggregateListing> GetAsync(int identifier)
+        {
+            return this.GetAsync(identifier, CancellationToken.None);
+        }
+
+        /// <inheritdoc />
+        public async Task<AggregateListing> GetAsync(int identifier, CancellationToken cancellationToken)
+        {
+            AggregateListing cacheItem = this.Cache.Get(i => i.ItemId == identifier).Single();
+            if (cacheItem != null)
             {
-                throw new ArgumentNullException("responseConverter");
+                return cacheItem;
             }
 
-            if (bulkResponseConverter == null)
+            HttpRequestMessage request = ApiMessageBuilder.Init().Version(ApiVersion.V2).OnEndpoint("commerce/prices").WithIdentifier(identifier).Build();
+
+            return await this.ResponseConverter.ConvertElementAsync(await this.Client.SendAsync(request, cancellationToken), this.aggregateListingConverter);
+        }
+
+        /// <inheritdoc />
+        public Task<IEnumerable<AggregateListing>> GetAsync()
+        {
+            return this.GetAsync(CancellationToken.None);
+        }
+
+        /// <inheritdoc />
+        public async Task<IEnumerable<AggregateListing>> GetAsync(CancellationToken cancellationToken)
+        {
+            // We need to do this, so we get all non stale items
+            List<AggregateListing> cacheListings = this.Cache.Get(l => true).ToList();
+
+            IEnumerable<int> idsToQuery = (await this.DiscoverAsync(cancellationToken)).SymmetricExcept(cacheListings.Select(l => l.ItemId));
+
+            IEnumerable<AggregateListing> listings = (await this.GetAsync(idsToQuery, cancellationToken)).Union(cacheListings);
+
+            return listings.Union(cacheListings);
+        }
+
+        /// <inheritdoc />
+        public Task<IEnumerable<AggregateListing>> GetAsync(IEnumerable<int> identifiers)
+        {
+            return this.GetAsync(identifiers, CancellationToken.None);
+        }
+
+        /// <inheritdoc />
+        public async Task<IEnumerable<AggregateListing>> GetAsync(IEnumerable<int> identifiers, CancellationToken cancellationToken)
+        {
+            IList<int> ids = identifiers as IList<int> ?? identifiers.ToList();
+
+            // We need to do this, so we get all non stale items
+            List<AggregateListing> cacheListings = this.Cache.Get(l => ids.All(id => id == l.ItemId)).ToList();
+            if (cacheListings.Count == ids.Count)
             {
-                throw new ArgumentNullException("bulkResponseConverter");
+                return cacheListings;
             }
 
-            if (pageResponseConverter == null)
-            {
-                throw new ArgumentNullException("pageResponseConverter");
-            }
+            IEnumerable<IEnumerable<int>> idListList = this.CalculatePages((await this.DiscoverAsync(cancellationToken)).SymmetricExcept(cacheListings.Select(l => l.ItemId)));
 
-            this.serviceClient = serviceClient;
-            this.identifiersResponseConverter = identifiersResponseConverter;
-            this.responseConverter = responseConverter;
-            this.bulkResponseConverter = bulkResponseConverter;
-            this.pageResponseConverter = pageResponseConverter;
-        }
+            ConcurrentBag<AggregateListing> aggregateListings = new ConcurrentBag<AggregateListing>(cacheListings);
+            Parallel.ForEach(idListList,
+                             async idList =>
+                             {
+                                 HttpRequestMessage request = ApiMessageBuilder.Init()
+                                                      .Version(ApiVersion.V2)
+                                                      .OnEndpoint("commerce/prices")
+                                                      .WithIdentifiers(idList)
+                                                      .Build();
+                                 HttpResponseMessage response = await this.Client.SendAsync(request, cancellationToken);
 
-        /// <inheritdoc />
-        ICollection<int> IDiscoverable<int>.Discover()
-        {
-            var request = new AggregateListingDiscoveryRequest();
-            var response = this.serviceClient.Send<ICollection<int>>(request);
-            return this.identifiersResponseConverter.Convert(response, null);
-        }
+                                 foreach (AggregateListing aggregateListing in await this.ResponseConverter.ConvertSetAsync(response, this.aggregateListingConverter))
+                                 {
+                                     aggregateListings.Add(aggregateListing);
+                                 }
+                             });
 
-        /// <inheritdoc />
-        Task<ICollection<int>> IDiscoverable<int>.DiscoverAsync()
-        {
-            IAggregateListingRepository self = this;
-            return self.DiscoverAsync(CancellationToken.None);
-        }
-
-        /// <inheritdoc />
-        async Task<ICollection<int>> IDiscoverable<int>.DiscoverAsync(CancellationToken cancellationToken)
-        {
-            var request = new AggregateListingDiscoveryRequest();
-            var response = await this.serviceClient.SendAsync<ICollection<int>>(request, cancellationToken).ConfigureAwait(false);
-            return this.identifiersResponseConverter.Convert(response, null);
-        }
-
-        /// <inheritdoc />
-        AggregateListing IRepository<int, AggregateListing>.Find(int identifier)
-        {
-            var request = new AggregateListingDetailsRequest
-            {
-                Identifier = identifier.ToString(NumberFormatInfo.InvariantInfo)
-            };
-            var response = this.serviceClient.Send<AggregateListingDTO>(request);
-            return this.responseConverter.Convert(response, null);
-        }
-
-        /// <inheritdoc />
-        IDictionaryRange<int, AggregateListing> IRepository<int, AggregateListing>.FindAll()
-        {
-            var request = new AggregateListingBulkRequest();
-            var response = this.serviceClient.Send<ICollection<AggregateListingDTO>>(request);
-            return this.bulkResponseConverter.Convert(response, null);
-        }
-
-        /// <inheritdoc />
-        IDictionaryRange<int, AggregateListing> IRepository<int, AggregateListing>.FindAll(ICollection<int> identifiers)
-        {
-            var request = new AggregateListingBulkRequest
-            {
-                Identifiers = identifiers.Select(i => i.ToString(NumberFormatInfo.InvariantInfo)).ToList()
-            };
-            var response = this.serviceClient.Send<ICollection<AggregateListingDTO>>(request);
-            return this.bulkResponseConverter.Convert(response, null);
-        }
-
-        /// <inheritdoc />
-        Task<IDictionaryRange<int, AggregateListing>> IRepository<int, AggregateListing>.FindAllAsync()
-        {
-            IAggregateListingRepository self = this;
-            return self.FindAllAsync(CancellationToken.None);
-        }
-
-        /// <inheritdoc />
-        async Task<IDictionaryRange<int, AggregateListing>> IRepository<int, AggregateListing>.FindAllAsync(CancellationToken cancellationToken)
-        {
-            var request = new AggregateListingBulkRequest();
-            var response = await this.serviceClient.SendAsync<ICollection<AggregateListingDTO>>(request, cancellationToken).ConfigureAwait(false);
-            return this.bulkResponseConverter.Convert(response, null);
-        }
-
-        /// <inheritdoc />
-        Task<IDictionaryRange<int, AggregateListing>> IRepository<int, AggregateListing>.FindAllAsync(ICollection<int> identifiers)
-        {
-            IAggregateListingRepository self = this;
-            return self.FindAllAsync(identifiers, CancellationToken.None);
-        }
-
-        /// <inheritdoc />
-        async Task<IDictionaryRange<int, AggregateListing>> IRepository<int, AggregateListing>.FindAllAsync(ICollection<int> identifiers, CancellationToken cancellationToken)
-        {
-            var request = new AggregateListingBulkRequest
-            {
-                Identifiers = identifiers.Select(i => i.ToString(NumberFormatInfo.InvariantInfo)).ToList()
-            };
-            var response = await this.serviceClient.SendAsync<ICollection<AggregateListingDTO>>(request, cancellationToken).ConfigureAwait(false);
-            return this.bulkResponseConverter.Convert(response, null);
-        }
-
-        /// <inheritdoc />
-        Task<AggregateListing> IRepository<int, AggregateListing>.FindAsync(int identifier)
-        {
-            IAggregateListingRepository self = this;
-            return self.FindAsync(identifier, CancellationToken.None);
-        }
-
-        /// <inheritdoc />
-        async Task<AggregateListing> IRepository<int, AggregateListing>.FindAsync(int identifier, CancellationToken cancellationToken)
-        {
-            var request = new AggregateListingDetailsRequest
-            {
-                Identifier = identifier.ToString(NumberFormatInfo.InvariantInfo)
-            };
-            var response = await this.serviceClient.SendAsync<AggregateListingDTO>(request, cancellationToken).ConfigureAwait(false);
-            return this.responseConverter.Convert(response, null);
-        }
-
-        /// <inheritdoc />
-        ICollectionPage<AggregateListing> IPaginator<AggregateListing>.FindPage(int pageIndex)
-        {
-            var request = new AggregateListingPageRequest
-            {
-                Page = pageIndex
-            };
-            var response = this.serviceClient.Send<ICollection<AggregateListingDTO>>(request);
-            return this.pageResponseConverter.Convert(response, pageIndex);
-        }
-
-        /// <inheritdoc />
-        ICollectionPage<AggregateListing> IPaginator<AggregateListing>.FindPage(int pageIndex, int pageSize)
-        {
-            var request = new AggregateListingPageRequest
-            {
-                Page = pageIndex,
-                PageSize = pageSize
-            };
-            var response = this.serviceClient.Send<ICollection<AggregateListingDTO>>(request);
-            return this.pageResponseConverter.Convert(response, pageIndex);
-        }
-
-        /// <inheritdoc />
-        Task<ICollectionPage<AggregateListing>> IPaginator<AggregateListing>.FindPageAsync(int pageIndex)
-        {
-            IAggregateListingRepository self = this;
-            return self.FindPageAsync(pageIndex, CancellationToken.None);
-        }
-
-        /// <inheritdoc />
-        async Task<ICollectionPage<AggregateListing>> IPaginator<AggregateListing>.FindPageAsync(int pageIndex, CancellationToken cancellationToken)
-        {
-            var request = new AggregateListingPageRequest
-            {
-                Page = pageIndex
-            };
-            var response = await this.serviceClient.SendAsync<ICollection<AggregateListingDTO>>(request, cancellationToken).ConfigureAwait(false);
-            return this.pageResponseConverter.Convert(response, pageIndex);
-        }
-
-        /// <inheritdoc />
-        Task<ICollectionPage<AggregateListing>> IPaginator<AggregateListing>.FindPageAsync(int pageIndex, int pageSize)
-        {
-            IAggregateListingRepository self = this;
-            return self.FindPageAsync(pageIndex, pageSize, CancellationToken.None);
-        }
-
-        /// <inheritdoc />
-        async Task<ICollectionPage<AggregateListing>> IPaginator<AggregateListing>.FindPageAsync(int pageIndex, int pageSize, CancellationToken cancellationToken)
-        {
-            var request = new AggregateListingPageRequest
-            {
-                Page = pageIndex,
-                PageSize = pageSize
-            };
-            var response = await this.serviceClient.SendAsync<ICollection<AggregateListingDTO>>(request, cancellationToken).ConfigureAwait(false);
-            return this.pageResponseConverter.Convert(response, pageIndex);
+            return aggregateListings;
         }
     }
 }

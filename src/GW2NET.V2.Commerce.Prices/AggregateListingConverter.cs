@@ -1,28 +1,22 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="AggregateListingConverter.cs" company="GW2.NET Coding Team">
-//   This product is licensed under the GNU General Public License version 2 (GPLv2). See the License in the project root folder or the following page: http://www.gnu.org/licenses/gpl-2.0.html
+﻿// <copyright file="AggregateListingConverter.cs" company="GW2.NET Coding Team">
+// This product is licensed under the GNU General Public License version 2 (GPLv2). See the License in the project root folder or the following page: http://www.gnu.org/licenses/gpl-2.0.html
 // </copyright>
-// <summary>
-//   Converts objects of type <see cref="AggregateListingDTO" /> to objects of type <see cref="AggregateListing" />.
-// </summary>
-// --------------------------------------------------------------------------------------------------------------------
-namespace GW2NET.V2.Commerce.Prices.Converters
+
+namespace GW2NET.V2.Commerce.Prices
 {
     using System;
-    using System.Diagnostics;
 
     using GW2NET.Commerce;
     using GW2NET.Common;
-    using GW2NET.V2.Commerce.Prices.Json;
 
-    /// <summary>Converts objects of type <see cref="AggregateListingDTO"/> to objects of type <see cref="AggregateListing"/>.</summary>
-    public sealed class AggregateListingConverter : IConverter<AggregateListingDTO, AggregateListing>
+    /// <summary>Converts objects of type <see cref="AggregateListingDataContract"/> to objects of type <see cref="AggregateListing"/>.</summary>
+    public sealed class AggregateListingConverter : IConverter<AggregateListingDataContract, AggregateListing>
     {
-        private readonly IConverter<AggregateOfferDTO, AggregateOffer> aggregateOfferConverter;
+        private readonly IConverter<AggregateOfferDataContract, AggregateOffer> aggregateOfferConverter;
 
         /// <summary>Initializes a new instance of the <see cref="AggregateListingConverter"/> class.</summary>
         /// <param name="aggregateOfferConverter">The converter for <see cref="AggregateOffer"/>.</param>
-        public AggregateListingConverter(IConverter<AggregateOfferDTO, AggregateOffer> aggregateOfferConverter)
+        public AggregateListingConverter(IConverter<AggregateOfferDataContract, AggregateOffer> aggregateOfferConverter)
         {
             if (aggregateOfferConverter == null)
             {
@@ -33,7 +27,7 @@ namespace GW2NET.V2.Commerce.Prices.Converters
         }
 
         /// <inheritdoc />
-        public AggregateListing Convert(AggregateListingDTO value, object state)
+        public AggregateListing Convert(AggregateListingDataContract value, object state)
         {
             if (value == null)
             {
@@ -45,13 +39,13 @@ namespace GW2NET.V2.Commerce.Prices.Converters
                 throw new ArgumentNullException("state", "Precondition: state is IResponse");
             }
 
-            var response = state as IResponse;
+            IResponse response = state as IResponse;
             if (response == null)
             {
                 throw new ArgumentException("Precondition: state is IResponse", "state");
             }
 
-            var aggregateListing = new AggregateListing
+            AggregateListing aggregateListing = new AggregateListing
             {
                 ItemId = value.Id,
                 Timestamp = response.Date,
