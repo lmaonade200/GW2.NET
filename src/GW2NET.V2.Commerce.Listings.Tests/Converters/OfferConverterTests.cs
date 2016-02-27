@@ -18,7 +18,7 @@ namespace GW2NET.V2.Commerce.Listings.Converters
         public void Convert(int listings, int unitPrice, int quantity)
         {
             var converter = new OfferConverter();
-            var value = new ListingOfferDTO
+            var value = new ListingOfferDataContract
             {
                 Listings = listings,
                 UnitPrice = unitPrice,
