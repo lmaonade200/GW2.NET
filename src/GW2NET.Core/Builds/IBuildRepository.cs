@@ -14,13 +14,8 @@ namespace GW2NET.Builds
     using GW2NET.Common;
 
     /// <summary>Provides the interface for the build service.</summary>
-    public interface IBuildService
+    public interface IBuildRepository
     {
-        /// <summary>Gets the current game build.</summary>
-        /// <exception cref="ServiceException">An error occurred while retrieving the current game build.</exception>
-        /// <returns>The current game build.</returns>
-        Build GetBuild();
-
         /// <summary>Gets the current build.</summary>
         /// <exception cref="ServiceException">An error occurred while retrieving the current game build.</exception>
         /// <returns>The current game build.</returns>

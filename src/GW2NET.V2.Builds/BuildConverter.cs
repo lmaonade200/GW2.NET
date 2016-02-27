@@ -7,19 +7,18 @@
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace GW2NET.V2.Builds.Converters
+namespace GW2NET.V2.Builds
 {
     using System;
 
     using GW2NET.Builds;
     using GW2NET.Common;
-    using GW2NET.V2.Builds.Json;
 
-    /// <summary>Converts objects of type <see cref="BuildDTO"/> to objects of type <see cref="Build"/>.</summary>
-    public sealed class BuildConverter : IConverter<BuildDTO, Build>
+    /// <summary>Converts objects of type <see cref="BuildDataContract"/> to objects of type <see cref="Build"/>.</summary>
+    public sealed class BuildConverter : IConverter<BuildDataContract, Build>
     {
         /// <inheritdoc />
-        public Build Convert(BuildDTO value, object state)
+        public Build Convert(BuildDataContract value, object state)
         {
             if (value == null)
             {

@@ -7,14 +7,14 @@
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace GW2NET.V2.Builds.Json
+namespace GW2NET.V2.Builds
 {
     using System.Diagnostics.CodeAnalysis;
     using System.Runtime.Serialization;
 
     [DataContract]
     [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1600:ElementsMustBeDocumented", Justification = "http://wiki.guildwars2.com/wiki/API:1/build")]
-    public sealed class BuildDTO
+    public sealed class BuildDataContract
     {
         [DataMember(Name = "id", Order = 0)]
         public int BuildId { get; set; }

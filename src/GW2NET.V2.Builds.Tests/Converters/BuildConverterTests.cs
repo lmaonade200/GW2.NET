@@ -7,7 +7,6 @@ namespace GW2NET.V2.Builds.Converters
     using System;
 
     using GW2NET.Common;
-    using GW2NET.V2.Builds.Json;
 
     using Xunit;
 
@@ -24,8 +23,8 @@ namespace GW2NET.V2.Builds.Converters
         [InlineData(100000, "Tue, 26 May 2015 18:46:01 GMT")]
         public void CanConvert(int buildId, DateTime date)
         {
-            var value = new BuildDTO { BuildId = buildId };
-            var state = new Response<BuildDTO>
+            var value = new BuildDataContract { BuildId = buildId };
+            var state = new Response<BuildDataContract>
                             {
                                 Content = value,
                                 Date = date
