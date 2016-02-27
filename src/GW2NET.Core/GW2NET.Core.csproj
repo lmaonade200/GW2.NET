@@ -40,7 +40,7 @@
     <Compile Include="Accounts\Account.cs" />
     <Compile Include="Accounts\IAccountRepository.cs" />
     <Compile Include="Builds\Build.cs" />
-    <Compile Include="Builds\IBuildService.cs" />
+    <Compile Include="Builds\IBuildRepository.cs" />
     <Compile Include="Caching\ICache{T}.cs" />
     <Compile Include="Caching\MemoryCache.cs" />
     <Compile Include="Characters\Character.cs" />
@@ -68,6 +68,7 @@
     <Compile Include="Commerce\IListingRepository.cs" />
     <Compile Include="Commerce\Listing.cs" />
     <Compile Include="Commerce\Offer.cs" />
+    <Compile Include="Common\CachedRepository{T}.cs" />
     <Compile Include="Common\Converters\ApiMetadata.cs" />
     <Compile Include="Common\Converters\ResponseConverterBase.cs" />
     <Compile Include="Common\Converters\Base64Converter.cs" />
@@ -89,8 +90,8 @@
     <Compile Include="Common\Messages\IPagedBuilder.cs" />
     <Compile Include="Common\Messages\IParameterizedBuilder.cs" />
     <Compile Include="Common\Messages\IVersionedBuilder.cs" />
+    <Compile Include="Common\RepositoryBase{T}.cs" />
     <Compile Include="Common\TypeExtensions.cs" />
-    <Compile Include="Common\RepositoryBase.cs" />
     <Compile Include="Common\ServiceClientAuthorized.cs" />
     <Compile Include="Common\BulkRequest.cs" />
     <Compile Include="Common\CollectionPage.cs" />

@@ -1,3 +1,7 @@
+﻿// <copyright file="CachedRepository.cs" company="GW2.NET Coding Team">
+// This product is licensed under the GNU General Public License version 2 (GPLv2). See the License in the project root folder or the following page: http://www.gnu.org/licenses/gpl-2.0.html
+// </copyright>
+
 namespace GW2NET.Common
 {
     using System;
@@ -5,18 +9,15 @@ namespace GW2NET.Common
     using System.Linq;
     using System.Net.Http;
 
-    using GW2NET.Caching;
     using GW2NET.Common.Converters;
 
-    /// <summary>Contains methods and properties for repositories.</summary>
-    /// <typeparam name="T">The type of objects used in the service.</typeparam>
     public abstract class RepositoryBase<T>
     {
         /// <summary>Initializes a new instance of the <see cref="RepositoryBase{T}"/> class.</summary>
         /// <param name="client">The <see cref="HttpClient"/> to make connections with the GW2 api.</param>
         /// <param name="responseConverter">The <see cref="ResponseConverterBase"/> converting an <see cref="HttpResponseMessage"/> for further processing.</param>
         /// <param name="cache">The cache used to store objects.</param>
-        protected RepositoryBase(HttpClient client, ResponseConverterBase responseConverter, ICache<T> cache)
+        protected RepositoryBase(HttpClient client, ResponseConverterBase responseConverter)
         {
             if (client == null)
             {
@@ -28,14 +29,8 @@ namespace GW2NET.Common
                 throw new ArgumentNullException(nameof(responseConverter));
             }
 
-            if (cache == null)
-            {
-                throw new ArgumentNullException(nameof(cache));
-            }
-
             this.Client = client;
             this.ResponseConverter = responseConverter;
-            this.Cache = cache;
         }
 
         /// <summary>Gets the http client.</summary>
@@ -43,9 +38,6 @@ namespace GW2NET.Common
 
         /// <summary>Gets the response converter.</summary>
         public ResponseConverterBase ResponseConverter { get; }
-
-        /// <summary>Gets ot sets the cache used to retrieve not yet obsolete objects.</summary>
-        public ICache<T> Cache { get; }
 
         protected IEnumerable<int> CalculatePageSizes(int queryCount)
         {
@@ -76,6 +68,6 @@ namespace GW2NET.Common
             }
 
             return returnList;
-        } 
+        }
     }
 }
