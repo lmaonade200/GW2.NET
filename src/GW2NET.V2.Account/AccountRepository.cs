@@ -14,7 +14,7 @@ namespace GW2NET.V2.Accounts
     using GW2NET.Common.Messages;
 
     /// <summary>Represents a repository that retrieves data from the authorized /v2/account interface.</summary>
-    public class AccountRepository : RepositoryBase<Account>, IAccountRepository
+    public class AccountRepository : CachedRepository<Account>, IAccountRepository
     {
         /// <summary>Converts an account data contract into an account model.</summary>
         private readonly IConverter<AccountDataContract, Account> accountConverter;

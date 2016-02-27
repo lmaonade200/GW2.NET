@@ -20,7 +20,7 @@ namespace GW2NET.V2.Accounts.Characters
     using GW2NET.Common.Messages;
 
     /// <summary>Represents a repository that retrieves data from the /v2/characters interface.</summary>
-    public sealed class CharacterRepository : RepositoryBase<Character>, IDiscoverService<string>, IApiService<string, Character>
+    public sealed class CharacterRepository : CachedRepository<Character>, IDiscoverService<string>, IApiService<string, Character>
     {
         private readonly IConverter<string, string> identifiersConverter;
 

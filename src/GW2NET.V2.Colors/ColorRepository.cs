@@ -19,7 +19,7 @@ namespace GW2NET.V2.Colors
     using GW2NET.Common.Messages;
 
     /// <summary>Provides methods and properties to retrive colors from the GW2 api.</summary>
-    public class ColorRepository : RepositoryBase<ColorPalette>, IDiscoverService<int>, IApiService<int, ColorPalette>, ILocalizable
+    public class ColorRepository : CachedRepository<ColorPalette>, IDiscoverService<int>, IApiService<int, ColorPalette>, ILocalizable
     {
         private readonly IConverter<int, int> identifiersConverter;
 

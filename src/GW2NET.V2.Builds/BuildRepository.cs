@@ -1,8 +1,6 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="BuildRepository.cs" company="GW2.NET Coding Team">
-//   This product is licensed under the GNU General Public License version 2 (GPLv2). See the License in the project root folder or the following page: http://www.gnu.org/licenses/gpl-2.0.html
+﻿// <copyright file="BuildRepository.cs" company="GW2.NET Coding Team">
+// This product is licensed under the GNU General Public License version 2 (GPLv2). See the License in the project root folder or the following page: http://www.gnu.org/licenses/gpl-2.0.html
 // </copyright>
-// --------------------------------------------------------------------------------------------------------------------
 
 namespace GW2NET.V2.Builds
 {
@@ -12,7 +10,6 @@ namespace GW2NET.V2.Builds
     using System.Threading.Tasks;
 
     using GW2NET.Builds;
-    using GW2NET.Caching;
     using GW2NET.Common;
     using GW2NET.Common.Converters;
     using GW2NET.Common.Messages;
@@ -29,7 +26,7 @@ namespace GW2NET.V2.Builds
         /// <param name="responseConverter"></param>
         /// <exception cref="ArgumentNullException">The value of <paramref name="httpClient"/> or <paramref name="buildConverter"/> is a null reference.</exception>
         public BuildRepository(HttpClient httpClient, ResponseConverterBase responseConverter, IConverter<BuildDataContract, Build> buildConverter)
-            : base(httpClient, responseConverter, new MemoryCache<Build>())
+            : base(httpClient, responseConverter)
         {
             if (buildConverter == null)
             {
@@ -49,7 +46,7 @@ namespace GW2NET.V2.Builds
         public async Task<Build> GetBuildAsync(CancellationToken cancellationToken)
         {
             var request = ApiMessageBuilder.Init().Version(ApiVersion.V2).OnEndpoint("build").Build();
-            
+
             return await this.ResponseConverter.ConvertElementAsync(await this.Client.SendAsync(request, cancellationToken), this.buildConverter);
         }
     }
