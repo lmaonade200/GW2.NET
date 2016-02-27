@@ -1,7 +1,9 @@
-﻿namespace GW2NET.IntegrationTests.V2
+﻿namespace GW2NET.V2.Commerce.Listings
 {
+    using System.Collections.Generic;
     using System.Linq;
 
+    using GW2NET.Commerce;
     using GW2NET.Common;
 
     using Xunit;
@@ -19,33 +21,12 @@
         }
 
         [Fact]
-        public void Discover()
-        {
-            var repository = GW2.Services.Commerce.Listings;
-            var result = repository.Discover();
-            Assert.NotNull(result);
-            Assert.NotEmpty(result);
-        }
-
-        [Fact]
         public async void DiscoverAsync()
         {
-            var repository = GW2.Services.Commerce.Listings;
-            var result = await repository.DiscoverAsync();
+            ListingRepository repository = GW2.Services.Commerce.Listings;
+            IEnumerable<int> result = await repository.DiscoverAsync();
             Assert.NotNull(result);
             Assert.NotEmpty(result);
-        }
-
-        [Theory]
-        [InlineData(24)]
-        [InlineData(68)]
-        [InlineData(69)]
-        public void Find(int identifier)
-        {
-            var repository = GW2.Services.Commerce.Listings;
-            var result = repository.Find(identifier);
-            Assert.NotNull(result);
-            Assert.StrictEqual(identifier, result.ItemId);
         }
 
         [Theory]
@@ -54,52 +35,30 @@
         [InlineData(69)]
         public async void FindAsync(int identifier)
         {
-            var repository = GW2.Services.Commerce.Listings;
-            var result = await repository.FindAsync(identifier);
+            ListingRepository repository = GW2.Services.Commerce.Listings;
+            Listing result = await repository.GetAsync(identifier);
             Assert.NotNull(result);
             Assert.StrictEqual(identifier, result.ItemId);
         }
 
-        [Fact]
-        public void FindAll_ServiceException()
-        {
-            var repository = GW2.Services.Commerce.Listings;
-            var exception = Assert.Throws<ServiceException>(() => repository.FindAll());
-            this.logger.WriteLine(exception.Message);
-        }
 
         [Fact]
         public async void FindAllAsync_ServiceException()
         {
-            var repository = GW2.Services.Commerce.Listings;
-            var exception = await Assert.ThrowsAsync<ServiceException>(() => repository.FindAllAsync());
+            ListingRepository repository = GW2.Services.Commerce.Listings;
+            ServiceException exception = await Assert.ThrowsAsync<ServiceException>(() => repository.GetAsync());
             this.logger.WriteLine(exception.Message);
-        }
-
-        [Theory]
-        [InlineData(new[] { 24, 68, 69 })]
-        public void FindAll_WithIdList(int[] filter)
-        {
-            var repository = GW2.Services.Commerce.Listings;
-            var result = repository.FindAll(filter);
-            Assert.NotNull(result);
-            Assert.StrictEqual(filter.Length, result.Count);
-            foreach (var identifier in filter)
-            {
-                Assert.NotNull(result[identifier]);
-                Assert.StrictEqual(identifier, result[identifier].ItemId);
-            }
         }
 
         [Theory]
         [InlineData(new[] { 24, 68, 69 })]
         public async void FindAllAsync_WithIdList(int[] filter)
         {
-            var repository = GW2.Services.Commerce.Listings;
-            var result = await repository.FindAllAsync(filter);
+            ListingRepository repository = GW2.Services.Commerce.Listings;
+            List<Listing> result = (await repository.GetAsync(filter)).ToList();
             Assert.NotNull(result);
             Assert.StrictEqual(filter.Length, result.Count);
-            foreach (var identifier in filter)
+            foreach (int identifier in filter)
             {
                 Assert.NotNull(result[identifier]);
                 Assert.StrictEqual(identifier, result[identifier].ItemId);
@@ -107,94 +66,11 @@
         }
 
         [Fact]
-        public void FindAll_WithIdListTooLong_ServceException()
-        {
-            var repository = GW2.Services.Commerce.Listings;
-            var filter = Enumerable.Range(1, 201).ToArray();
-            var exception = Assert.Throws<ServiceException>(() => repository.FindAll(filter));
-            this.logger.WriteLine(exception.Message);
-        }
-
-        [Fact]
         public async void FindAllAsync_WithIdListTooLong_ServceException()
         {
-            var repository = GW2.Services.Commerce.Listings;
-            var filter = Enumerable.Range(1, 201).ToArray();
-            var exception = await Assert.ThrowsAsync<ServiceException>(() => repository.FindAllAsync(filter));
-            this.logger.WriteLine(exception.Message);
-        }
-
-        [Theory]
-        [InlineData(0)]
-        [InlineData(1)]
-        [InlineData(2)]
-        [InlineData(3)]
-        public void FindPage(int pageIndex)
-        {
-            var repository = GW2.Services.Commerce.Listings;
-            var result = repository.FindPage(pageIndex);
-            Assert.NotNull(result);
-            Assert.NotEmpty(result);
-            Assert.StrictEqual(pageIndex, result.PageIndex);
-        }
-
-        [Theory]
-        [InlineData(0)]
-        [InlineData(1)]
-        [InlineData(2)]
-        [InlineData(3)]
-        public async void FindPageAsync(int pageIndex)
-        {
-            var repository = GW2.Services.Commerce.Listings;
-            var result = await repository.FindPageAsync(pageIndex);
-            Assert.NotNull(result);
-            Assert.NotEmpty(result);
-            Assert.StrictEqual(pageIndex, result.PageIndex);
-        }
-
-        [Theory]
-        [InlineData(0, 50)]
-        [InlineData(0, 100)]
-        [InlineData(0, 150)]
-        [InlineData(0, 200)]
-        public void FindPage_WithPageSize(int pageIndex, int pageSize)
-        {
-            var repository = GW2.Services.Commerce.Listings;
-            var result = repository.FindPage(pageIndex, pageSize);
-            Assert.NotNull(result);
-            Assert.NotEmpty(result);
-            Assert.StrictEqual(pageIndex, result.PageIndex);
-            Assert.StrictEqual(pageSize, result.PageSize);
-        }
-
-        [Theory]
-        [InlineData(0, 50)]
-        [InlineData(0, 100)]
-        [InlineData(0, 150)]
-        [InlineData(0, 200)]
-        public async void FindPageAsync_WithPageSize(int pageIndex, int pageSize)
-        {
-            var repository = GW2.Services.Commerce.Listings;
-            var result = await repository.FindPageAsync(pageIndex, pageSize);
-            Assert.NotNull(result);
-            Assert.NotEmpty(result);
-            Assert.StrictEqual(pageIndex, result.PageIndex);
-            Assert.StrictEqual(pageSize, result.PageSize);
-        }
-
-        [Fact]
-        public void FindPage_WithPageSizeOutOfRange_ServiceException()
-        {
-            var repository = GW2.Services.Commerce.Listings;
-            var exception = Assert.Throws<ServiceException>(() => repository.FindPage(0, 201));
-            this.logger.WriteLine(exception.Message);
-        }
-
-        [Fact]
-        public async void FindPageAsync_WithPageSizeOutOfRange_ServiceException()
-        {
-            var repository = GW2.Services.Commerce.Listings;
-            var exception = await Assert.ThrowsAsync<ServiceException>(() => repository.FindPageAsync(0, 201));
+            ListingRepository repository = GW2.Services.Commerce.Listings;
+            int[] filter = Enumerable.Range(1, 201).ToArray();
+            ServiceException exception = await Assert.ThrowsAsync<ServiceException>(() => repository.GetAsync(filter));
             this.logger.WriteLine(exception.Message);
         }
     }

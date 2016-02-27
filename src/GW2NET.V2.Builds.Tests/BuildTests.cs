@@ -2,7 +2,7 @@
 // This product is licensed under the GNU General Public License version 2 (GPLv2). See the License in the project root folder or the following page: http://www.gnu.org/licenses/gpl-2.0.html
 // </copyright>
 
-namespace GW2NET.IntegrationTests.V2
+namespace GW2NET.V2.Builds
 {
     using System;
 
@@ -11,15 +11,6 @@ namespace GW2NET.IntegrationTests.V2
     public class BuildTests
     {
         private static readonly GW2Bootstrapper GW2 = new GW2Bootstrapper();
-
-        [Fact]
-        public void GetBuild()
-        {
-            var result = GW2.Services.Builds.GetBuild();
-            Assert.NotNull(result);
-            Assert.NotInRange(result.BuildId, int.MinValue, 0);
-            Assert.NotStrictEqual(default(DateTimeOffset), result.Timestamp);
-        }
 
         [Fact]
         public async void GetBuildAsync()
