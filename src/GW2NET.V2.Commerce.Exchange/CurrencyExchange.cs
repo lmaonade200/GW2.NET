@@ -1,74 +1,51 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="CurrencyExchange.cs" company="GW2.NET Coding Team">
-//   This product is licensed under the GNU General Public License version 2 (GPLv2). See the License in the project root folder or the following page: http://www.gnu.org/licenses/gpl-2.0.html
+﻿// <copyright file="CurrencyExchange.cs" company="GW2.NET Coding Team">
+// This product is licensed under the GNU General Public License version 2 (GPLv2). See the License in the project root folder or the following page: http://www.gnu.org/licenses/gpl-2.0.html
 // </copyright>
-// <summary>
-//   Represents a currency exchange service that retrieves data from the /v2/commerce/exchange interface.
-// </summary>
-// --------------------------------------------------------------------------------------------------------------------
+
 namespace GW2NET.V2.Commerce.Exchange
 {
     using System;
+    using System.Net.Http;
     using System.Threading;
     using System.Threading.Tasks;
 
     using GW2NET.Commerce;
     using GW2NET.Common;
-    using GW2NET.V2.Commerce.Exchange.Json;
+    using GW2NET.Common.Converters;
+    using GW2NET.Common.Messages;
 
     /// <summary>Represents a currency exchange service that retrieves data from the /v2/commerce/exchange interface.</summary>
-    public class CurrencyExchange : ICurrencyExchange
+    public class CurrencyExchange : RepositoryBase<Exchange>, ICurrencyExchange
     {
-        private readonly IServiceClient serviceClient;
+        private readonly IConverter<ExchangeDataContract, Exchange> exchangeConverter;
 
-        private readonly IConverter<ExchangeDTO, Exchange> exchangeConverter;
-
-        public CurrencyExchange(IServiceClient serviceClient, IConverter<ExchangeDTO, Exchange> exchangeConverter)
+        /// <summary>Initializes a new instance of the <see cref="CurrencyExchange"/> class.</summary>
+        /// <param name="httpClient">The client used to make requests against the api.</param>
+        /// <param name="responseConverter">The converter used to convert the <see cref="HttpResponseMessage"/>.</param>
+        /// <param name="exchangeConverter">The connverter used to convert data contracts into actual objects.</param>
+        public CurrencyExchange(HttpClient httpClient, ResponseConverterBase responseConverter, IConverter<ExchangeDataContract, Exchange> exchangeConverter)
+            : base(httpClient, responseConverter)
         {
-            if (serviceClient == null)
-            {
-                throw new ArgumentNullException("serviceClient");
-            }
-
             if (exchangeConverter == null)
             {
-                throw new ArgumentNullException("exchangeConverter");
+                throw new ArgumentNullException(nameof(exchangeConverter));
             }
 
-            this.serviceClient = serviceClient;
             this.exchangeConverter = exchangeConverter;
         }
 
-        public Exchange GetCoins(int gems)
-        {
-            var request = new GemsExchangeRequest
-            {
-                Quantity = gems
-            };
-
-            var response = this.serviceClient.Send<ExchangeDTO>(request);
-            var exchange = this.exchangeConverter.Convert(response.Content, response);
-
-            // Patch the quantity because it is not a property of the response object
-            exchange.Send = gems;
-
-            return exchange;
-        }
-
+        /// <inheritdoc />
         public Task<Exchange> GetCoinsAsync(int gems)
         {
             return this.GetCoinsAsync(gems, CancellationToken.None);
         }
 
+        /// <inheritdoc />
         public async Task<Exchange> GetCoinsAsync(int gems, CancellationToken cancellationToken)
         {
-            var request = new GemsExchangeRequest
-            {
-                Quantity = gems
-            };
+            HttpRequestMessage request = ApiMessageBuilder.Init().Version(ApiVersion.V2).OnEndpoint("commerce/exchange/gems").WithQuantity(gems).Build();
 
-            var response = await this.serviceClient.SendAsync<ExchangeDTO>(request, cancellationToken).ConfigureAwait(false);
-            var exchange = this.exchangeConverter.Convert(response.Content, response);
+            Exchange exchange = await this.ResponseConverter.ConvertElementAsync(await this.Client.SendAsync(request, cancellationToken), this.exchangeConverter);
 
             // Patch the quantity because it is not a property of the response object
             exchange.Send = gems;
@@ -76,35 +53,18 @@ namespace GW2NET.V2.Commerce.Exchange
             return exchange;
         }
 
-        public Exchange GetGems(int coins)
-        {
-            var request = new CoinsExchangeRequest
-            {
-                Quantity = coins
-            };
-
-            var response = this.serviceClient.Send<ExchangeDTO>(request);
-            var exchange = this.exchangeConverter.Convert(response.Content, response);
-
-            // Patch the quantity because it is not a property of the response object
-            exchange.Send = coins;
-
-            return exchange;
-        }
-
+        /// <inheritdoc />
         public Task<Exchange> GetGemsAsync(int coins)
         {
             return this.GetGemsAsync(coins, CancellationToken.None);
         }
 
+        /// <inheritdoc />
         public async Task<Exchange> GetGemsAsync(int coins, CancellationToken cancellationToken)
         {
-            var request = new GemsExchangeRequest
-            {
-                Quantity = coins
-            };
-            var response = await this.serviceClient.SendAsync<ExchangeDTO>(request, cancellationToken).ConfigureAwait(false);
-            var exchange = this.exchangeConverter.Convert(response.Content, response);
+            HttpRequestMessage request = ApiMessageBuilder.Init().Version(ApiVersion.V2).OnEndpoint("commerce/exchange/coins").WithQuantity(coins).Build();
+
+            Exchange exchange = await this.ResponseConverter.ConvertElementAsync(await this.Client.SendAsync(request, cancellationToken), this.exchangeConverter);
 
             // Patch the quantity because it is not a property of the response object
             exchange.Send = coins;

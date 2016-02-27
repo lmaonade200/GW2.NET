@@ -7,8 +7,6 @@ namespace GW2NET.V2.Commerce.Exchange.Converter
     using System;
 
     using GW2NET.Common;
-    using GW2NET.V2.Commerce.Exchange.Converters;
-    using GW2NET.V2.Commerce.Exchange.Json;
 
     using Xunit;
 
@@ -21,13 +19,13 @@ namespace GW2NET.V2.Commerce.Exchange.Converter
         [InlineData(1076, 107676780, "Thu, 28 May 2015 12:13:46 GMT")]
         public void CanConvert(int coinsPerGem, int quantity, DateTime date)
         {
-            var value = new ExchangeDTO
+            var value = new ExchangeDataContract
             {
                 CoinsPerGem = coinsPerGem,
                 Quantity = quantity
             };
 
-            var state = new Response<ExchangeDTO>
+            var state = new Response<ExchangeDataContract>
             {
                 Content = value,
                 Date = date
