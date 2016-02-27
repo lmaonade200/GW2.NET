@@ -67,29 +67,11 @@ namespace GW2NET.V2.Colors
         /// <inheritdoc />
         public async Task<IEnumerable<ColorPalette>> GetAsync(CancellationToken cancellationToken)
         {
-            IEnumerable<ColorPalette> cacheColors = this.Cache.Get(cp => cp.Culture.Equals(this.Culture));
+            IEnumerable<ColorPalette> cacheColors = this.Cache.Get(cp => cp.Culture.Equals(this.Culture)).ToList();
 
-            IEnumerable<IEnumerable<int>> idListList = this.CalculatePages((await this.DiscoverAsync(cancellationToken)).SymmetricExcept(cacheColors.Select(c => c.ColorId)));
+            IEnumerable<int> ids = (await this.DiscoverAsync(cancellationToken)).SymmetricExcept(cacheColors.Select(c => c.ColorId));
 
-            ConcurrentBag<ColorPalette> colors = new ConcurrentBag<ColorPalette>();
-            Parallel.ForEach(idListList,
-                             async idList =>
-                             {
-                                 HttpRequestMessage request = ApiMessageBuilder.Init()
-                                                      .Version(ApiVersion.V2)
-                                                      .OnEndpoint("colors")
-                                                      .ForCulture(this.Culture)
-                                                      .WithIdentifiers(idList)
-                                                      .Build();
-                                 HttpResponseMessage response = await this.Client.SendAsync(request, cancellationToken);
-
-                                 foreach (ColorPalette color in await this.ResponseConverter.ConvertSetAsync(response, this.colorConverter))
-                                 {
-                                     colors.Add(color);
-                                 }
-                             });
-
-            return colors;
+            return (await this.GetAsync(ids, cancellationToken)).Union(cacheColors);
         }
 
         /// <inheritdoc />
@@ -109,12 +91,12 @@ namespace GW2NET.V2.Colors
                 return cacheColors;
             }
 
-            // If the id count is greater than 200 we need to partitionate
-            IEnumerable<IEnumerable<int>> idsToQuery = this.CalculatePages(ids.Where(x => cacheColors.All(i => i.ItemId != x)));
+            // If the id count is greater than 200 we need to partition
+            IEnumerable<IEnumerable<int>> idListList = this.CalculatePages((await this.DiscoverAsync(cancellationToken)).SymmetricExcept(cacheColors.Select(l => l.ColorId)));
 
             ConcurrentBag<ColorPalette> colors = new ConcurrentBag<ColorPalette>(cacheColors);
 
-            Parallel.ForEach(idsToQuery,
+            Parallel.ForEach(idListList,
                 async idList =>
                 {
                     HttpRequestMessage request =
