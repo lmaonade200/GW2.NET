@@ -92,28 +92,5 @@ namespace GW2NET.V2.Colors.Tests
 
             Assert.NotNull(color);
         }
-
-        [Fact]
-        public async void SelectorTest()
-        {
-            HttpClient client = new HttpClient(new HttpClientHandler(), false)
-            {
-                BaseAddress = new Uri("https://api.guildwars2.com/")
-            };
-
-            JsonSerializerFactory jsonSerializerFactory = new JsonSerializerFactory();
-            GzipInflator gzipInflator = new GzipInflator();
-
-            ResponseConverterBase responseConverter = new HttpResponseConverter(jsonSerializerFactory, jsonSerializerFactory, gzipInflator);
-
-            IConverter<int, int> idConverter = new ConverterAdapter<int>();
-            ColorPaletteConverter colorConverter = new ColorPaletteConverter(new ColorConverter(), new ColorModelConverter(new ColorConverter()));
-
-            ColorRepository repository = new ColorRepository(client, responseConverter, new MemoryCache<ColorPalette>(), idConverter, colorConverter);
-
-            IEnumerable<ColorPalette> color = await repository.GetAsync(p => p.Name == "Sky", CancellationToken.None);
-
-            Assert.NotNull(color);
-        }
     }
 }
