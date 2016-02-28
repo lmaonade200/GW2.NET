@@ -49,15 +49,11 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="MapBulkRequest.cs" />
-    <Compile Include="Converter\MapConverter.cs" />
-    <Compile Include="Json\MapDTO.cs" />
-    <Compile Include="MapDetailsRequest.cs" />
-    <Compile Include="MapDiscoveryRequest.cs" />
-    <Compile Include="MapPageRequest.cs" />
+    <Compile Include="MapConverter.cs" />
+    <Compile Include="MapDataContract.cs" />
     <Compile Include="MapRepository.cs" />
-    <Compile Include="Converter\RectangleConverter.cs" />
-    <Compile Include="Converter\Vector2DConverter.cs" />
+    <Compile Include="RectangleConverter.cs" />
+    <Compile Include="Vector2DConverter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="$(SolutionDir)SharedAssemblyInfo.cs">
       <Link>Properties\SharedAssemblyInfo.cs</Link>

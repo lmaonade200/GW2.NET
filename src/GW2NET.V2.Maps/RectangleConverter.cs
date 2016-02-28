@@ -1,13 +1,8 @@
-// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="RectangleConverter.cs" company="GW2.NET Coding Team">
-//   This product is licensed under the GNU General Public License version 2 (GPLv2). See the License in the project root folder or the following page: http://www.gnu.org/licenses/gpl-2.0.html
+// This product is licensed under the GNU General Public License version 2 (GPLv2). See the License in the project root folder or the following page: http://www.gnu.org/licenses/gpl-2.0.html
 // </copyright>
-// <summary>
-//   Converts objects of type <see cref="T:double[][]" /> to objects of type <see cref="Rectangle" />.
-// </summary>
-// --------------------------------------------------------------------------------------------------------------------
 
-namespace GW2NET.V2.Maps.Converter
+namespace GW2NET.V2.Maps
 {
     using System;
 
@@ -26,7 +21,7 @@ namespace GW2NET.V2.Maps.Converter
         {
             if (vectorConverter == null)
             {
-                throw new ArgumentNullException("vectorConverter");
+                throw new ArgumentNullException(nameof(vectorConverter));
             }
 
             this.vectorConverter = vectorConverter;
@@ -37,22 +32,22 @@ namespace GW2NET.V2.Maps.Converter
         {
             if (value == null)
             {
-                throw new ArgumentNullException("value");
+                throw new ArgumentNullException(nameof(value));
             }
 
             if (value.Length != 2)
             {
-                throw new ArgumentException("Precondition: value.Length == 2", "value");
+                throw new ArgumentException("The array must contain exactly two elements.", nameof(value));
             }
 
-            var vectorNorthWest = default(Vector2D);
-            var coordiantes = value[0];
+            Vector2D vectorNorthWest = default(Vector2D);
+            double[] coordiantes = value[0];
             if (coordiantes != null && coordiantes.Length == 2)
             {
                 vectorNorthWest = this.vectorConverter.Convert(coordiantes, state);
             }
 
-            var vectorSouthEast = default(Vector2D);
+            Vector2D vectorSouthEast = default(Vector2D);
             coordiantes = value[1];
             if (coordiantes != null && coordiantes.Length == 2)
             {

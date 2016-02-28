@@ -1,262 +1,156 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="MapRepository.cs" company="GW2.NET Coding Team">
-//   This product is licensed under the GNU General Public License version 2 (GPLv2). See the License in the project root folder or the following page: http://www.gnu.org/licenses/gpl-2.0.html
+﻿// <copyright file="MapRepository.cs" company="GW2.NET Coding Team">
+// This product is licensed under the GNU General Public License version 2 (GPLv2). See the License in the project root folder or the following page: http://www.gnu.org/licenses/gpl-2.0.html
 // </copyright>
-// <summary>
-//   Defines the MapRepository type.
-// </summary>
-// --------------------------------------------------------------------------------------------------------------------
 
 namespace GW2NET.V2.Maps
 {
     using System;
+    using System.Collections.Concurrent;
     using System.Collections.Generic;
-    using System.Diagnostics;
-    using System.Diagnostics.CodeAnalysis;
     using System.Globalization;
     using System.Linq;
+    using System.Net.Http;
     using System.Threading;
     using System.Threading.Tasks;
 
+    using GW2NET.Caching;
     using GW2NET.Common;
+    using GW2NET.Common.Converters;
+    using GW2NET.Common.Messages;
     using GW2NET.Maps;
-    using GW2NET.V2.Maps.Json;
 
     /// <summary>Represents a repository that retrieves data from the /v2/items interface. See the remarks section for important limitations regarding this implementation.</summary>
     /// <remarks>
     /// This implementation does not retrieve associated entities.
     /// </remarks>
-    public sealed class MapRepository : IMapRepository
+    public sealed class MapRepository : CachedRepository<Map>, IApiService<int, Map>, IDiscoverService<int>, ILocalizable
     {
-        private readonly IConverter<IResponse<ICollection<MapDTO>>, IDictionaryRange<int, Map>> bulkResponseConverter;
+        private readonly IConverter<int, int> identifiersConverter;
 
-        private readonly IConverter<IResponse<ICollection<int>>, ICollection<int>> identifiersResponseConverter;
-
-        private readonly IConverter<IResponse<ICollection<MapDTO>>, ICollectionPage<Map>> pageResponseConverter;
-
-        private readonly IConverter<IResponse<MapDTO>, Map> responseConverter;
-
-        private readonly IServiceClient serviceClient;
+        private readonly IConverter<MapDataContract, Map> itemConverter;
 
         /// <summary>Initializes a new instance of the <see cref="MapRepository"/> class.</summary>
-        /// <param name="serviceClient"></param>
-        /// <param name="identifiersResponseConverter"></param>
-        /// <param name="responseConverter"></param>
-        /// <param name="bulkResponseConverter"></param>
-        /// <param name="pageResponseConverter"></param>
-        /// <exception cref="ArgumentNullException">The value of <paramref name="serviceClient"/> or <paramref name="bulkResponseConverter"/> or <paramref name="responseConverter"/> is a null reference.</exception>
+        /// <param name="httpClient">The <see cref="HttpClient"/> used to make connections with the ArenaNet servers.</param>
+        /// <param name="responseConverter">The <see cref="ResponseConverterBase"/> used to convert <see cref="HttpResponseMessage"/> into objects.</param>
+        /// <param name="cache">The <see cref="ICache{T}"/> used to cache api responses.</param>
+        /// <param name="identifiersConverter">A converter used to convert identifiers.</param>
+        /// <param name="itemConverter">A converter used to convert data contracts into objects.</param>
+        /// <exception cref="ArgumentNullException">Thrown when either parameter is null.</exception>
         public MapRepository(
-            IServiceClient serviceClient,
-            IConverter<IResponse<ICollection<int>>, ICollection<int>> identifiersResponseConverter,
-            IConverter<IResponse<MapDTO>, Map> responseConverter, 
-            IConverter<IResponse<ICollection<MapDTO>>, IDictionaryRange<int, Map>> bulkResponseConverter,
-            IConverter<IResponse<ICollection<MapDTO>>, ICollectionPage<Map>> pageResponseConverter)
+            HttpClient httpClient,
+            ResponseConverterBase responseConverter,
+            ICache<Map> cache,
+            IConverter<int, int> identifiersConverter,
+            IConverter<MapDataContract, Map> itemConverter)
+            : base(httpClient, responseConverter, cache)
         {
-            if (serviceClient == null)
+            if (identifiersConverter == null)
             {
-                throw new ArgumentNullException("serviceClient");
+                throw new ArgumentNullException(nameof(identifiersConverter));
             }
 
-            if (identifiersResponseConverter == null)
+            if (itemConverter == null)
             {
-                throw new ArgumentNullException("identifiersResponseConverter");
+                throw new ArgumentNullException(nameof(itemConverter));
             }
 
-            if (responseConverter == null)
+            this.identifiersConverter = identifiersConverter;
+            this.itemConverter = itemConverter;
+        }
+
+        /// <inheritdoc />
+        public CultureInfo Culture { get; set; }
+
+        /// <inheritdoc />
+        public Task<IEnumerable<int>> DiscoverAsync()
+        {
+            return this.DiscoverAsync(CancellationToken.None);
+        }
+
+        /// <inheritdoc />
+        public async Task<IEnumerable<int>> DiscoverAsync(CancellationToken cancellationToken)
+        {
+            HttpRequestMessage request = ApiMessageBuilder.Init().Version(ApiVersion.V2).OnEndpoint("maps").Build();
+            return await this.ResponseConverter.ConvertSetAsync(await this.Client.SendAsync(request, cancellationToken), this.identifiersConverter);
+        }
+        
+        /// <inheritdoc />
+        public Task<Map> GetAsync(int identifier)
+        {
+            return this.GetAsync(identifier, CancellationToken.None);
+        }
+
+        /// <inheritdoc />
+        public async Task<Map> GetAsync(int identifier, CancellationToken cancellationToken)
+        {
+            Map cacheItem = this.Cache.Get(i => i.MapId == identifier).SingleOrDefault();
+            if (cacheItem != null)
             {
-                throw new ArgumentNullException("responseConverter");
+                return cacheItem;
             }
 
-            if (bulkResponseConverter == null)
+            HttpRequestMessage request = ApiMessageBuilder.Init().Version(ApiVersion.V2).OnEndpoint("maps").WithIdentifier(identifier).Build();
+            return await this.ResponseConverter.ConvertElementAsync(await this.Client.SendAsync(request, cancellationToken), this.itemConverter);
+        }
+
+        /// <inheritdoc />
+        public Task<IEnumerable<Map>> GetAsync()
+        {
+            return this.GetAsync(CancellationToken.None);
+        }
+
+        /// <inheritdoc />
+        public async Task<IEnumerable<Map>> GetAsync(CancellationToken cancellationToken)
+        {
+            List<Map> cacheItems = this.Cache.Get(i => true).ToList();
+
+            IEnumerable<int> idsToQuery = (await this.DiscoverAsync(cancellationToken)).SymmetricExcept(cacheItems.Select(i => i.MapId));
+            return (await this.GetItemsAsync(idsToQuery, this.itemConverter, cancellationToken)).Union(cacheItems);
+        }
+
+        /// <inheritdoc />
+        public Task<IEnumerable<Map>> GetAsync(IEnumerable<int> identifiers)
+        {
+            return this.GetAsync(identifiers, CancellationToken.None);
+        }
+
+        /// <inheritdoc />
+        public async Task<IEnumerable<Map>> GetAsync(IEnumerable<int> identifiers, CancellationToken cancellationToken)
+        {
+            IList<int> ids = identifiers as IList<int> ?? identifiers.ToList();
+            List<Map> cacheItems = this.Cache.Get(i => ids.All(id => id != i.MapId)).ToList();
+            if (cacheItems.Count == ids.Count)
             {
-                throw new ArgumentNullException("bulkResponseConverter");
+                return cacheItems;
             }
 
-            if (pageResponseConverter == null)
-            {
-                throw new ArgumentNullException("pageResponseConverter");
-            }
-
-            this.serviceClient = serviceClient;
-            this.identifiersResponseConverter = identifiersResponseConverter;
-            this.responseConverter = responseConverter;
-            this.bulkResponseConverter = bulkResponseConverter;
-            this.pageResponseConverter = pageResponseConverter;
+            return (await this.GetItemsAsync(ids.SymmetricExcept(cacheItems.Select(i => i.MapId)), this.itemConverter,cancellationToken)).Union(cacheItems);
         }
 
-        /// <inheritdoc />
-        CultureInfo ILocalizable.Culture { get; set; }
-
-        /// <inheritdoc />
-        ICollection<int> IDiscoverable<int>.Discover()
+        private async Task<IEnumerable<TValue>> GetItemsAsync<TKey, TDataContract, TValue>(IEnumerable<TKey> ids, IConverter<TDataContract, TValue> itemConverter, CancellationToken cancellationToken)
         {
-            var request = new MapDiscoveryRequest();
-            var response = this.serviceClient.Send<ICollection<int>>(request);
-            return this.identifiersResponseConverter.Convert(response, null);
-        }
+            IEnumerable<IEnumerable<TKey>> idListList = this.CalculatePages(ids);
 
-        /// <inheritdoc />
-        Task<ICollection<int>> IDiscoverable<int>.DiscoverAsync()
-        {
-            return ((IMapRepository)this).DiscoverAsync(CancellationToken.None);
-        }
+            ConcurrentBag<TValue> items = new ConcurrentBag<TValue>();
+            Parallel.ForEach(idListList,
+                             async idList =>
+                             {
+                                 HttpRequestMessage request =
+                                     ApiMessageBuilder.Init()
+                                                      .Version(ApiVersion.V2)
+                                                      .OnEndpoint("continents")
+                                                      .WithIdentifiers(idList)
+                                                      .Build();
 
-        /// <inheritdoc />
-        async Task<ICollection<int>> IDiscoverable<int>.DiscoverAsync(CancellationToken cancellationToken)
-        {
-            var request = new MapDiscoveryRequest();
-            var response = await this.serviceClient.SendAsync<ICollection<int>>(request, cancellationToken).ConfigureAwait(false);
-            return this.identifiersResponseConverter.Convert(response, null);
-        }
+                                 Task<IEnumerable<TValue>> responseItems = this.ResponseConverter.ConvertSetAsync(await this.Client.SendAsync(request, cancellationToken), itemConverter);
 
-        /// <inheritdoc />
-        Map IRepository<int, Map>.Find(int identifier)
-        {
-            var request = new MapDetailsRequest
-            {
-                Identifier = identifier.ToString(NumberFormatInfo.InvariantInfo),
-                Culture = ((IMapRepository)this).Culture
-            };
-            var response = this.serviceClient.Send<MapDTO>(request);
-            return this.responseConverter.Convert(response, null);
-        }
+                                 foreach (TValue item in await responseItems)
+                                 {
+                                     items.Add(item);
+                                 }
+                             });
 
-        /// <inheritdoc />
-        IDictionaryRange<int, Map> IRepository<int, Map>.FindAll()
-        {
-            var request = new MapBulkRequest
-            {
-                Culture = ((IMapRepository)this).Culture
-            };
-            var response = this.serviceClient.Send<ICollection<MapDTO>>(request);
-            return this.bulkResponseConverter.Convert(response, null);
-        }
-
-        /// <inheritdoc />
-        IDictionaryRange<int, Map> IRepository<int, Map>.FindAll(ICollection<int> identifiers)
-        {
-            var request = new MapBulkRequest
-            {
-                Identifiers = identifiers.Select(i => i.ToString(NumberFormatInfo.InvariantInfo)).ToList(),
-                Culture = ((IMapRepository)this).Culture
-            };
-            var response = this.serviceClient.Send<ICollection<MapDTO>>(request);
-            return this.bulkResponseConverter.Convert(response, null);
-        }
-
-        /// <inheritdoc />
-        Task<IDictionaryRange<int, Map>> IRepository<int, Map>.FindAllAsync()
-        {
-            return ((IMapRepository)this).FindAllAsync(CancellationToken.None);
-        }
-
-        /// <inheritdoc />
-        async Task<IDictionaryRange<int, Map>> IRepository<int, Map>.FindAllAsync(CancellationToken cancellationToken)
-        {
-            var request = new MapBulkRequest
-            {
-                Culture = ((IMapRepository)this).Culture
-            };
-            var response = await this.serviceClient.SendAsync<ICollection<MapDTO>>(request, cancellationToken).ConfigureAwait(false);
-            return this.bulkResponseConverter.Convert(response, null);
-        }
-
-        /// <inheritdoc />
-        Task<IDictionaryRange<int, Map>> IRepository<int, Map>.FindAllAsync(ICollection<int> identifiers)
-        {
-            return ((IMapRepository)this).FindAllAsync(identifiers, CancellationToken.None);
-        }
-
-        /// <inheritdoc />
-        async Task<IDictionaryRange<int, Map>> IRepository<int, Map>.FindAllAsync(ICollection<int> identifiers, CancellationToken cancellationToken)
-        {
-            var request = new MapBulkRequest
-            {
-                Identifiers = identifiers.Select(i => i.ToString(NumberFormatInfo.InvariantInfo)).ToList(),
-                Culture = ((IMapRepository)this).Culture
-            };
-            var response = await this.serviceClient.SendAsync<ICollection<MapDTO>>(request, cancellationToken).ConfigureAwait(false);
-            return this.bulkResponseConverter.Convert(response, null);
-        }
-
-        /// <inheritdoc />
-        Task<Map> IRepository<int, Map>.FindAsync(int identifier)
-        {
-            return ((IMapRepository)this).FindAsync(identifier, CancellationToken.None);
-        }
-
-        /// <inheritdoc />
-        async Task<Map> IRepository<int, Map>.FindAsync(int identifier, CancellationToken cancellationToken)
-        {
-            var request = new MapDetailsRequest
-            {
-                Identifier = identifier.ToString(NumberFormatInfo.InvariantInfo),
-                Culture = ((IMapRepository)this).Culture
-            };
-            var response = await this.serviceClient.SendAsync<MapDTO>(request, cancellationToken).ConfigureAwait(false);
-            return this.responseConverter.Convert(response, null);
-        }
-
-        /// <inheritdoc />
-        ICollectionPage<Map> IPaginator<Map>.FindPage(int pageIndex)
-        {
-            var request = new MapPageRequest
-            {
-                Page = pageIndex,
-                Culture = ((IMapRepository)this).Culture
-            };
-            var response = this.serviceClient.Send<ICollection<MapDTO>>(request);
-            return this.pageResponseConverter.Convert(response, pageIndex);
-        }
-
-        /// <inheritdoc />
-        ICollectionPage<Map> IPaginator<Map>.FindPage(int pageIndex, int pageSize)
-        {
-            var request = new MapPageRequest
-            {
-                Page = pageIndex,
-                PageSize = pageSize,
-                Culture = ((IMapRepository)this).Culture
-            };
-            var response = this.serviceClient.Send<ICollection<MapDTO>>(request);
-            return this.pageResponseConverter.Convert(response, pageIndex);
-        }
-
-        /// <inheritdoc />
-        Task<ICollectionPage<Map>> IPaginator<Map>.FindPageAsync(int pageIndex)
-        {
-            return ((IMapRepository)this).FindPageAsync(pageIndex, CancellationToken.None);
-        }
-
-        /// <inheritdoc />
-        async Task<ICollectionPage<Map>> IPaginator<Map>.FindPageAsync(int pageIndex, CancellationToken cancellationToken)
-        {
-            var request = new MapPageRequest
-            {
-                Page = pageIndex,
-                Culture = ((IMapRepository)this).Culture
-            };
-            var response = await this.serviceClient.SendAsync<ICollection<MapDTO>>(request, cancellationToken).ConfigureAwait(false);
-            return this.pageResponseConverter.Convert(response, pageIndex);
-        }
-
-        /// <inheritdoc />
-        Task<ICollectionPage<Map>> IPaginator<Map>.FindPageAsync(int pageIndex, int pageSize)
-        {
-            return ((IMapRepository)this).FindPageAsync(pageIndex, pageSize, CancellationToken.None);
-        }
-
-        /// <inheritdoc />
-        async Task<ICollectionPage<Map>> IPaginator<Map>.FindPageAsync(int pageIndex, int pageSize, CancellationToken cancellationToken)
-        {
-            var request = new MapPageRequest
-            {
-                Page = pageIndex,
-                PageSize = pageSize,
-                Culture = ((IMapRepository)this).Culture
-            };
-            var response = await this.serviceClient.SendAsync<ICollection<MapDTO>>(request, cancellationToken).ConfigureAwait(false);
-            return this.pageResponseConverter.Convert(response, pageIndex);
+            return items;
         }
     }
 }

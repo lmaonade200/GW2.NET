@@ -1,23 +1,18 @@
-// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="MapConverter.cs" company="GW2.NET Coding Team">
-//   This product is licensed under the GNU General Public License version 2 (GPLv2). See the License in the project root folder or the following page: http://www.gnu.org/licenses/gpl-2.0.html
+// This product is licensed under the GNU General Public License version 2 (GPLv2). See the License in the project root folder or the following page: http://www.gnu.org/licenses/gpl-2.0.html
 // </copyright>
-// <summary>
-//   Defines the MapConverter type.
-// </summary>
-// --------------------------------------------------------------------------------------------------------------------
 
-namespace GW2NET.V2.Maps.Converter
+namespace GW2NET.V2.Maps
 {
     using System;
 
     using GW2NET.Common;
+    using GW2NET.Common.Converters;
     using GW2NET.Common.Drawing;
     using GW2NET.Maps;
-    using GW2NET.V2.Maps.Json;
 
-    /// <summary>Converts objects of type <see cref="MapDTO"/> to objects of type <see cref="Map"/>.</summary>
-    public sealed class MapConverter : IConverter<MapDTO, Map>
+    /// <summary>Converts objects of type <see cref="MapDataContract"/> to objects of type <see cref="Map"/>.</summary>
+    public sealed class MapConverter : IConverter<MapDataContract, Map>
     {
         private readonly IConverter<double[][], Rectangle> rectangleConverter;
 
@@ -28,34 +23,34 @@ namespace GW2NET.V2.Maps.Converter
         {
             if (rectangleConverter == null)
             {
-                throw new ArgumentNullException("rectangleConverter");
+                throw new ArgumentNullException(nameof(rectangleConverter));
             }
 
             this.rectangleConverter = rectangleConverter;
         }
 
         /// <inheritdoc />
-        public Map Convert(MapDTO value, object state)
+        public Map Convert(MapDataContract value, object state)
         {
             if (value == null)
             {
-                throw new ArgumentNullException("value");
+                throw new ArgumentNullException(nameof(value));
             }
 
             if (state == null)
             {
-                throw new ArgumentNullException("state", "Precondition: state is IResponse");
+                throw new ArgumentNullException(nameof(state));
             }
 
-            var response = state as IResponse;
+            ApiMetadata response = state as ApiMetadata;
             if (response == null)
             {
-                throw new ArgumentException("Precondition: state is IResponse", "state");
+                throw new ArgumentException("Could not cast to ApiMetadata", nameof(state));
             }
 
-            var map = new Map
+            Map map = new Map
             {
-                Culture = response.Culture,
+                Culture = response.ContentLanguage,
                 MapName = value.Name,
                 MinimumLevel = value.MinimumLevel,
                 MaximumLevel = value.MaximumLevel,
@@ -68,13 +63,13 @@ namespace GW2NET.V2.Maps.Converter
                 MapId = value.Id,
             };
 
-            var mapRectangle = value.MapRectangle;
+            double[][] mapRectangle = value.MapRectangle;
             if (mapRectangle != null && mapRectangle.Length == 2)
             {
-                var northWest = mapRectangle[0];
+                double[] northWest = mapRectangle[0];
                 if (northWest != null && northWest.Length == 2)
                 {
-                    var southEast = mapRectangle[1];
+                    double[] southEast = mapRectangle[1];
                     if (southEast != null && southEast.Length == 2)
                     {
                         map.MapRectangle = this.rectangleConverter.Convert(mapRectangle, state);
@@ -82,13 +77,13 @@ namespace GW2NET.V2.Maps.Converter
                 }
             }
 
-            var continentRectangle = value.ContinentRectangle;
+            double[][] continentRectangle = value.ContinentRectangle;
             if (continentRectangle != null && continentRectangle.Length == 2)
             {
-                var northWest = continentRectangle[0];
+                double[] northWest = continentRectangle[0];
                 if (northWest != null && northWest.Length == 2)
                 {
-                    var southEast = continentRectangle[1];
+                    double[] southEast = continentRectangle[1];
                     if (southEast != null && southEast.Length == 2)
                     {
                         map.ContinentRectangle = this.rectangleConverter.Convert(continentRectangle, state);

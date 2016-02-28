@@ -7,7 +7,7 @@
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace GW2NET.V2.Maps.Converter
+namespace GW2NET.V2.Maps
 {
     using System;
 
