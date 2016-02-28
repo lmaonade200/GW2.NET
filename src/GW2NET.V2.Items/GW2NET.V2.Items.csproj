@@ -143,10 +143,6 @@
     <Compile Include="Converters\UpgradeComponentFlagConverter.cs" />
     <Compile Include="Converters\UpgradeComponentFlagCollectionConverter.cs" />
     <Compile Include="Converters\WeightClassConverter.cs" />
-    <Compile Include="ItemBulkRequest.cs" />
-    <Compile Include="ItemDetailsRequest.cs" />
-    <Compile Include="ItemDiscoveryRequest.cs" />
-    <Compile Include="ItemPageRequest.cs" />
     <Compile Include="ItemRepository.cs" />
     <Compile Include="Json\AttributeDTO.cs" />
     <Compile Include="Json\BuffDTO.cs" />

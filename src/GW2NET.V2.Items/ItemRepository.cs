@@ -1,23 +1,22 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="ItemRepository.cs" company="GW2.NET Coding Team">
-//   This product is licensed under the GNU General Public License version 2 (GPLv2). See the License in the project root folder or the following page: http://www.gnu.org/licenses/gpl-2.0.html
+﻿// <copyright file="ItemRepository.cs" company="GW2.NET Coding Team">
+// This product is licensed under the GNU General Public License version 2 (GPLv2). See the License in the project root folder or the following page: http://www.gnu.org/licenses/gpl-2.0.html
 // </copyright>
-// <summary>
-//   Represents a repository that retrieves data from the /v2/items interface. See the remarks section for important limitations regarding this implementation.
-// </summary>
-// --------------------------------------------------------------------------------------------------------------------
+
 namespace GW2NET.V2.Items
 {
     using System;
+    using System.Collections.Concurrent;
     using System.Collections.Generic;
-    using System.Diagnostics;
-    using System.Diagnostics.CodeAnalysis;
     using System.Globalization;
     using System.Linq;
+    using System.Net.Http;
     using System.Threading;
     using System.Threading.Tasks;
 
+    using GW2NET.Caching;
     using GW2NET.Common;
+    using GW2NET.Common.Converters;
+    using GW2NET.Common.Messages;
     using GW2NET.Items;
     using GW2NET.V2.Items.Json;
 
@@ -48,252 +47,136 @@ namespace GW2NET.V2.Items
     ///     </item>
     /// </list>
     /// </remarks>
-    public class ItemRepository : IItemRepository
+    public class ItemRepository : CachedRepository<Item>, IApiService<int, Item>, IDiscoverService<int>, ILocalizable
     {
-        private readonly IConverter<IResponse<ICollection<ItemDTO>>, IDictionaryRange<int, Item>> bulkResponseConverter;
 
-        private readonly IConverter<IResponse<ICollection<int>>, ICollection<int>> identifiersResponseConverter;
+        private readonly IConverter<int, int> identifiersConverter;
 
-        private readonly IConverter<IResponse<ICollection<ItemDTO>>, ICollectionPage<Item>> pageResponseConverter;
-
-        private readonly IConverter<IResponse<ItemDTO>, Item> responseConverter;
-
-        private readonly IServiceClient serviceClient;
+        private readonly IConverter<ItemDTO, Item> itemConverter;
 
         /// <summary>Initializes a new instance of the <see cref="ItemRepository"/> class.</summary>
-        /// <param name="serviceClient"></param>
-        /// <param name="identifiersResponseConverter"></param>
-        /// <param name="responseConverter"></param>
-        /// <param name="bulkResponseConverter"></param>
-        /// <param name="pageResponseConverter"></param>
+        /// <param name="httpClient">The <see cref="HttpClient"/> used to make connections with the ArenaNet servers.</param>
+        /// <param name="responseConverter">The <see cref="ResponseConverterBase"/> used to convert <see cref="HttpResponseMessage"/> into objects.</param>
+        /// <param name="cache">The <see cref="ICache{T}"/> used to cache api responses.</param>
+        /// <param name="identifiersConverter">A converter used to convert identifiers.</param>
+        /// <param name="itemConverter">A converter used to convert data contracts into objects.</param>
+        /// <exception cref="ArgumentNullException">Thrown when either parameter is null.</exception>
         public ItemRepository(
-            IServiceClient serviceClient,
-            IConverter<IResponse<ICollection<int>>, ICollection<int>> identifiersResponseConverter,
-            IConverter<IResponse<ItemDTO>, Item> responseConverter,
-            IConverter<IResponse<ICollection<ItemDTO>>, IDictionaryRange<int, Item>> bulkResponseConverter,
-            IConverter<IResponse<ICollection<ItemDTO>>, ICollectionPage<Item>> pageResponseConverter)
+            HttpClient httpClient,
+            ResponseConverterBase responseConverter,
+            ICache<Item> cache,
+            IConverter<int, int> identifiersConverter,
+            IConverter<ItemDTO, Item> itemConverter)
+            : base(httpClient, responseConverter, cache)
         {
-            if (serviceClient == null)
+            if (identifiersConverter == null)
             {
-                throw new ArgumentNullException("serviceClient");
-            }
-
-            if (identifiersResponseConverter == null)
-            {
-                throw new ArgumentNullException("identifiersResponseConverter");
+                throw new ArgumentNullException(nameof(identifiersConverter));
             }
 
             if (responseConverter == null)
             {
-                throw new ArgumentNullException("responseConverter");
+                throw new ArgumentNullException(nameof(itemConverter));
             }
 
-            if (bulkResponseConverter == null)
+            this.identifiersConverter = identifiersConverter;
+            this.itemConverter = itemConverter;
+        }
+
+        /// <inheritdoc />
+        public CultureInfo Culture { get; set; }
+
+        /// <inheritdoc />
+        public Task<IEnumerable<int>> DiscoverAsync()
+        {
+            return this.DiscoverAsync(CancellationToken.None);
+        }
+
+        /// <inheritdoc />
+        public async Task<IEnumerable<int>> DiscoverAsync(CancellationToken cancellationToken)
+        {
+            var request = ApiMessageBuilder.Init().Version(ApiVersion.V2).OnEndpoint("items").Build();
+            return await this.ResponseConverter.ConvertSetAsync(await this.Client.SendAsync(request, cancellationToken), this.identifiersConverter);
+        }
+
+        /// <inheritdoc />
+        public Task<Item> GetAsync(int identifier)
+        {
+            return this.GetAsync(identifier, CancellationToken.None);
+        }
+
+        /// <inheritdoc />
+        public async Task<Item> GetAsync(int identifier, CancellationToken cancellationToken)
+        {
+            var cacheItem = this.Cache.Get(i => i.ItemId == identifier).SingleOrDefault();
+            if (cacheItem != null)
             {
-                throw new ArgumentNullException("bulkResponseConverter");
+                return cacheItem;
             }
 
-            if (pageResponseConverter == null)
+            var request = ApiMessageBuilder.Init().Version(ApiVersion.V2).OnEndpoint("items").WithIdentifier(identifier).Build();
+            return await this.ResponseConverter.ConvertElementAsync(await this.Client.SendAsync(request, cancellationToken), this.itemConverter);
+        }
+
+        /// <inheritdoc />
+        public Task<IEnumerable<Item>> GetAsync()
+        {
+            return this.GetAsync(CancellationToken.None);
+        }
+
+        /// <inheritdoc />
+        public async Task<IEnumerable<Item>> GetAsync(CancellationToken cancellationToken)
+        {
+            var cacheItems = this.Cache.Get(i => true).ToList();
+            var idsToQuery = (await this.DiscoverAsync(cancellationToken)).SymmetricExcept(cacheItems.Select(i => i.ItemId));
+
+            return await this.GetItemsAsync(idsToQuery, this.itemConverter, cancellationToken);
+        }
+
+        /// <inheritdoc />
+        public Task<IEnumerable<Item>> GetAsync(IEnumerable<int> identifiers)
+        {
+            return this.GetAsync(identifiers, CancellationToken.None);
+        }
+
+        /// <inheritdoc />
+        public async Task<IEnumerable<Item>> GetAsync(IEnumerable<int> identifiers, CancellationToken cancellationToken)
+        {
+            var ids = identifiers as IList<int> ?? identifiers.ToList();
+            var cacheItems = this.Cache.Get(i => ids.All(id => id != i.ItemId)).ToList();
+            if (ids.Count == cacheItems.Count)
             {
-                throw new ArgumentNullException("pageResponseConverter");
+                return cacheItems;
             }
 
-            this.serviceClient = serviceClient;
-            this.identifiersResponseConverter = identifiersResponseConverter;
-            this.responseConverter = responseConverter;
-            this.bulkResponseConverter = bulkResponseConverter;
-            this.pageResponseConverter = pageResponseConverter;
+            return await this.GetItemsAsync(ids.SymmetricExcept(cacheItems.Select(i => i.ItemId)), this.itemConverter, cancellationToken);
         }
 
-        /// <inheritdoc />
-        CultureInfo ILocalizable.Culture { get; set; }
-
-        /// <inheritdoc />
-        ICollection<int> IDiscoverable<int>.Discover()
+        private async Task<IEnumerable<TValue>> GetItemsAsync<TKey, TDataContract, TValue>(IEnumerable<TKey> ids, IConverter<TDataContract, TValue> itemConverter, CancellationToken cancellationToken)
         {
-            var request = new ItemDiscoveryRequest();
-            var response = this.serviceClient.Send<ICollection<int>>(request);
-            return this.identifiersResponseConverter.Convert(response, null);
-        }
+            var idListList = this.CalculatePages(ids);
 
-        /// <inheritdoc />
-        Task<ICollection<int>> IDiscoverable<int>.DiscoverAsync()
-        {
-            IItemRepository self = this;
-            return self.DiscoverAsync(CancellationToken.None);
-        }
+            ConcurrentBag<TValue> items = new ConcurrentBag<TValue>();
+            Parallel.ForEach(idListList,
+                             async idList =>
+                             {
+                                 var request =
+                                     ApiMessageBuilder.Init()
+                                                      .Version(ApiVersion.V2)
+                                                      .OnEndpoint("continents")
+                                                      .ForCulture(this.Culture)
+                                                      .WithIdentifiers(idList)
+                                                      .Build();
 
-        /// <inheritdoc />
-        async Task<ICollection<int>> IDiscoverable<int>.DiscoverAsync(CancellationToken cancellationToken)
-        {
-            var request = new ItemDiscoveryRequest();
-            var response = await this.serviceClient.SendAsync<ICollection<int>>(request, cancellationToken).ConfigureAwait(false);
-            return this.identifiersResponseConverter.Convert(response, null);
-        }
+                                 Task<IEnumerable<TValue>> responseItems = this.ResponseConverter.ConvertSetAsync(await this.Client.SendAsync(request, cancellationToken), itemConverter);
 
-        /// <inheritdoc />
-        Item IRepository<int, Item>.Find(int identifier)
-        {
-            IItemRepository self = this;
-            var request = new ItemDetailsRequest
-            {
-                Identifier = identifier.ToString(NumberFormatInfo.InvariantInfo),
-                Culture = self.Culture
-            };
-            var response = this.serviceClient.Send<ItemDTO>(request);
-            return this.responseConverter.Convert(response, null);
-        }
+                                 foreach (TValue item in await responseItems)
+                                 {
+                                     items.Add(item);
+                                 }
+                             });
 
-        /// <inheritdoc />
-        IDictionaryRange<int, Item> IRepository<int, Item>.FindAll()
-        {
-            IItemRepository self = this;
-            var request = new ItemBulkRequest
-            {
-                Culture = self.Culture
-            };
-            var response = this.serviceClient.Send<ICollection<ItemDTO>>(request);
-            return this.bulkResponseConverter.Convert(response, null);
-        }
-
-        /// <inheritdoc />
-        IDictionaryRange<int, Item> IRepository<int, Item>.FindAll(ICollection<int> identifiers)
-        {
-            IItemRepository self = this;
-            var request = new ItemBulkRequest
-            {
-                Identifiers = identifiers.Select(i => i.ToString(NumberFormatInfo.InvariantInfo)).ToList(),
-                Culture = self.Culture
-            };
-            var response = this.serviceClient.Send<ICollection<ItemDTO>>(request);
-            return this.bulkResponseConverter.Convert(response, null);
-        }
-
-        /// <inheritdoc />
-        Task<IDictionaryRange<int, Item>> IRepository<int, Item>.FindAllAsync()
-        {
-            IItemRepository self = this;
-            return self.FindAllAsync(CancellationToken.None);
-        }
-
-        /// <inheritdoc />
-        async Task<IDictionaryRange<int, Item>> IRepository<int, Item>.FindAllAsync(CancellationToken cancellationToken)
-        {
-            IItemRepository self = this;
-            var request = new ItemBulkRequest
-            {
-                Culture = self.Culture
-            };
-            var response = await this.serviceClient.SendAsync<ICollection<ItemDTO>>(request, cancellationToken).ConfigureAwait(false);
-            return this.bulkResponseConverter.Convert(response, null);
-        }
-
-        /// <inheritdoc />
-        Task<IDictionaryRange<int, Item>> IRepository<int, Item>.FindAllAsync(ICollection<int> identifiers)
-        {
-            IItemRepository self = this;
-            return self.FindAllAsync(identifiers, CancellationToken.None);
-        }
-
-        /// <inheritdoc />
-        async Task<IDictionaryRange<int, Item>> IRepository<int, Item>.FindAllAsync(ICollection<int> identifiers, CancellationToken cancellationToken)
-        {
-            IItemRepository self = this;
-            var request = new ItemBulkRequest
-            {
-                Identifiers = identifiers.Select(i => i.ToString(NumberFormatInfo.InvariantInfo)).ToList(),
-                Culture = self.Culture
-            };
-            var response = await this.serviceClient.SendAsync<ICollection<ItemDTO>>(request, cancellationToken).ConfigureAwait(false);
-            return this.bulkResponseConverter.Convert(response, null);
-        }
-
-        /// <inheritdoc />
-        Task<Item> IRepository<int, Item>.FindAsync(int identifier)
-        {
-            IItemRepository self = this;
-            return self.FindAsync(identifier, CancellationToken.None);
-        }
-
-        /// <inheritdoc />
-        async Task<Item> IRepository<int, Item>.FindAsync(int identifier, CancellationToken cancellationToken)
-        {
-            IItemRepository self = this;
-            var request = new ItemDetailsRequest
-            {
-                Identifier = identifier.ToString(NumberFormatInfo.InvariantInfo),
-                Culture = self.Culture
-            };
-            var response = await this.serviceClient.SendAsync<ItemDTO>(request, cancellationToken).ConfigureAwait(false);
-            return this.responseConverter.Convert(response, null);
-        }
-
-        /// <inheritdoc />
-        ICollectionPage<Item> IPaginator<Item>.FindPage(int pageIndex)
-        {
-            IItemRepository self = this;
-            var request = new ItemPageRequest
-            {
-                Page = pageIndex,
-                Culture = self.Culture
-            };
-            var response = this.serviceClient.Send<ICollection<ItemDTO>>(request);
-            return this.pageResponseConverter.Convert(response, pageIndex);
-        }
-
-        /// <inheritdoc />
-        ICollectionPage<Item> IPaginator<Item>.FindPage(int pageIndex, int pageSize)
-        {
-            IItemRepository self = this;
-            var request = new ItemPageRequest
-            {
-                Page = pageIndex,
-                PageSize = pageSize,
-                Culture = self.Culture
-            };
-            var response = this.serviceClient.Send<ICollection<ItemDTO>>(request);
-            return this.pageResponseConverter.Convert(response, pageIndex);
-        }
-
-        /// <inheritdoc />
-        Task<ICollectionPage<Item>> IPaginator<Item>.FindPageAsync(int pageIndex)
-        {
-            IItemRepository self = this;
-            return self.FindPageAsync(pageIndex, CancellationToken.None);
-        }
-
-        /// <inheritdoc />
-        async Task<ICollectionPage<Item>> IPaginator<Item>.FindPageAsync(int pageIndex, CancellationToken cancellationToken)
-        {
-            IItemRepository self = this;
-            var request = new ItemPageRequest
-            {
-                Page = pageIndex,
-                Culture = self.Culture
-            };
-            var response = await this.serviceClient.SendAsync<ICollection<ItemDTO>>(request, cancellationToken).ConfigureAwait(false);
-            return this.pageResponseConverter.Convert(response, pageIndex);
-        }
-
-        /// <inheritdoc />
-        Task<ICollectionPage<Item>> IPaginator<Item>.FindPageAsync(int pageIndex, int pageSize)
-        {
-            IItemRepository self = this;
-            return self.FindPageAsync(pageIndex, pageSize, CancellationToken.None);
-        }
-
-        /// <inheritdoc />
-        async Task<ICollectionPage<Item>> IPaginator<Item>.FindPageAsync(int pageIndex, int pageSize, CancellationToken cancellationToken)
-        {
-            IItemRepository self = this;
-            var request = new ItemPageRequest
-            {
-                Page = pageIndex,
-                PageSize = pageSize,
-                Culture = self.Culture
-            };
-            var response = await this.serviceClient.SendAsync<ICollection<ItemDTO>>(request, cancellationToken).ConfigureAwait(false);
-            return this.pageResponseConverter.Convert(response, pageIndex);
+            return items;
         }
     }
 }
