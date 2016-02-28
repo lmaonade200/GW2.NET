@@ -58,7 +58,7 @@ namespace GW2NET.V2.Files
         /// <inheritdoc />
         public async Task<IEnumerable<string>> DiscoverAsync(CancellationToken cancellationToken)
         {
-            var request = ApiMessageBuilder.Init().Version(ApiVersion.V2).OnEndpoint("files").Build();
+            HttpRequestMessage request = ApiMessageBuilder.Init().Version(ApiVersion.V2).OnEndpoint("files").Build();
             return await this.ResponseConverter.ConvertSetAsync(await this.Client.SendAsync(request, cancellationToken), this.identifiersConverter);
         }
 
@@ -71,13 +71,13 @@ namespace GW2NET.V2.Files
         /// <inheritdoc />
         public async Task<Asset> GetAsync(string identifier, CancellationToken cancellationToken)
         {
-            var cacheItem = this.Cache.Get(i => i.Identifier == identifier).SingleOrDefault();
+            Asset cacheItem = this.Cache.Get(i => i.Identifier == identifier).SingleOrDefault();
             if (cacheItem != null)
             {
                 return cacheItem;
             }
 
-            var request = ApiMessageBuilder.Init().Version(ApiVersion.V2).OnEndpoint("files").WithIdentifier(identifier).Build();
+            HttpRequestMessage request = ApiMessageBuilder.Init().Version(ApiVersion.V2).OnEndpoint("files").WithIdentifier(identifier).Build();
             return await this.ResponseConverter.ConvertElementAsync(await this.Client.SendAsync(request, cancellationToken), this.assetConverter);
         }
 
@@ -90,9 +90,9 @@ namespace GW2NET.V2.Files
         /// <inheritdoc />
         public async Task<IEnumerable<Asset>> GetAsync(CancellationToken cancellationToken)
         {
-            var cacheItems = this.Cache.Get(i => true).ToList();
+            List<Asset> cacheItems = this.Cache.Get(i => true).ToList();
 
-            var idsToQuery = (await this.DiscoverAsync(cancellationToken)).SymmetricExcept(cacheItems.Select(i => i.Identifier));
+            IEnumerable<string> idsToQuery = (await this.DiscoverAsync(cancellationToken)).SymmetricExcept(cacheItems.Select(i => i.Identifier));
 
             return (await this.GetItemsAsync(idsToQuery, this.assetConverter, cancellationToken)).Union(cacheItems);
         }
@@ -106,8 +106,8 @@ namespace GW2NET.V2.Files
         /// <inheritdoc />
         public async Task<IEnumerable<Asset>> GetAsync(IEnumerable<string> identifiers, CancellationToken cancellationToken)
         {
-            var idList = identifiers as IList<string> ?? identifiers.ToList();
-            var cacheItems = this.Cache.Get(i => idList.All(id => id != i.Identifier)).ToList();
+            IList<string> idList = identifiers as IList<string> ?? identifiers.ToList();
+            List<Asset> cacheItems = this.Cache.Get(i => idList.All(id => id != i.Identifier)).ToList();
 
             if (cacheItems.Count == idList.Count)
             {
@@ -119,13 +119,13 @@ namespace GW2NET.V2.Files
 
         private async Task<IEnumerable<TValue>> GetItemsAsync<TKey, TDataContract, TValue>(IEnumerable<TKey> ids, IConverter<TDataContract, TValue> itemConverter, CancellationToken cancellationToken)
         {
-            var idListList = this.CalculatePages(ids);
+            IEnumerable<IEnumerable<TKey>> idListList = this.CalculatePages(ids);
 
             ConcurrentBag<TValue> items = new ConcurrentBag<TValue>();
             Parallel.ForEach(idListList,
                              async idList =>
                              {
-                                 var request =
+                                 HttpRequestMessage request =
                                      ApiMessageBuilder.Init()
                                                       .Version(ApiVersion.V2)
                                                       .OnEndpoint("continents")

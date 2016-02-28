@@ -2,13 +2,12 @@
 // This product is licensed under the GNU General Public License version 2 (GPLv2). See the License in the project root folder or the following page: http://www.gnu.org/licenses/gpl-2.0.html
 // </copyright>
 
-namespace GW2NET.V2.Commerce.Listings.Converters
+namespace GW2NET.V2.Commerce.Listings
 {
     using System;
 
     using GW2NET.Commerce;
     using GW2NET.Common;
-    using GW2NET.V2.Commerce.Listings.Json;
 
     /// <summary>Converts objects of type <see cref="ListingOfferDataContract"/> to objects of type <see cref="Offer"/>.</summary>
     public sealed class OfferConverter : IConverter<ListingOfferDataContract, Offer>

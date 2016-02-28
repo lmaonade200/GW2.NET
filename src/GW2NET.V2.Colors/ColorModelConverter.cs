@@ -25,7 +25,7 @@ namespace GW2NET.V2.Colors
         {
             if (colorConverter == null)
             {
-                throw new ArgumentNullException("colorConverter");
+                throw new ArgumentNullException(nameof(colorConverter));
             }
 
             this.colorConverter = colorConverter;
@@ -36,10 +36,10 @@ namespace GW2NET.V2.Colors
         {
             if (value == null)
             {
-                throw new ArgumentNullException("value");
+                throw new ArgumentNullException(nameof(value));
             }
 
-            var colorModel = new ColorModel
+            ColorModel colorModel = new ColorModel
             {
                 Brightness = value.Brightness,
                 Contrast = value.Contrast,
@@ -47,7 +47,7 @@ namespace GW2NET.V2.Colors
                 Saturation = value.Saturation,
                 Lightness = value.Lightness
             };
-            var rgb = value.Rgb;
+            int[] rgb = value.Rgb;
             if (rgb != null && rgb.Length == 3)
             {
                 colorModel.Rgb = this.colorConverter.Convert(rgb, value);

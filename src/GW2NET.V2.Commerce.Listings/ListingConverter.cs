@@ -2,14 +2,14 @@
 // This product is licensed under the GNU General Public License version 2 (GPLv2). See the License in the project root folder or the following page: http://www.gnu.org/licenses/gpl-2.0.html
 // </copyright>
 
-namespace GW2NET.V2.Commerce.Listings.Converters
+namespace GW2NET.V2.Commerce.Listings
 {
     using System;
     using System.Collections.Generic;
 
     using GW2NET.Commerce;
     using GW2NET.Common;
-    using GW2NET.V2.Commerce.Listings.Json;
+    using GW2NET.Common.Converters;
 
     /// <summary>Converts objects of type <see cref="ListingDataContract"/> to objects of type <see cref="Listing"/>.</summary>
     public sealed class ListingConverter : IConverter<ListingDataContract, Listing>
@@ -41,13 +41,13 @@ namespace GW2NET.V2.Commerce.Listings.Converters
 
             if (state == null)
             {
-                throw new ArgumentNullException(nameof(state), "Precondition: state is IResponse");
+                throw new ArgumentNullException(nameof(state));
             }
 
-            var response = state as IResponse;
+            ApiMetadata response = state as ApiMetadata;
             if (response == null)
             {
-                throw new ArgumentException("Precondition: state is IResponse", nameof(state));
+                throw new ArgumentException("Could not cast to ApiMetadata", nameof(state));
             }
 
             return new Listing

@@ -45,7 +45,7 @@ namespace GW2NET.V2.Builds
         /// <inheritdoc />
         public async Task<Build> GetBuildAsync(CancellationToken cancellationToken)
         {
-            var request = ApiMessageBuilder.Init().Version(ApiVersion.V2).OnEndpoint("build").Build();
+            HttpRequestMessage request = ApiMessageBuilder.Init().Version(ApiVersion.V2).OnEndpoint("build").Build();
 
             return await this.ResponseConverter.ConvertElementAsync(await this.Client.SendAsync(request, cancellationToken), this.buildConverter);
         }

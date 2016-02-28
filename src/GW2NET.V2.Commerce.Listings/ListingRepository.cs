@@ -18,7 +18,6 @@ namespace GW2NET.V2.Commerce.Listings
     using GW2NET.Common.Converters;
     using GW2NET.Common.Messages;
     using GW2NET.Items;
-    using GW2NET.V2.Commerce.Listings.Json;
 
     /// <summary>Represents a repository that retrieves data from the /v2/commerce/listings interface. See the remarks section for important limitations regarding this implementation.</summary>
     /// <remarks>
@@ -38,14 +37,14 @@ namespace GW2NET.V2.Commerce.Listings
         private readonly IConverter<ListingDataContract, Listing> listingConverter;
 
         /// <summary>Initializes a new instance of the <see cref="ListingRepository"/> class.</summary>
-        /// <param name="serviceClient"></param>
-        /// <param name="identifiersConverter"></param>
-        /// <param name="listingConverter"></param>
-        /// <param name="responseConverter"></param>
-        /// <param name="cache"></param>
-        /// <exception cref="ArgumentNullException"></exception>
-        public ListingRepository(HttpClient serviceClient, ResponseConverterBase responseConverter, ICache<Listing> cache, IConverter<int, int> identifiersConverter, IConverter<ListingDataContract, Listing> listingConverter)
-            : base(serviceClient, responseConverter, cache)
+        /// <param name="httpClient">The <see cref="HttpClient"/> used to make connections with the ArenaNet servers.</param>
+        /// <param name="responseConverter">The <see cref="ResponseConverterBase"/> used to convert <see cref="HttpResponseMessage"/> into objects.</param>
+        /// <param name="cache">The <see cref="ICache{T}"/> used to cache api responses.</param>
+        /// <param name="identifiersConverter">A converter used to convert identifiers.</param>
+        /// <param name="listingConverter">A converter used to convert data contracts into objects.</param>
+        /// <exception cref="ArgumentNullException">Thrown when either parameter is null.</exception>
+        public ListingRepository(HttpClient httpClient, ResponseConverterBase responseConverter, ICache<Listing> cache, IConverter<int, int> identifiersConverter, IConverter<ListingDataContract, Listing> listingConverter)
+            : base(httpClient, responseConverter, cache)
         {
             if (identifiersConverter == null)
             {
@@ -70,7 +69,7 @@ namespace GW2NET.V2.Commerce.Listings
         /// <inheritdoc />
         public async Task<IEnumerable<int>> DiscoverAsync(CancellationToken cancellationToken)
         {
-            var request = ApiMessageBuilder.Init().Version(ApiVersion.V2).OnEndpoint("commerce/listings").Build();
+            HttpRequestMessage request = ApiMessageBuilder.Init().Version(ApiVersion.V2).OnEndpoint("commerce/listings").Build();
 
             return await this.ResponseConverter.ConvertSetAsync(await this.Client.SendAsync(request, cancellationToken), this.identifiersConverter);
         }
@@ -84,13 +83,13 @@ namespace GW2NET.V2.Commerce.Listings
         /// <inheritdoc />
         public async Task<Listing> GetAsync(int identifier, CancellationToken cancellationToken)
         {
-            var cacheElem = this.Cache.Get(l => l.ItemId == identifier).SingleOrDefault();
+            Listing cacheElem = this.Cache.Get(l => l.ItemId == identifier).SingleOrDefault();
             if (cacheElem != null)
             {
                 return cacheElem;
             }
 
-            var request = ApiMessageBuilder.Init().Version(ApiVersion.V2).OnEndpoint("commerce/listings").WithIdentifier(identifier).Build();
+            HttpRequestMessage request = ApiMessageBuilder.Init().Version(ApiVersion.V2).OnEndpoint("commerce/listings").WithIdentifier(identifier).Build();
 
             return await this.ResponseConverter.ConvertElementAsync(await this.Client.SendAsync(request, cancellationToken), this.listingConverter);
         }
@@ -104,30 +103,30 @@ namespace GW2NET.V2.Commerce.Listings
         /// <inheritdoc />
         public async Task<IEnumerable<Listing>> GetAsync(CancellationToken cancellationToken)
         {
-            var ids = this.DiscoverAsync(cancellationToken);
-            var cacheItems = this.Cache.Value.ToList();
-            var idsToQuery = (await ids).SymmetricExcept(cacheItems.Select(i => i.ItemId)).ToList();
+            Task<IEnumerable<int>> ids = this.DiscoverAsync(cancellationToken);
+            List<Listing> cacheItems = this.Cache.Value.ToList();
+            List<int> idsToQuery = (await ids).SymmetricExcept(cacheItems.Select(i => i.ItemId)).ToList();
             if (idsToQuery.Count == 0)
             {
                 return cacheItems;
             }
 
-            var idListList = this.CalculatePages(idsToQuery);
+            IEnumerable<IEnumerable<int>> idListList = this.CalculatePages(idsToQuery);
 
             ConcurrentBag<Listing> listings = new ConcurrentBag<Listing>(cacheItems);
             Parallel.ForEach(idListList,
                              async idList =>
                              {
-                                 var request =
+                                 HttpRequestMessage request =
                                      ApiMessageBuilder.Init()
                                                       .Version(ApiVersion.V2)
                                                       .OnEndpoint("commerce/listings")
                                                       .WithIdentifiers(idList)
                                                       .Build();
 
-                                 var response = this.ResponseConverter.ConvertSetAsync(await this.Client.SendAsync(request, cancellationToken), this.listingConverter);
+                                 Task<IEnumerable<Listing>> response = this.ResponseConverter.ConvertSetAsync(await this.Client.SendAsync(request, cancellationToken), this.listingConverter);
 
-                                 foreach (var listing in await response)
+                                 foreach (Listing listing in await response)
                                  {
                                      listings.Add(listing);
                                  }
@@ -146,28 +145,28 @@ namespace GW2NET.V2.Commerce.Listings
         {
             IList<int> ids = identifiers as IList<int> ?? identifiers.ToList();
 
-            var cacheItems = this.Cache.Get(l => ids.All(i => i != l.ItemId)).ToList();
+            List<Listing> cacheItems = this.Cache.Get(l => ids.All(i => i != l.ItemId)).ToList();
             if (cacheItems.Count == ids.Count)
             {
                 return cacheItems;
             }
 
-            var idListList = this.CalculatePages(ids.SymmetricExcept(cacheItems.Select(i => i.ItemId)).ToList());
+            IEnumerable<IEnumerable<int>> idListList = this.CalculatePages(ids.SymmetricExcept(cacheItems.Select(i => i.ItemId)).ToList());
 
             ConcurrentBag<Listing> listings = new ConcurrentBag<Listing>(cacheItems);
             Parallel.ForEach(idListList,
                              async idList =>
                              {
-                                 var request =
+                                 HttpRequestMessage request =
                                      ApiMessageBuilder.Init()
                                                       .Version(ApiVersion.V2)
                                                       .OnEndpoint("commerce/listings")
                                                       .WithIdentifiers(idList)
                                                       .Build();
 
-                                 var response = this.ResponseConverter.ConvertSetAsync(await this.Client.SendAsync(request, cancellationToken), this.listingConverter);
+                                 Task<IEnumerable<Listing>> response = this.ResponseConverter.ConvertSetAsync(await this.Client.SendAsync(request, cancellationToken), this.listingConverter);
 
-                                 foreach (var listing in await response)
+                                 foreach (Listing listing in await response)
                                  {
                                      listings.Add(listing);
                                  }

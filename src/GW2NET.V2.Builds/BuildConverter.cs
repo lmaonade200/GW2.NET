@@ -1,11 +1,6 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="BuildConverter.cs" company="GW2.NET Coding Team">
-//   This product is licensed under the GNU General Public License version 2 (GPLv2). See the License in the project root folder or the following page: http://www.gnu.org/licenses/gpl-2.0.html
+﻿// <copyright file="BuildConverter.cs" company="GW2.NET Coding Team">
+// This product is licensed under the GNU General Public License version 2 (GPLv2). See the License in the project root folder or the following page: http://www.gnu.org/licenses/gpl-2.0.html
 // </copyright>
-// <summary>
-//   Converts objects of type <see cref="BuildDTO" /> to objects of type <see cref="Build" />.
-// </summary>
-// --------------------------------------------------------------------------------------------------------------------
 
 namespace GW2NET.V2.Builds
 {
@@ -13,6 +8,7 @@ namespace GW2NET.V2.Builds
 
     using GW2NET.Builds;
     using GW2NET.Common;
+    using GW2NET.Common.Converters;
 
     /// <summary>Converts objects of type <see cref="BuildDataContract"/> to objects of type <see cref="Build"/>.</summary>
     public sealed class BuildConverter : IConverter<BuildDataContract, Build>
@@ -22,24 +18,24 @@ namespace GW2NET.V2.Builds
         {
             if (value == null)
             {
-                throw new ArgumentNullException("value");
+                throw new ArgumentNullException(nameof(value));
             }
 
             if (state == null)
             {
-                throw new ArgumentNullException("state", "Precondition: state is IResponse<BuildDTO>");
+                throw new ArgumentNullException(nameof(state));
             }
 
-            var response = state as IResponse;
+            ApiMetadata response = state as ApiMetadata;
             if (response == null)
             {
-                throw new ArgumentException("Precondition: state is IResponse", "state");
+                throw new ArgumentException("Could not cast to ApiMetadata", nameof(state));
             }
 
             return new Build
             {
                 BuildId = value.BuildId,
-                Timestamp = response.Date
+                Timestamp = response.RequestDate
             };
         }
     }

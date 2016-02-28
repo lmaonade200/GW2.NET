@@ -62,7 +62,7 @@ namespace GW2NET.V2.Continents
         /// <inheritdoc />
         public async Task<IEnumerable<int>> DiscoverAsync(CancellationToken cancellationToken)
         {
-            var request = ApiMessageBuilder.Init().Version(ApiVersion.V2).OnEndpoint("continents").Build();
+            HttpRequestMessage request = ApiMessageBuilder.Init().Version(ApiVersion.V2).OnEndpoint("continents").Build();
             return await this.ResponseConverter.ConvertSetAsync(await this.Client.SendAsync(request, cancellationToken), this.identifiersConverter);
         }
 
@@ -75,13 +75,13 @@ namespace GW2NET.V2.Continents
         /// <inheritdoc />
         public async Task<Continent> GetAsync(int identifier, CancellationToken cancellationToken)
         {
-            var cacheItem = this.Cache.Get(i => i.ContinentId == identifier).SingleOrDefault();
+            Continent cacheItem = this.Cache.Get(i => i.ContinentId == identifier).SingleOrDefault();
             if (cacheItem != null)
             {
                 return cacheItem;
             }
 
-            var request = ApiMessageBuilder.Init().Version(ApiVersion.V2).OnEndpoint("continents").ForCulture(this.Culture).WithIdentifier(identifier).Build();
+            HttpRequestMessage request = ApiMessageBuilder.Init().Version(ApiVersion.V2).OnEndpoint("continents").ForCulture(this.Culture).WithIdentifier(identifier).Build();
             return await this.ResponseConverter.ConvertElementAsync(await this.Client.SendAsync(request, cancellationToken), this.continentConverter);
         }
 
@@ -94,8 +94,8 @@ namespace GW2NET.V2.Continents
         /// <inheritdoc />
         public async Task<IEnumerable<Continent>> GetAsync(CancellationToken cancellationToken)
         {
-            var cacheItems = this.Cache.Get(i => true).ToList();
-            var ids = (await this.DiscoverAsync(cancellationToken)).SymmetricExcept(cacheItems.Select(i => i.ContinentId));
+            List<Continent> cacheItems = this.Cache.Get(i => true).ToList();
+            IEnumerable<int> ids = (await this.DiscoverAsync(cancellationToken)).SymmetricExcept(cacheItems.Select(i => i.ContinentId));
 
             return (await this.GetItemsAsync(ids, this.continentConverter, cancellationToken)).Union(cacheItems);
         }
@@ -110,7 +110,7 @@ namespace GW2NET.V2.Continents
         public async Task<IEnumerable<Continent>> GetAsync(IEnumerable<int> identifiers, CancellationToken cancellationToken)
         {
             IList<int> ids = identifiers as IList<int> ?? identifiers.ToList();
-            var cacheItems = this.Cache.Get(i => ids.All(id => id != i.ContinentId)).ToList();
+            List<Continent> cacheItems = this.Cache.Get(i => ids.All(id => id != i.ContinentId)).ToList();
 
             if (cacheItems.Count == ids.Count)
             {
@@ -122,13 +122,13 @@ namespace GW2NET.V2.Continents
 
         private async Task<IEnumerable<TValue>> GetItemsAsync<TKey, TDataContract, TValue>(IEnumerable<TKey> ids, IConverter<TDataContract, TValue> itemConverter, CancellationToken cancellationToken)
         {
-            var idListList = this.CalculatePages(ids);
+            IEnumerable<IEnumerable<TKey>> idListList = this.CalculatePages(ids);
 
             ConcurrentBag<TValue> items = new ConcurrentBag<TValue>();
             Parallel.ForEach(idListList,
                              async idList =>
                              {
-                                 var request =
+                                 HttpRequestMessage request =
                                      ApiMessageBuilder.Init()
                                                       .Version(ApiVersion.V2)
                                                       .OnEndpoint("continents")

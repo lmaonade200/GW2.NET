@@ -51,13 +51,13 @@ namespace GW2NET.V2.Colors
                 throw new ArgumentNullException("state");
             }
 
-            var response = state as IResponse;
+            IResponse response = state as IResponse;
             if (response == null)
             {
                 throw new ArgumentException("Precondition: state is IResponse", "state");
             }
 
-            var entity = new ColorPalette
+            ColorPalette entity = new ColorPalette
             {
                 ColorId = value.Id,
                 Name = value.Name,
@@ -74,7 +74,7 @@ namespace GW2NET.V2.Colors
             }
             else
             {
-                var values = new List<string>(value.Categories.Length);
+                List<string> values = new List<string>(value.Categories.Length);
                 values.AddRange(value.Categories);
                 entity.Categories = values;
             }

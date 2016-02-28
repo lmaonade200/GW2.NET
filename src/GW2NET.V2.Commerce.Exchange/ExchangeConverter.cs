@@ -8,6 +8,7 @@ namespace GW2NET.V2.Commerce.Exchange
 
     using GW2NET.Commerce;
     using GW2NET.Common;
+    using GW2NET.Common.Converters;
 
     /// <summary>Converts objects of type <see cref="ExchangeDataContract"/> to objects of type <see cref="Exchange"/>.</summary>
     public sealed class ExchangeConverter : IConverter<ExchangeDataContract, Exchange>
@@ -17,25 +18,25 @@ namespace GW2NET.V2.Commerce.Exchange
         {
             if (value == null)
             {
-                throw new ArgumentNullException("value");
+                throw new ArgumentNullException(nameof(value));
             }
 
             if (state == null)
             {
-                throw new ArgumentNullException("state", "Precondition: state is IResponse<ExchangeDTO>");
+                throw new ArgumentNullException(nameof(state));
             }
 
-            var response = state as IResponse;
+            ApiMetadata response = state as ApiMetadata;
             if (response == null)
             {
-                throw new ArgumentException("Precondition: state is IResponse", "state");
+                throw new ArgumentException("Could not cast to ApiMetadata", nameof(state));
             }
 
             return new Exchange
             {
                 CoinsPerGem = value.CoinsPerGem,
                 Receive = value.Quantity,
-                Timestamp = response.Date
+                Timestamp = response.RequestDate
             };
         }
     }

@@ -29,17 +29,17 @@ namespace GW2NET.V2.Accounts.Characters
         {
             if (genderConverter == null)
             {
-                throw new ArgumentNullException("genderConverter");
+                throw new ArgumentNullException(nameof(genderConverter));
             }
 
             if (professionConverter == null)
             {
-                throw new ArgumentNullException("professionConverter");
+                throw new ArgumentNullException(nameof(professionConverter));
             }
 
             if (raceConverter == null)
             {
-                throw new ArgumentNullException("raceConverter");
+                throw new ArgumentNullException(nameof(raceConverter));
             }
 
             this.genderConverter = genderConverter;
@@ -52,10 +52,10 @@ namespace GW2NET.V2.Accounts.Characters
         {
             if (value == null)
             {
-                throw new ArgumentNullException("value");
+                throw new ArgumentNullException(nameof(value));
             }
 
-            var character = new Character
+            Character character = new Character
             {
                 Level = (short)value.Level,
                 Name = value.Name,

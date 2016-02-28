@@ -7,6 +7,7 @@ namespace GW2NET.V2.Continents
     using System;
 
     using GW2NET.Common;
+    using GW2NET.Common.Converters;
     using GW2NET.Common.Drawing;
     using GW2NET.Maps;
 
@@ -16,15 +17,20 @@ namespace GW2NET.V2.Continents
         /// <inheritdoc />
         public Continent Convert(ContinentDataContract value, object state)
         {
-            if (state == null)
+            if (value == null)
             {
-                throw new ArgumentNullException(nameof(state), "Precondition: state is IResponse");
+                throw new ArgumentNullException(nameof(value));
             }
 
-            var response = state as IResponse;
+            if (state == null)
+            {
+                throw new ArgumentNullException(nameof(state));
+            }
+
+            ApiMetadata response = state as ApiMetadata;
             if (response == null)
             {
-                throw new ArgumentException("Precondition: state is IResponse", nameof(state));
+                throw new ArgumentException("Could not cast to ApiMetadata", nameof(state));
             }
 
             return new Continent
@@ -35,7 +41,7 @@ namespace GW2NET.V2.Continents
                 MaximumZoom = value.MaximumZoom,
                 MinimumZoom = value.MinimumZoom,
                 Name = value.Name,
-                Culture = response.Culture
+                Culture = response.ContentLanguage
             };
         }
     }

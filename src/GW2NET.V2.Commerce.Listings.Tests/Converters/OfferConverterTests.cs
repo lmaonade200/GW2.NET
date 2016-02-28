@@ -4,8 +4,6 @@
 
 namespace GW2NET.V2.Commerce.Listings.Converters
 {
-    using GW2NET.V2.Commerce.Listings.Json;
-
     using Xunit;
 
     public class OfferConverterTests

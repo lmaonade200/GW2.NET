@@ -8,6 +8,7 @@ namespace GW2NET.V2.Commerce.Prices
 
     using GW2NET.Commerce;
     using GW2NET.Common;
+    using GW2NET.Common.Converters;
 
     /// <summary>Converts objects of type <see cref="AggregateListingDataContract"/> to objects of type <see cref="AggregateListing"/>.</summary>
     public sealed class AggregateListingConverter : IConverter<AggregateListingDataContract, AggregateListing>
@@ -20,7 +21,7 @@ namespace GW2NET.V2.Commerce.Prices
         {
             if (aggregateOfferConverter == null)
             {
-                throw new ArgumentNullException("aggregateOfferConverter");
+                throw new ArgumentNullException(nameof(aggregateOfferConverter));
             }
 
             this.aggregateOfferConverter = aggregateOfferConverter;
@@ -31,24 +32,24 @@ namespace GW2NET.V2.Commerce.Prices
         {
             if (value == null)
             {
-                throw new ArgumentNullException("value");
+                throw new ArgumentNullException(nameof(value));
             }
 
             if (state == null)
             {
-                throw new ArgumentNullException("state", "Precondition: state is IResponse");
+                throw new ArgumentNullException(nameof(state));
             }
 
-            IResponse response = state as IResponse;
+            ApiMetadata response = state as ApiMetadata;
             if (response == null)
             {
-                throw new ArgumentException("Precondition: state is IResponse", "state");
+                throw new ArgumentException("Could not cast to ApiMetadata", nameof(state));
             }
 
             AggregateListing aggregateListing = new AggregateListing
             {
                 ItemId = value.Id,
-                Timestamp = response.Date,
+                Timestamp = response.RequestDate,
                 Whitelisted = value.Whitelisted
             };
             if (value.BuyOffers != null)

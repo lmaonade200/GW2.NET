@@ -20,7 +20,7 @@ namespace GW2NET.V2.Files
                 throw new ArgumentNullException(nameof(value));
             }
 
-            var asset = new Asset
+            Asset asset = new Asset
             {
                 Identifier = value.Id,
             };
@@ -32,7 +32,7 @@ namespace GW2NET.V2.Files
 
                 // Split the path into segments
                 // Format: /file/{signature}/{identifier}.{extension}
-                var segments = icon.LocalPath.Split('.')[0].Split('/');
+                string[] segments = icon.LocalPath.Split('.')[0].Split('/');
                 if (segments.Length >= 3 && segments[2] != null)
                 {
                     asset.FileSignature = segments[2];

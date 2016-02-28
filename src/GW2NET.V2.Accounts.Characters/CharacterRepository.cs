@@ -134,7 +134,7 @@ namespace GW2NET.V2.Accounts.Characters
         public async Task<IEnumerable<Character>> GetAsync(IEnumerable<string> identifiers, CancellationToken cancellationToken)
         {
             IList<string> ids = identifiers as IList<string> ?? identifiers.ToList();
-            var cacheChars = this.Cache.Get(c => ids.All(i => i != c.Name)).ToList();
+            List<Character> cacheChars = this.Cache.Get(c => ids.All(i => i != c.Name)).ToList();
 
             if (cacheChars.Count == ids.Count)
             {
