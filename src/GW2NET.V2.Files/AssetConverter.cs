@@ -1,29 +1,23 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="AssetConverter.cs" company="GW2.NET Coding Team">
-//   This product is licensed under the GNU General Public License version 2 (GPLv2). See the License in the project root folder or the following page: http://www.gnu.org/licenses/gpl-2.0.html
+﻿// <copyright file="AssetConverter.cs" company="GW2.NET Coding Team">
+// This product is licensed under the GNU General Public License version 2 (GPLv2). See the License in the project root folder or the following page: http://www.gnu.org/licenses/gpl-2.0.html
 // </copyright>
-// <summary>
-//   Defines the AssetConverter type.
-// </summary>
-// --------------------------------------------------------------------------------------------------------------------
 
-namespace GW2NET.V2.Files.Converters
+namespace GW2NET.V2.Files
 {
     using System;
 
     using GW2NET.Common;
     using GW2NET.Files;
-    using GW2NET.V2.Files.Json;
 
-    /// <summary>Converts a <see cref="FileDTO"/> to an <see cref="Asset"/>.</summary>
-    public sealed class AssetConverter : IConverter<FileDTO, Asset>
+    /// <summary>Converts a <see cref="FileDataContract"/> to an <see cref="Asset"/>.</summary>
+    public sealed class AssetConverter : IConverter<FileDataContract, Asset>
     {
         /// <inheritdoc />
-        public Asset Convert(FileDTO value, object state)
+        public Asset Convert(FileDataContract value, object state)
         {
             if (value == null)
             {
-                throw new ArgumentNullException("value");
+                throw new ArgumentNullException(nameof(value));
             }
 
             var asset = new Asset

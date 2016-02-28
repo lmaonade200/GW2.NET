@@ -1,217 +1,146 @@
-// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="FileRepository.cs" company="GW2.NET Coding Team">
-//   This product is licensed under the GNU General Public License version 2 (GPLv2). See the License in the project root folder or the following page: http://www.gnu.org/licenses/gpl-2.0.html
+// This product is licensed under the GNU General Public License version 2 (GPLv2). See the License in the project root folder or the following page: http://www.gnu.org/licenses/gpl-2.0.html
 // </copyright>
-// <summary>
-//   Defines the FileRepository type.
-// </summary>
-// --------------------------------------------------------------------------------------------------------------------
 
 namespace GW2NET.V2.Files
 {
     using System;
+    using System.Collections.Concurrent;
     using System.Collections.Generic;
+    using System.Linq;
+    using System.Net.Http;
     using System.Threading;
     using System.Threading.Tasks;
 
+    using GW2NET.Caching;
     using GW2NET.Common;
+    using GW2NET.Common.Converters;
+    using GW2NET.Common.Messages;
     using GW2NET.Files;
-    using GW2NET.V2.Files.Json;
 
     /// <summary>Represents a repository that retrieves data from the /v2/files interface.</summary>
-    public sealed class FileRepository : IFileRepository
+    public sealed class FileRepository : CachedRepository<Asset>, IApiService<string, Asset>, IDiscoverService<string>
     {
-        private readonly IServiceClient serviceClient;
+        private readonly IConverter<string, string> identifiersConverter;
 
-        private readonly IConverter<IResponse<ICollection<string>>, ICollection<string>> identifiersResponseConverter;
-
-        private readonly IConverter<IResponse<FileDTO>, Asset> responseConverter;
-
-        private readonly IConverter<IResponse<ICollection<FileDTO>>, ICollectionPage<Asset>> pageResponseConverter;
-
-        private readonly IConverter<IResponse<ICollection<FileDTO>>, IDictionaryRange<string, Asset>> bulkResponseConverter;
+        private readonly IConverter<FileDataContract, Asset> assetConverter;
 
         /// <summary>Initializes a new instance of the <see cref="FileRepository"/> class.</summary>
-        /// <param name="serviceClient"></param>
-        /// <param name="identifiersResponseConverter"></param>
-        /// <param name="responseConverter"></param>
-        /// <param name="bulkResponseConverter"></param>
-        /// <param name="pageResponseConverter"></param>
-        /// <exception cref="ArgumentNullException"></exception>
-        public FileRepository(
-            IServiceClient serviceClient,
-            IConverter<IResponse<ICollection<string>>, ICollection<string>> identifiersResponseConverter,
-            IConverter<IResponse<FileDTO>, Asset> responseConverter,
-            IConverter<IResponse<ICollection<FileDTO>>, IDictionaryRange<string, Asset>> bulkResponseConverter,
-            IConverter<IResponse<ICollection<FileDTO>>, ICollectionPage<Asset>> pageResponseConverter)
+        /// <param name="httpClient">The <see cref="HttpClient"/> used to make connections with the ArenaNet servers.</param>
+        /// <param name="responseConverter">The <see cref="ResponseConverterBase"/> used to convert <see cref="HttpResponseMessage"/> into objects.</param>
+        /// <param name="cache">The <see cref="ICache{T}"/> used to cache api responses.</param>
+        /// <param name="identifiersConverter">A converter used to convert identifiers.</param>
+        /// <param name="assetConverter">A converter used to convert data contracts into objects.</param>
+        /// <exception cref="ArgumentNullException">Thrown when either parameter is null.</exception>
+        public FileRepository(HttpClient httpClient, ResponseConverterBase responseConverter, ICache<Asset> cache, IConverter<string, string> identifiersConverter, IConverter<FileDataContract, Asset> assetConverter)
+            : base(httpClient, responseConverter, cache)
         {
-            if (serviceClient == null)
+            if (identifiersConverter == null)
             {
-                throw new ArgumentNullException("serviceClient");
+                throw new ArgumentNullException(nameof(identifiersConverter));
             }
 
-            if (identifiersResponseConverter == null)
+            if (assetConverter == null)
             {
-                throw new ArgumentNullException("identifiersResponseConverter");
+                throw new ArgumentNullException(nameof(assetConverter));
             }
 
-            if (responseConverter == null)
+            this.identifiersConverter = identifiersConverter;
+            this.assetConverter = assetConverter;
+        }
+
+        /// <inheritdoc />
+        public Task<IEnumerable<string>> DiscoverAsync()
+        {
+            return this.DiscoverAsync(CancellationToken.None);
+        }
+
+        /// <inheritdoc />
+        public async Task<IEnumerable<string>> DiscoverAsync(CancellationToken cancellationToken)
+        {
+            var request = ApiMessageBuilder.Init().Version(ApiVersion.V2).OnEndpoint("files").Build();
+            return await this.ResponseConverter.ConvertSetAsync(await this.Client.SendAsync(request, cancellationToken), this.identifiersConverter);
+        }
+
+        /// <inheritdoc />
+        public Task<Asset> GetAsync(string identifier)
+        {
+            return this.GetAsync(identifier, CancellationToken.None);
+        }
+
+        /// <inheritdoc />
+        public async Task<Asset> GetAsync(string identifier, CancellationToken cancellationToken)
+        {
+            var cacheItem = this.Cache.Get(i => i.Identifier == identifier).SingleOrDefault();
+            if (cacheItem != null)
             {
-                throw new ArgumentNullException("responseConverter");
+                return cacheItem;
             }
 
-            if (bulkResponseConverter == null)
+            var request = ApiMessageBuilder.Init().Version(ApiVersion.V2).OnEndpoint("files").WithIdentifier(identifier).Build();
+            return await this.ResponseConverter.ConvertElementAsync(await this.Client.SendAsync(request, cancellationToken), this.assetConverter);
+        }
+
+        /// <inheritdoc />
+        public Task<IEnumerable<Asset>> GetAsync()
+        {
+            return this.GetAsync(CancellationToken.None);
+        }
+
+        /// <inheritdoc />
+        public async Task<IEnumerable<Asset>> GetAsync(CancellationToken cancellationToken)
+        {
+            var cacheItems = this.Cache.Get(i => true).ToList();
+
+            var idsToQuery = (await this.DiscoverAsync(cancellationToken)).SymmetricExcept(cacheItems.Select(i => i.Identifier));
+
+            return (await this.GetItemsAsync(idsToQuery, this.assetConverter, cancellationToken)).Union(cacheItems);
+        }
+
+        /// <inheritdoc />
+        public Task<IEnumerable<Asset>> GetAsync(IEnumerable<string> identifiers)
+        {
+            return this.GetAsync(identifiers, CancellationToken.None);
+        }
+
+        /// <inheritdoc />
+        public async Task<IEnumerable<Asset>> GetAsync(IEnumerable<string> identifiers, CancellationToken cancellationToken)
+        {
+            var idList = identifiers as IList<string> ?? identifiers.ToList();
+            var cacheItems = this.Cache.Get(i => idList.All(id => id != i.Identifier)).ToList();
+
+            if (cacheItems.Count == idList.Count)
             {
-                throw new ArgumentNullException("bulkResponseConverter");
+                return cacheItems;
             }
 
-            if (pageResponseConverter == null)
-            {
-                throw new ArgumentNullException("pageResponseConverter");
-            }
-
-            this.serviceClient = serviceClient;
-            this.identifiersResponseConverter = identifiersResponseConverter;
-            this.responseConverter = responseConverter;
-            this.bulkResponseConverter = bulkResponseConverter;
-            this.pageResponseConverter = pageResponseConverter;
+            return await this.GetItemsAsync(idList.SymmetricExcept(cacheItems.Select(i => i.Identifier)), this.assetConverter, cancellationToken);
         }
 
-        /// <inheritdoc />
-        ICollection<string> IDiscoverable<string>.Discover()
+        private async Task<IEnumerable<TValue>> GetItemsAsync<TKey, TDataContract, TValue>(IEnumerable<TKey> ids, IConverter<TDataContract, TValue> itemConverter, CancellationToken cancellationToken)
         {
-            var request = new FileDiscoveryRequest();
-            var response = this.serviceClient.Send<ICollection<string>>(request);
-            return this.identifiersResponseConverter.Convert(response, null);
-        }
+            var idListList = this.CalculatePages(ids);
 
-        /// <inheritdoc />
-        Task<ICollection<string>> IDiscoverable<string>.DiscoverAsync()
-        {
-            return ((IFileRepository)this).DiscoverAsync(CancellationToken.None);
-        }
+            ConcurrentBag<TValue> items = new ConcurrentBag<TValue>();
+            Parallel.ForEach(idListList,
+                             async idList =>
+                             {
+                                 var request =
+                                     ApiMessageBuilder.Init()
+                                                      .Version(ApiVersion.V2)
+                                                      .OnEndpoint("continents")
+                                                      .WithIdentifiers(idList)
+                                                      .Build();
 
-        /// <inheritdoc />
-        async Task<ICollection<string>> IDiscoverable<string>.DiscoverAsync(CancellationToken cancellationToken)
-        {
-            var request = new FileDiscoveryRequest();
-            var response = await this.serviceClient.SendAsync<ICollection<string>>(request, cancellationToken).ConfigureAwait(false);
-            return this.identifiersResponseConverter.Convert(response, null);
-        }
+                                 Task<IEnumerable<TValue>> responseItems = this.ResponseConverter.ConvertSetAsync(await this.Client.SendAsync(request, cancellationToken), itemConverter);
 
-        /// <inheritdoc />
-        ICollectionPage<Asset> IPaginator<Asset>.FindPage(int pageIndex)
-        {
-            var request = new FilePageRequest { Page = pageIndex };
-            var response = this.serviceClient.Send<ICollection<FileDTO>>(request);
-            return this.pageResponseConverter.Convert(response, pageIndex);
-        }
+                                 foreach (TValue item in await responseItems)
+                                 {
+                                     items.Add(item);
+                                 }
+                             });
 
-        /// <inheritdoc />
-        ICollectionPage<Asset> IPaginator<Asset>.FindPage(int pageIndex, int pageSize)
-        {
-            var request = new FilePageRequest { Page = pageIndex, PageSize = pageSize };
-            var response = this.serviceClient.Send<ICollection<FileDTO>>(request);
-            return this.pageResponseConverter.Convert(response, pageIndex);
-        }
-
-        /// <inheritdoc />
-        Task<ICollectionPage<Asset>> IPaginator<Asset>.FindPageAsync(int pageIndex)
-        {
-            return ((IFileRepository)this).FindPageAsync(pageIndex, CancellationToken.None);
-        }
-
-        /// <inheritdoc />
-        async Task<ICollectionPage<Asset>> IPaginator<Asset>.FindPageAsync(int pageIndex, CancellationToken cancellationToken)
-        {
-            var request = new FilePageRequest { Page = pageIndex };
-            var response = await this.serviceClient.SendAsync<ICollection<FileDTO>>(request, cancellationToken).ConfigureAwait(false);
-            return this.pageResponseConverter.Convert(response, pageIndex);
-        }
-
-        /// <inheritdoc />
-        Task<ICollectionPage<Asset>> IPaginator<Asset>.FindPageAsync(int pageIndex, int pageSize)
-        {
-            return ((IFileRepository)this).FindPageAsync(pageIndex, pageSize, CancellationToken.None);
-        }
-
-        /// <inheritdoc />
-        async Task<ICollectionPage<Asset>> IPaginator<Asset>.FindPageAsync(int pageIndex, int pageSize, CancellationToken cancellationToken)
-        {
-            var request = new FilePageRequest
-            {
-                Page = pageIndex,
-                PageSize = pageSize
-            };
-            var response = await this.serviceClient.SendAsync<ICollection<FileDTO>>(request, cancellationToken).ConfigureAwait(false);
-            return this.pageResponseConverter.Convert(response, pageIndex);
-        }
-
-        /// <inheritdoc />
-        Asset IRepository<string, Asset>.Find(string identifier)
-        {
-            var request = new FileDetailRequest { Identifier = identifier };
-            var response = this.serviceClient.Send<FileDTO>(request);
-            return this.responseConverter.Convert(response, null);
-        }
-
-        /// <inheritdoc />
-        IDictionaryRange<string, Asset> IRepository<string, Asset>.FindAll()
-        {
-            var request = new FileBulkRequest();
-            var response = this.serviceClient.Send<ICollection<FileDTO>>(request);
-            return this.bulkResponseConverter.Convert(response, null);
-        }
-
-        /// <inheritdoc />
-        IDictionaryRange<string, Asset> IRepository<string, Asset>.FindAll(ICollection<string> identifiers)
-        {
-            var request = new FileBulkRequest { Identifiers = identifiers };
-            var response = this.serviceClient.Send<ICollection<FileDTO>>(request);
-            return this.bulkResponseConverter.Convert(response, null);
-        }
-
-        /// <inheritdoc />
-        Task<IDictionaryRange<string, Asset>> IRepository<string, Asset>.FindAllAsync()
-        {
-            return ((IFileRepository)this).FindAllAsync(CancellationToken.None);
-        }
-
-        /// <inheritdoc />
-        async Task<IDictionaryRange<string, Asset>> IRepository<string, Asset>.FindAllAsync(CancellationToken cancellationToken)
-        {
-            var request = new FileBulkRequest();
-            var response = await this.serviceClient.SendAsync<ICollection<FileDTO>>(request, cancellationToken).ConfigureAwait(false);
-            return this.bulkResponseConverter.Convert(response, null);
-        }
-
-        /// <inheritdoc />
-        Task<IDictionaryRange<string, Asset>> IRepository<string, Asset>.FindAllAsync(ICollection<string> identifiers)
-        {
-            return ((IFileRepository)this).FindAllAsync(identifiers, CancellationToken.None);
-        }
-
-        /// <inheritdoc />
-        async Task<IDictionaryRange<string, Asset>> IRepository<string, Asset>.FindAllAsync(ICollection<string> identifiers, CancellationToken cancellationToken)
-        {
-            var request = new FileBulkRequest { Identifiers = identifiers };
-            var response = await this.serviceClient.SendAsync<ICollection<FileDTO>>(request, cancellationToken).ConfigureAwait(false);
-            return this.bulkResponseConverter.Convert(response, null);
-
-        }
-
-        /// <inheritdoc />
-        Task<Asset> IRepository<string, Asset>.FindAsync(string identifier)
-        {
-            return ((IFileRepository)this).FindAsync(identifier, CancellationToken.None);
-        }
-
-        /// <inheritdoc />
-        async Task<Asset> IRepository<string, Asset>.FindAsync(string identifier, CancellationToken cancellationToken)
-        {
-            var request = new FileDetailRequest { Identifier = identifier };
-            var response = await this.serviceClient.SendAsync<FileDTO>(request, cancellationToken).ConfigureAwait(false);
-            return this.responseConverter.Convert(response, null);
+            return items;
         }
     }
 }
