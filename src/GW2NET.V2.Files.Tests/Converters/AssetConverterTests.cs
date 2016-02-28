@@ -4,8 +4,6 @@
 
 namespace GW2NET.V2.Files.Converters
 {
-    using GW2NET.V2.Files.Json;
-
     using Xunit;
 
     public class AssetConverterTests
@@ -16,7 +14,7 @@ namespace GW2NET.V2.Files.Converters
         [InlineData("map_complete", 528724, "5A4E663071250EC72668C09E3C082E595A380BF7", "https://render.guildwars2.com/file/5A4E663071250EC72668C09E3C082E595A380BF7/528724.png")]
         public void CanConvert(string identifier, int fileId, string fileSignature, string icon)
         {
-            var value = new FileDTO
+            var value = new FileDataContract
             {
                 Id = identifier,
                 Icon = icon

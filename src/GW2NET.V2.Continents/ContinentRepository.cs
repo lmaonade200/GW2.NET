@@ -75,7 +75,7 @@ namespace GW2NET.V2.Continents
         /// <inheritdoc />
         public async Task<Continent> GetAsync(int identifier, CancellationToken cancellationToken)
         {
-            var cacheItem = this.Cache.Get(i => i.ContinentId == identifier).Single();
+            var cacheItem = this.Cache.Get(i => i.ContinentId == identifier).SingleOrDefault();
             if (cacheItem != null)
             {
                 return cacheItem;
@@ -97,7 +97,7 @@ namespace GW2NET.V2.Continents
             var cacheItems = this.Cache.Get(i => true).ToList();
             var ids = (await this.DiscoverAsync(cancellationToken)).SymmetricExcept(cacheItems.Select(i => i.ContinentId));
 
-            return await this.GetItemsAsync(ids, this.continentConverter, cancellationToken);
+            return (await this.GetItemsAsync(ids, this.continentConverter, cancellationToken)).Union(cacheItems);
         }
 
         /// <inheritdoc />
@@ -117,7 +117,7 @@ namespace GW2NET.V2.Continents
                 return cacheItems;
             }
 
-            return await this.GetItemsAsync(ids.SymmetricExcept(cacheItems.Select(i => i.ContinentId)), this.continentConverter, cancellationToken);
+            return (await this.GetItemsAsync(ids.SymmetricExcept(cacheItems.Select(i => i.ContinentId)), this.continentConverter, cancellationToken)).Union(cacheItems);
         }
 
         private async Task<IEnumerable<TValue>> GetItemsAsync<TKey, TDataContract, TValue>(IEnumerable<TKey> ids, IConverter<TDataContract, TValue> itemConverter, CancellationToken cancellationToken)

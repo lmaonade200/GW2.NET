@@ -84,7 +84,7 @@ namespace GW2NET.V2.Commerce.Listings
         /// <inheritdoc />
         public async Task<Listing> GetAsync(int identifier, CancellationToken cancellationToken)
         {
-            var cacheElem = this.Cache.Get(l => l.ItemId == identifier).Single();
+            var cacheElem = this.Cache.Get(l => l.ItemId == identifier).SingleOrDefault();
             if (cacheElem != null)
             {
                 return cacheElem;

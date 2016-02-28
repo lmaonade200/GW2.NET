@@ -81,7 +81,7 @@ namespace GW2NET.V2.Accounts.Characters
         /// <inheritdoc />
         public async Task<Character> GetAsync(string identifier, CancellationToken cancellationToken)
         {
-            Character cacheChar = this.Cache.Get(c => c.Name == identifier).Single();
+            Character cacheChar = this.Cache.Get(c => c.Name == identifier).SingleOrDefault();
             if (cacheChar != null)
             {
                 return cacheChar;

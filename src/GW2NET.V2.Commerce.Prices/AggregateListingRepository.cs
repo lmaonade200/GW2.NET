@@ -86,7 +86,7 @@ namespace GW2NET.V2.Commerce.Prices
         /// <inheritdoc />
         public async Task<AggregateListing> GetAsync(int identifier, CancellationToken cancellationToken)
         {
-            AggregateListing cacheItem = this.Cache.Get(i => i.ItemId == identifier).Single();
+            AggregateListing cacheItem = this.Cache.Get(i => i.ItemId == identifier).SingleOrDefault();
             if (cacheItem != null)
             {
                 return cacheItem;
