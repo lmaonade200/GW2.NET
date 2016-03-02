@@ -1,16 +1,13 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="EmblemTransformationCollectionConverter.cs" company="GW2.NET Coding Team">
-//   This product is licensed under the GNU General Public License version 2 (GPLv2). See the License in the project root folder or the following page: http://www.gnu.org/licenses/gpl-2.0.html
+﻿// <copyright file="EmblemTransformationCollectionConverter.cs" company="GW2.NET Coding Team">
+// This product is licensed under the GNU General Public License version 2 (GPLv2). See the License in the project root folder or the following page: http://www.gnu.org/licenses/gpl-2.0.html
 // </copyright>
-// <summary>
-//   Converts objects of type <see cref="T:ICollection{string}" /> to objects of type <see cref="EmblemTransformations" />.
-// </summary>
-// --------------------------------------------------------------------------------------------------------------------
 
-namespace GW2NET.V1.Guilds.Converters
+namespace GW2NET.V1.Guilds
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
+
     using GW2NET.Common;
     using GW2NET.Guilds;
 
@@ -21,12 +18,12 @@ namespace GW2NET.V1.Guilds.Converters
 
         /// <summary>Initializes a new instance of the <see cref="EmblemTransformationCollectionConverter"/> class.</summary>
         /// <param name="emblemTransformationConverter"></param>
-        /// <exception cref="ArgumentNullException"></exception>
+        /// <exception cref="ArgumentNullException">Thrown when </exception>
         public EmblemTransformationCollectionConverter(IConverter<string, EmblemTransformations> emblemTransformationConverter)
         {
             if (emblemTransformationConverter == null)
             {
-                throw new ArgumentNullException("emblemTransformationConverter");
+                throw new ArgumentNullException(nameof(emblemTransformationConverter));
             }
 
             this.emblemTransformationConverter = emblemTransformationConverter;
@@ -37,16 +34,10 @@ namespace GW2NET.V1.Guilds.Converters
         {
             if (value == null)
             {
-                throw new ArgumentNullException("value");
+                throw new ArgumentNullException(nameof(value));
             }
 
-            var result = default(EmblemTransformations);
-            foreach (var s in value)
-            {
-                result |= this.emblemTransformationConverter.Convert(s, state);
-            }
-
-            return result;
+            return value.Aggregate(default(EmblemTransformations), (current, s) => current | this.emblemTransformationConverter.Convert(s, state));
         }
     }
 }

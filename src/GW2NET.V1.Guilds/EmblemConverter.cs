@@ -1,47 +1,42 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="EmblemConverter.cs" company="GW2.NET Coding Team">
-//   This product is licensed under the GNU General Public License version 2 (GPLv2). See the License in the project root folder or the following page: http://www.gnu.org/licenses/gpl-2.0.html
+﻿// <copyright file="EmblemConverter.cs" company="GW2.NET Coding Team">
+// This product is licensed under the GNU General Public License version 2 (GPLv2). See the License in the project root folder or the following page: http://www.gnu.org/licenses/gpl-2.0.html
 // </copyright>
-// <summary>
-//   Converts objects of type <see cref="EmblemDTO" /> to objects of type <see cref="Emblem" />.
-// </summary>
-// --------------------------------------------------------------------------------------------------------------------
 
-namespace GW2NET.V1.Guilds.Converters
+namespace GW2NET.V1.Guilds
 {
     using System;
     using System.Collections.Generic;
+
     using GW2NET.Common;
     using GW2NET.Guilds;
-    using GW2NET.V1.Guilds.Json;
 
-    /// <summary>Converts objects of type <see cref="EmblemDTO"/> to objects of type <see cref="Emblem"/>.</summary>
-    public sealed class EmblemConverter : IConverter<EmblemDTO, Emblem>
+    /// <summary>Converts objects of type <see cref="EmblemDataContract"/> to objects of type <see cref="Emblem"/>.</summary>
+    public sealed class EmblemConverter : IConverter<EmblemDataContract, Emblem>
     {
         private readonly IConverter<ICollection<string>, EmblemTransformations> emblemTransformationsConverter;
 
         /// <summary>Initializes a new instance of the <see cref="EmblemConverter"/> class.</summary>
         /// <param name="emblemTransformationsConverter"></param>
-        /// <exception cref="ArgumentNullException"></exception>
+        /// <exception cref="ArgumentNullException">Thrown when the inner converter is null.</exception>
         public EmblemConverter(IConverter<ICollection<string>, EmblemTransformations> emblemTransformationsConverter)
         {
             if (emblemTransformationsConverter == null)
             {
-                throw new ArgumentNullException("emblemTransformationsConverter");
+                throw new ArgumentNullException(nameof(emblemTransformationsConverter));
             }
 
             this.emblemTransformationsConverter = emblemTransformationsConverter;
         }
 
         /// <inheritdoc />
-        public Emblem Convert(EmblemDTO value, object state)
+        public Emblem Convert(EmblemDataContract value, object state)
         {
             if (value == null)
             {
-                throw new ArgumentNullException("value");
+                throw new ArgumentNullException(nameof(value));
             }
 
-            var emblem = new Emblem
+            Emblem emblem = new Emblem
             {
                 BackgroundId = value.BackgroundId,
                 ForegroundId = value.ForegroundId,
@@ -49,7 +44,7 @@ namespace GW2NET.V1.Guilds.Converters
                 ForegroundPrimaryColorId = value.ForegroundPrimaryColorId,
                 ForegroundSecondaryColorId = value.ForegroundSecondaryColorId
             };
-            var flags = value.Flags;
+            string[] flags = value.Flags;
             if (flags != null)
             {
                 emblem.Flags = this.emblemTransformationsConverter.Convert(flags, state);

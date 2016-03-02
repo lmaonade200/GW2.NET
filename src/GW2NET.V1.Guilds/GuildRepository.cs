@@ -1,215 +1,63 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="GuildRepository.cs" company="GW2.NET Coding Team">
-//   This product is licensed under the GNU General Public License version 2 (GPLv2). See the License in the project root folder or the following page: http://www.gnu.org/licenses/gpl-2.0.html
+﻿// <copyright file="GuildRepository.cs" company="GW2.NET Coding Team">
+// This product is licensed under the GNU General Public License version 2 (GPLv2). See the License in the project root folder or the following page: http://www.gnu.org/licenses/gpl-2.0.html
 // </copyright>
-// <summary>
-//   Represents a repository that retrieves data from the /v1/guild_details.json interface.
-// </summary>
-// --------------------------------------------------------------------------------------------------------------------
 
 namespace GW2NET.V1.Guilds
 {
     using System;
-    using System.Collections.Generic;
+    using System.Net.Http;
     using System.Threading;
     using System.Threading.Tasks;
     using GW2NET.Common;
+    using GW2NET.Common.Converters;
+    using GW2NET.Common.Messages;
     using GW2NET.Guilds;
-    using GW2NET.V1.Guilds.Json;
 
     /// <summary>Represents a repository that retrieves data from the /v1/guild_details.json interface.</summary>
-    public class GuildRepository : IGuildRepository
+    public class GuildRepository : RepositoryBase, IGuildRepository
     {
-        private readonly IConverter<GuildDTO, Guild> guildConverter;
-
-        private readonly IServiceClient serviceClient;
+        private readonly IConverter<GuildDataContract, Guild> modelConverter;
 
         /// <summary>Initializes a new instance of the <see cref="GuildRepository"/> class.</summary>
-        /// <param name="serviceClient"></param>
-        /// <param name="guildConverter"></param>
-        /// <exception cref="ArgumentNullException"></exception>
-        public GuildRepository(IServiceClient serviceClient, IConverter<GuildDTO, Guild> guildConverter)
+        /// <param name="httpClient">The <see cref="HttpClient"/> used to make connections with the ArenaNet servers.</param>
+        /// <param name="responseConverter">The <see cref="ResponseConverterBase"/> used to convert <see cref="HttpResponseMessage"/> into objects.</param>
+        /// <param name="modelConverter">A converter used to convert data contracts into objects.</param>
+        /// <exception cref="ArgumentNullException">Thrown when either parameter is null.</exception>
+        public GuildRepository(HttpClient httpClient, ResponseConverterBase responseConverter, IConverter<GuildDataContract, Guild> modelConverter)
+            : base(httpClient, responseConverter)
         {
-            if (serviceClient == null)
+            if (modelConverter == null)
             {
-                throw new ArgumentNullException("serviceClient");
+                throw new ArgumentNullException(nameof(modelConverter));
             }
 
-            if (guildConverter == null)
-            {
-                throw new ArgumentNullException("guildConverter");
-            }
-
-            this.serviceClient = serviceClient;
-            this.guildConverter = guildConverter;
+            this.modelConverter = modelConverter;
         }
 
         /// <inheritdoc />
-        ICollection<Guid> IDiscoverable<Guid>.Discover()
+        public Task<Guild> FindAsync(Guid identifier)
         {
-            throw new NotSupportedException();
+            return this.FindAsync(identifier, CancellationToken.None);
         }
 
         /// <inheritdoc />
-        Task<ICollection<Guid>> IDiscoverable<Guid>.DiscoverAsync()
+        public async Task<Guild> FindAsync(Guid identifier, CancellationToken cancellationToken)
         {
-            throw new NotSupportedException();
+            IParameterizedBuilder request = ApiMessageBuilder.Init().Version(ApiVersion.V1).OnEndpoint("guild_details.json").WithParameter("guild_id", identifier.ToString());
+            return await this.ResponseConverter.ConvertElementAsync(await this.Client.SendAsync(request.Build(), cancellationToken), this.modelConverter);
         }
 
         /// <inheritdoc />
-        Task<ICollection<Guid>> IDiscoverable<Guid>.DiscoverAsync(CancellationToken cancellationToken)
+        public Task<Guild> FindByNameAsync(string name)
         {
-            throw new NotSupportedException();
+            return this.FindByNameAsync(name, CancellationToken.None);
         }
 
         /// <inheritdoc />
-        Guild IRepository<Guid, Guild>.Find(Guid identifier)
+        public async Task<Guild> FindByNameAsync(string name, CancellationToken cancellationToken)
         {
-            var request = new GuildRequest
-            {
-                GuildId = identifier
-            };
-            var response = this.serviceClient.Send<GuildDTO>(request);
-            if (response.Content == null)
-            {
-                return null;
-            }
-
-            return this.guildConverter.Convert(response.Content, null);
-        }
-
-        /// <inheritdoc />
-        IDictionaryRange<Guid, Guild> IRepository<Guid, Guild>.FindAll()
-        {
-            throw new NotSupportedException();
-        }
-
-        /// <inheritdoc />
-        IDictionaryRange<Guid, Guild> IRepository<Guid, Guild>.FindAll(ICollection<Guid> identifiers)
-        {
-            throw new NotSupportedException();
-        }
-
-        /// <inheritdoc />
-        Task<IDictionaryRange<Guid, Guild>> IRepository<Guid, Guild>.FindAllAsync()
-        {
-            throw new NotSupportedException();
-        }
-
-        /// <inheritdoc />
-        Task<IDictionaryRange<Guid, Guild>> IRepository<Guid, Guild>.FindAllAsync(CancellationToken cancellationToken)
-        {
-            throw new NotSupportedException();
-        }
-
-        /// <inheritdoc />
-        Task<IDictionaryRange<Guid, Guild>> IRepository<Guid, Guild>.FindAllAsync(ICollection<Guid> identifiers)
-        {
-            throw new NotSupportedException();
-        }
-
-        /// <inheritdoc />
-        Task<IDictionaryRange<Guid, Guild>> IRepository<Guid, Guild>.FindAllAsync(ICollection<Guid> identifiers, CancellationToken cancellationToken)
-        {
-            throw new NotSupportedException();
-        }
-
-        /// <inheritdoc />
-        Task<Guild> IRepository<Guid, Guild>.FindAsync(Guid identifier)
-        {
-            IGuildRepository self = this;
-            return self.FindAsync(identifier, CancellationToken.None);
-        }
-
-        /// <inheritdoc />
-        async Task<Guild> IRepository<Guid, Guild>.FindAsync(Guid identifier, CancellationToken cancellationToken)
-        {
-            var request = new GuildRequest
-            {
-                GuildId = identifier
-            };
-            var response = await this.serviceClient.SendAsync<GuildDTO>(request, cancellationToken).ConfigureAwait(false);
-            if (response.Content == null)
-            {
-                return null;
-            }
-
-            return this.guildConverter.Convert(response.Content, response);
-        }
-
-        /// <inheritdoc />
-        Guild IGuildRepository.FindByName(string name)
-        {
-            var request = new GuildRequest
-            {
-                GuildName = name
-            };
-            var response = this.serviceClient.Send<GuildDTO>(request);
-            if (response.Content == null)
-            {
-                return null;
-            }
-
-            return this.guildConverter.Convert(response.Content, null);
-        }
-
-        /// <inheritdoc />
-        Task<Guild> IGuildRepository.FindByNameAsync(string name)
-        {
-            IGuildRepository self = this;
-            return self.FindByNameAsync(name, CancellationToken.None);
-        }
-
-        /// <inheritdoc />
-        async Task<Guild> IGuildRepository.FindByNameAsync(string name, CancellationToken cancellationToken)
-        {
-            var request = new GuildRequest
-            {
-                GuildName = name
-            };
-            var response = await this.serviceClient.SendAsync<GuildDTO>(request, cancellationToken).ConfigureAwait(false);
-            if (response.Content == null)
-            {
-                return null;
-            }
-
-            return this.guildConverter.Convert(response.Content, response);
-        }
-
-        /// <inheritdoc />
-        ICollectionPage<Guild> IPaginator<Guild>.FindPage(int pageIndex)
-        {
-            throw new NotSupportedException();
-        }
-
-        /// <inheritdoc />
-        ICollectionPage<Guild> IPaginator<Guild>.FindPage(int pageIndex, int pageSize)
-        {
-            throw new NotSupportedException();
-        }
-
-        /// <inheritdoc />
-        Task<ICollectionPage<Guild>> IPaginator<Guild>.FindPageAsync(int pageIndex)
-        {
-            throw new NotSupportedException();
-        }
-
-        /// <inheritdoc />
-        Task<ICollectionPage<Guild>> IPaginator<Guild>.FindPageAsync(int pageIndex, CancellationToken cancellationToken)
-        {
-            throw new NotSupportedException();
-        }
-
-        /// <inheritdoc />
-        Task<ICollectionPage<Guild>> IPaginator<Guild>.FindPageAsync(int pageIndex, int pageSize)
-        {
-            throw new NotSupportedException();
-        }
-
-        /// <inheritdoc />
-        Task<ICollectionPage<Guild>> IPaginator<Guild>.FindPageAsync(int pageIndex, int pageSize, CancellationToken cancellationToken)
-        {
-            throw new NotSupportedException();
+            IParameterizedBuilder request = ApiMessageBuilder.Init().Version(ApiVersion.V1).OnEndpoint("guild_details.json").WithParameter("guild_name", name);
+            return await this.ResponseConverter.ConvertElementAsync(await this.Client.SendAsync(request.Build(), cancellationToken), this.modelConverter);
         }
     }
 }
