@@ -1,25 +1,20 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="RecipeRepository.cs" company="GW2.NET Coding Team">
-//   This product is licensed under the GNU General Public License version 2 (GPLv2). See the License in the project root folder or the following page: http://www.gnu.org/licenses/gpl-2.0.html
+﻿// <copyright file="RecipeRepository.cs" company="GW2.NET Coding Team">
+// This product is licensed under the GNU General Public License version 2 (GPLv2). See the License in the project root folder or the following page: http://www.gnu.org/licenses/gpl-2.0.html
 // </copyright>
-// <summary>
-//   Represents a repository that retrieves data from the /v2/recipes interface. See the remarks section for important limitations regarding this implementation.
-// </summary>
-// --------------------------------------------------------------------------------------------------------------------
+
 namespace GW2NET.V2.Recipes
 {
     using System;
     using System.Collections.Generic;
-    using System.Diagnostics;
-    using System.Diagnostics.CodeAnalysis;
     using System.Globalization;
-    using System.Linq;
+    using System.Net.Http;
     using System.Threading;
     using System.Threading.Tasks;
 
+    using GW2NET.Caching;
     using GW2NET.Common;
     using GW2NET.Common.Converters;
-    using GW2NET.Items;
+    using GW2NET.Common.Messages;
     using GW2NET.Recipes;
     using GW2NET.V2.Recipes.Json;
 
@@ -38,311 +33,74 @@ namespace GW2NET.V2.Recipes
     ///     </item>
     /// </list>
     /// </remarks>
-    public class RecipeRepository : IRecipeRepository
+    public class RecipeRepository : CachedRepository<int, Recipe>, IRecipeRepository, IDiscoverableNew<int>, ICachedRepositoryNew<int, RecipeDTO, Recipe>, ILocalizable
     {
-        private readonly IConverter<IResponse<ICollection<RecipeDTO>>, IDictionaryRange<int, Recipe>> bulkResponseConverter;
-
-        private readonly IConverter<IResponse<ICollection<int>>, ICollection<int>> identifiersResponseConverter;
-
-        private readonly IConverter<IResponse<ICollection<RecipeDTO>>, ICollectionPage<Recipe>> pageResponseConverter;
-
-        private readonly IConverter<IResponse<RecipeDTO>, Recipe> responseConverter;
-
-        private readonly IServiceClient serviceClient;
-
         /// <summary>Initializes a new instance of the <see cref="RecipeRepository"/> class.</summary>
-        /// <param name="serviceClient"></param>
-        /// <param name="identifiersResponseConverter"></param>
-        /// <param name="responseConverter"></param>
-        /// <param name="bulkResponseConverter"></param>
-        /// <param name="pageResponseConverter"></param>
-        /// <exception cref="ArgumentNullException">The value of <paramref name="serviceClient"/> or <paramref name="bulkResponseConverter"/> or <paramref name="responseConverter"/> is a null reference.</exception>
-        public RecipeRepository(
-            IServiceClient serviceClient,
-            IConverter<IResponse<ICollection<int>>, ICollection<int>> identifiersResponseConverter,
-            IConverter<IResponse<RecipeDTO>, Recipe> responseConverter,
-            IConverter<IResponse<ICollection<RecipeDTO>>, IDictionaryRange<int, Recipe>> bulkResponseConverter,
-            IConverter<IResponse<ICollection<RecipeDTO>>, ICollectionPage<Recipe>> pageResponseConverter)
+        /// <param name="httpClient">The <see cref="HttpClient"/> used to make connections with the ArenaNet servers.</param>
+        /// <param name="responseConverter">The <see cref="IResponseConverter"/> used to convert <see cref="HttpResponseMessage"/> into objects.</param>
+        /// <param name="cache">The <see cref="ICache{TKey, TValue}"/> used to cache api responses.</param>
+        /// <param name="identifiersConverter">A converter used to convert identifiers.</param>
+        /// <param name="modelConverter">A converter used to convert data contracts into objects.</param>
+        /// <exception cref="ArgumentNullException">Thrown when either parameter is null.</exception>
+        public RecipeRepository(HttpClient httpClient, IResponseConverter responseConverter, ICache<int, Recipe> cache, IConverter<int, int> identifiersConverter, IConverter<RecipeDTO, Recipe> modelConverter)
+            : base(httpClient, responseConverter, cache)
         {
-            if (serviceClient == null)
+            if (identifiersConverter == null)
             {
-                throw new ArgumentNullException("serviceClient");
+                throw new ArgumentNullException(nameof(identifiersConverter));
             }
 
-            if (identifiersResponseConverter == null)
+            if (modelConverter == null)
             {
-                throw new ArgumentNullException("identifiersResponseConverter");
+                throw new ArgumentNullException(nameof(modelConverter));
             }
 
-            if (responseConverter == null)
+            this.IdentifiersConverter = identifiersConverter;
+            this.ModelConverter = modelConverter;
+        }
+
+        /// <inheritdoc />
+        public CultureInfo Culture { get; set; }
+
+        /// <inheritdoc />
+        public IConverter<int, int> IdentifiersConverter { get; }
+
+        /// <inheritdoc />
+        public IConverter<RecipeDTO, Recipe> ModelConverter { get; }
+
+        /// <inheritdoc />
+        public IParameterizedBuilder ServiceLocation
+        {
+            get
             {
-                throw new ArgumentNullException("responseConverter");
+                return ApiMessageBuilder.Init().Version(ApiVersion.V2).OnEndpoint("recipes");
             }
-
-            if (bulkResponseConverter == null)
-            {
-                throw new ArgumentNullException("bulkResponseConverter");
-            }
-
-            if (pageResponseConverter == null)
-            {
-                throw new ArgumentNullException("pageResponseConverter");
-            }
-
-            this.serviceClient = serviceClient;
-            this.identifiersResponseConverter = identifiersResponseConverter;
-            this.responseConverter = responseConverter;
-            this.bulkResponseConverter = bulkResponseConverter;
-            this.pageResponseConverter = pageResponseConverter;
         }
 
         /// <inheritdoc />
-        CultureInfo ILocalizable.Culture { get; set; }
-
-        /// <inheritdoc />
-        ICollection<int> IDiscoverable<int>.Discover()
+        public Task<IEnumerable<int>> DiscoverByInputAsync(int identifier)
         {
-            var request = new RecipeDiscoveryRequest();
-            var response = this.serviceClient.Send<ICollection<int>>(request);
-            return this.identifiersResponseConverter.Convert(response, null);
+            return this.DiscoverByInputAsync(identifier, CancellationToken.None);
         }
 
         /// <inheritdoc />
-        Task<ICollection<int>> IDiscoverable<int>.DiscoverAsync()
+        public async Task<IEnumerable<int>> DiscoverByInputAsync(int identifier, CancellationToken cancellationToken)
         {
-            IRecipeRepository self = this;
-            return self.DiscoverAsync(CancellationToken.None);
+            IParameterizedBuilder request = ApiMessageBuilder.Init().Version(ApiVersion.V2).OnEndpoint("recipes/search").WithParameter("input", identifier.ToString());
+            return await this.ResponseConverter.ConvertSetAsync(await this.Client.SendAsync(request.Build(), cancellationToken), this.IdentifiersConverter);
         }
 
         /// <inheritdoc />
-        async Task<ICollection<int>> IDiscoverable<int>.DiscoverAsync(CancellationToken cancellationToken)
+        public Task<IEnumerable<int>> DiscoverByOutputAsync(int identifier)
         {
-            var request = new RecipeDiscoveryRequest();
-            var response = await this.serviceClient.SendAsync<ICollection<int>>(request, cancellationToken).ConfigureAwait(false);
-            return this.identifiersResponseConverter.Convert(response, null);
+            return this.DiscoverByOutputAsync(identifier, CancellationToken.None);
         }
 
         /// <inheritdoc />
-        ICollection<int> IRecipeRepository.DiscoverByInput(int identifier)
+        public async Task<IEnumerable<int>> DiscoverByOutputAsync(int identifier, CancellationToken cancellationToken)
         {
-            var request = new RecipeSearchRequest
-            {
-                Input = identifier
-            };
-            var response = this.serviceClient.Send<ICollection<int>>(request);
-            return this.identifiersResponseConverter.Convert(response, null);
-        }
-
-        /// <inheritdoc />
-        Task<ICollection<int>> IRecipeRepository.DiscoverByInputAsync(int identifier)
-        {
-            IRecipeRepository self = this;
-            return self.DiscoverByInputAsync(identifier, CancellationToken.None);
-        }
-
-        /// <inheritdoc />
-        async Task<ICollection<int>> IRecipeRepository.DiscoverByInputAsync(int identifier, CancellationToken cancellationToken)
-        {
-            var request = new RecipeSearchRequest
-            {
-                Input = identifier
-            };
-            var response = await this.serviceClient.SendAsync<ICollection<int>>(request, cancellationToken).ConfigureAwait(false);
-            return this.identifiersResponseConverter.Convert(response, null);
-        }
-
-        /// <inheritdoc />
-        ICollection<int> IRecipeRepository.DiscoverByOutput(int identifier)
-        {
-            var request = new RecipeSearchRequest
-            {
-                Output = identifier
-            };
-            var response = this.serviceClient.Send<ICollection<int>>(request);
-            return this.identifiersResponseConverter.Convert(response, null);
-        }
-
-        /// <inheritdoc />
-        Task<ICollection<int>> IRecipeRepository.DiscoverByOutputAsync(int identifier)
-        {
-            IRecipeRepository self = this;
-            return self.DiscoverByOutputAsync(identifier, CancellationToken.None);
-        }
-
-        /// <inheritdoc />
-        async Task<ICollection<int>> IRecipeRepository.DiscoverByOutputAsync(int identifier, CancellationToken cancellationToken)
-        {
-            var request = new RecipeSearchRequest
-            {
-                Output = identifier
-            };
-            var response = await this.serviceClient.SendAsync<ICollection<int>>(request, cancellationToken).ConfigureAwait(false);
-            return this.identifiersResponseConverter.Convert(response, null);
-        }
-
-        /// <inheritdoc />
-        Recipe IRepository<int, Recipe>.Find(int identifier)
-        {
-            IRecipeRepository self = this;
-            var request = new RecipeDetailsRequest
-            {
-                Identifier = identifier.ToString(NumberFormatInfo.InvariantInfo), 
-                Culture = self.Culture
-            };
-            var response = this.serviceClient.Send<RecipeDTO>(request);
-            return this.responseConverter.Convert(response, null);
-        }
-
-        /// <inheritdoc />
-        IDictionaryRange<int, Recipe> IRepository<int, Recipe>.FindAll()
-        {
-            IRecipeRepository self = this;
-            var request = new RecipeBulkRequest
-            {
-                Culture = self.Culture
-            };
-            var response = this.serviceClient.Send<ICollection<RecipeDTO>>(request);
-            return this.bulkResponseConverter.Convert(response, null);
-        }
-
-        /// <inheritdoc />
-        IDictionaryRange<int, Recipe> IRepository<int, Recipe>.FindAll(ICollection<int> identifiers)
-        {
-            IRecipeRepository self = this;
-            var request = new RecipeBulkRequest
-            {
-                Identifiers = identifiers.Select(i => i.ToString(NumberFormatInfo.InvariantInfo)).ToList(), 
-                Culture = self.Culture
-            };
-            var response = this.serviceClient.Send<ICollection<RecipeDTO>>(request);
-            return this.bulkResponseConverter.Convert(response, null);
-        }
-
-        /// <inheritdoc />
-        Task<IDictionaryRange<int, Recipe>> IRepository<int, Recipe>.FindAllAsync()
-        {
-            IRecipeRepository self = this;
-            return self.FindAllAsync(CancellationToken.None);
-        }
-
-        /// <inheritdoc />
-        async Task<IDictionaryRange<int, Recipe>> IRepository<int, Recipe>.FindAllAsync(CancellationToken cancellationToken)
-        {
-            IRecipeRepository self = this;
-            var request = new RecipeBulkRequest
-            {
-                Culture = self.Culture
-            };
-            var response = await this.serviceClient.SendAsync<ICollection<RecipeDTO>>(request, cancellationToken).ConfigureAwait(false);
-            return this.bulkResponseConverter.Convert(response, null);
-        }
-
-        /// <inheritdoc />
-        Task<IDictionaryRange<int, Recipe>> IRepository<int, Recipe>.FindAllAsync(ICollection<int> identifiers)
-        {
-            IRecipeRepository self = this;
-            return self.FindAllAsync(identifiers, CancellationToken.None);
-        }
-
-        /// <inheritdoc />
-        async Task<IDictionaryRange<int, Recipe>> IRepository<int, Recipe>.FindAllAsync(ICollection<int> identifiers, CancellationToken cancellationToken)
-        {
-            IRecipeRepository self = this;
-            var request = new RecipeBulkRequest
-            {
-                Identifiers = identifiers.Select(i => i.ToString(NumberFormatInfo.InvariantInfo)).ToList(), 
-                Culture = self.Culture
-            };
-            var response = await this.serviceClient.SendAsync<ICollection<RecipeDTO>>(request, cancellationToken).ConfigureAwait(false);
-            return this.bulkResponseConverter.Convert(response, null);
-        }
-
-        /// <inheritdoc />
-        Task<Recipe> IRepository<int, Recipe>.FindAsync(int identifier)
-        {
-            IRecipeRepository self = this;
-            return self.FindAsync(identifier, CancellationToken.None);
-        }
-
-        /// <inheritdoc />
-        async Task<Recipe> IRepository<int, Recipe>.FindAsync(int identifier, CancellationToken cancellationToken)
-        {
-            IRecipeRepository self = this;
-            var request = new RecipeDetailsRequest
-            {
-                Identifier = identifier.ToString(NumberFormatInfo.InvariantInfo), 
-                Culture = self.Culture
-            };
-            var response = await this.serviceClient.SendAsync<RecipeDTO>(request, cancellationToken).ConfigureAwait(false);
-            return this.responseConverter.Convert(response, null);
-        }
-
-        /// <inheritdoc />
-        ICollectionPage<Recipe> IPaginator<Recipe>.FindPage(int pageIndex)
-        {
-            IRecipeRepository self = this;
-            var request = new RecipePageRequest
-            {
-                Page = pageIndex, 
-                Culture = self.Culture
-            };
-            var response = this.serviceClient.Send<ICollection<RecipeDTO>>(request);
-            return this.pageResponseConverter.Convert(response, pageIndex);
-        }
-
-        /// <inheritdoc />
-        ICollectionPage<Recipe> IPaginator<Recipe>.FindPage(int pageIndex, int pageSize)
-        {
-            IRecipeRepository self = this;
-            var request = new RecipePageRequest
-            {
-                Page = pageIndex, 
-                PageSize = pageSize, 
-                Culture = self.Culture
-            };
-            var response = this.serviceClient.Send<ICollection<RecipeDTO>>(request);
-            return this.pageResponseConverter.Convert(response, pageIndex);
-        }
-
-        /// <inheritdoc />
-        Task<ICollectionPage<Recipe>> IPaginator<Recipe>.FindPageAsync(int pageIndex)
-        {
-            IRecipeRepository self = this;
-            return self.FindPageAsync(pageIndex, CancellationToken.None);
-        }
-
-        /// <inheritdoc />
-        async Task<ICollectionPage<Recipe>> IPaginator<Recipe>.FindPageAsync(int pageIndex, CancellationToken cancellationToken)
-        {
-            IRecipeRepository self = this;
-            var request = new RecipePageRequest
-            {
-                Page = pageIndex, 
-                Culture = self.Culture
-            };
-            var response = await this.serviceClient.SendAsync<ICollection<RecipeDTO>>(request, cancellationToken).ConfigureAwait(false);
-            return this.pageResponseConverter.Convert(response, pageIndex);
-        }
-
-        /// <inheritdoc />
-        Task<ICollectionPage<Recipe>> IPaginator<Recipe>.FindPageAsync(int pageIndex, int pageSize)
-        {
-            IRecipeRepository self = this;
-            return self.FindPageAsync(pageIndex, pageSize, CancellationToken.None);
-        }
-
-        /// <inheritdoc />
-        async Task<ICollectionPage<Recipe>> IPaginator<Recipe>.FindPageAsync(int pageIndex, int pageSize, CancellationToken cancellationToken)
-        {
-            IRecipeRepository self = this;
-            var request = new RecipePageRequest
-            {
-                Page = pageIndex, 
-                PageSize = pageSize, 
-                Culture = self.Culture
-            };
-            var response = await this.serviceClient.SendAsync<ICollection<RecipeDTO>>(request, cancellationToken).ConfigureAwait(false);
-            return this.pageResponseConverter.Convert(response, pageIndex);
+            IParameterizedBuilder request = ApiMessageBuilder.Init().Version(ApiVersion.V2).OnEndpoint("recipes/search").WithParameter("output", identifier.ToString());
+            return await this.ResponseConverter.ConvertSetAsync(await this.Client.SendAsync(request.Build(), cancellationToken), this.IdentifiersConverter);
         }
     }
 }
