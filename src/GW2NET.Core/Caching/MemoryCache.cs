@@ -5,43 +5,71 @@
 namespace GW2NET.Caching
 {
     using System;
+    using System.Collections;
     using System.Collections.Generic;
+    using System.Collections.ObjectModel;
+    using System.Diagnostics.CodeAnalysis;
     using System.Linq;
 
     using GW2NET.Common;
 
     /// <summary>Provides methods and properties to access cached items stored in memory.</summary>
-    /// <typeparam name="T">The type of item to store in the cache.</typeparam>
-    public class MemoryCache<T> : ICache<T>
+    /// <typeparam name="TKey">They type of key to identify the items with.</typeparam>
+    /// <typeparam name="TValue">The type of item to store in the cache.</typeparam>
+    public class MemoryCache<TKey, TValue> : ICache<TKey, TValue>
     {
-        private readonly SortedSet<T> items;
+        private readonly IDictionary<TKey, IList<TValue>> items;
 
-        /// <summary>Initializes a new instance of the <see cref="MemoryCache{T}"/> class.</summary>
+        private readonly ICollection<TValue> staleItems;
+
+        /// <summary>Initializes a new instance of the <see cref="MemoryCache{TKey, TValue}"/> class.</summary>
         public MemoryCache()
         {
-            this.items = new SortedSet<T>();
+            this.items = new Dictionary<TKey, IList<TValue>>();
+            this.staleItems = new Collection<TValue>();
         }
 
         /// <inheritdoc />
-        public IEnumerable<T> Value
+        public IEnumerable<TValue> StaleItems
         {
             get
             {
-                return this.items;
+                return this.staleItems.AsEnumerable();
             }
         }
 
         /// <inheritdoc />
-        public void Add(T item)
+        public void Add(TKey identifier, TValue item)
         {
-            this.items.Add(item);
+            if (this.items.ContainsKey(identifier))
+            {
+                // ToDo: Maybe overwrite stale items per default?
+                if (!this.items[identifier].Any(i => i.Equals(item)))
+                {
+                    this.items[identifier].Add(item);
+                }
+            }
+            else
+            {
+                this.items.Add(identifier, new List<TValue>(1) { item });
+            }
+        }
+
+        /// <summary>Adds an item to the cache.</summary>
+        /// <param name="item">The item to add.</param>
+        public void Add(KeyValuePair<TKey, TValue> item)
+        {
+            this.Add(item.Key, item.Value);
         }
 
         /// <inheritdoc />
-        // ReSharper disable once ParameterHidesMember
-        public void AddRange(IEnumerable<T> items)
+        [SuppressMessage("ReSharper", "ParameterHidesMember", Justification = "Naming is intended.")]
+        public void AddRange(IEnumerable<KeyValuePair<TKey, TValue>> items)
         {
-            this.items.UnionWith(items);
+            foreach (KeyValuePair<TKey, TValue> pair in items)
+            {
+                this.Add(pair.Key, pair.Value);
+            }
         }
 
         /// <inheritdoc />
@@ -51,18 +79,75 @@ namespace GW2NET.Caching
         }
 
         /// <inheritdoc />
-        public void Remove(Func<T, bool> selector)
+        public void ClearStaleItems()
         {
-            this.items.RemoveWhere(new Predicate<T>(selector));
+            this.UpdateStaleItems();
+
+            this.staleItems.Clear();
         }
 
         /// <inheritdoc />
-        public IEnumerable<T> Get(Func<T, bool> selector)
+        public IEnumerable<TValue> GetByIdentifier(TKey identifier)
         {
-            return this.items.Where(item => selector(item) && !this.CheckIfStale(item));
+            IList<TValue> items;
+            return this.items.TryGetValue(identifier, out items) ? items : null;
         }
 
-        private bool CheckIfStale(T item)
+        /// <inheritdoc />
+        public void Remove(Func<TValue, bool> selector)
+        {
+            foreach (KeyValuePair<TKey, IList<TValue>> pair in this.items)
+            {
+                foreach (TValue value in pair.Value.Where(selector))
+                {
+                    pair.Value.Remove(value);
+                }
+            }
+        }
+
+        /// <inheritdoc />
+        public void UpdateStaleItems()
+        {
+            foreach (KeyValuePair<TKey, IList<TValue>> pair in this.items)
+            {
+                foreach (TValue value in pair.Value.Where(this.CheckIfStale))
+                {
+                    this.staleItems.Add(value);
+                    pair.Value.Remove(value);
+                }
+            }
+        }
+        
+        /// <inheritdoc />
+        public IEnumerator<TValue> GetEnumerator()
+        {
+            foreach (IList<TValue> values in this.items.Values)
+            {
+                foreach (TValue value in values)
+                {
+                    if (this.CheckIfStale(value))
+                    {
+                        this.staleItems.Add(value);
+                        values.Remove(value);
+                    }
+                    else
+                    {
+                        yield return value;
+                    }
+                }
+            }
+        }
+
+        /// <inheritdoc />
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return this.GetEnumerator();
+        }
+
+        /// <summary>Checks if an item is stale.</summary>
+        /// <param name="item">The item to check.</param>
+        /// <returns>True when the item is stale, otherwise false.</returns>
+        private bool CheckIfStale(TValue item)
         {
             ITimeSensitive timesensitiveItem = item as ITimeSensitive;
 
