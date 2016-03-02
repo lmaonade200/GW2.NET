@@ -1,11 +1,7 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="IGuildRepository.cs" company="GW2.NET Coding Team">
-//   This product is licensed under the GNU General Public License version 2 (GPLv2). See the License in the project root folder or the following page: http://www.gnu.org/licenses/gpl-2.0.html
+﻿// <copyright file="IGuildRepository.cs" company="GW2.NET Coding Team">
+// This product is licensed under the GNU General Public License version 2 (GPLv2). See the License in the project root folder or the following page: http://www.gnu.org/licenses/gpl-2.0.html
 // </copyright>
-// <summary>
-//   Provides the interface for repositories that provide guild details.
-// </summary>
-// --------------------------------------------------------------------------------------------------------------------
+
 namespace GW2NET.Guilds
 {
     using System;
@@ -15,14 +11,23 @@ namespace GW2NET.Guilds
     using GW2NET.Common;
 
     /// <summary>Provides the interface for repositories that provide guild details.</summary>
-    public interface IGuildRepository : IRepository<Guid, Guild>
+    public interface IGuildRepository
     {
-        /// <summary>Finds the <see cref="Guild"/> with the given name.</summary>
-        /// <param name="name">The name of the <see cref="Guild"/> to find.</param>
-        /// <exception cref="NotSupportedException">The data source does not support searching by name.</exception>
+        /// <summary>Finds the object with the given identifier.</summary>
+        /// <param name="identifier">The identifier of the object to find.</param>
+        /// <exception cref="NotSupportedException">The data source does not support searching by identifier.</exception>
         /// <exception cref="ServiceException">An error occurred while retrieving data from the data source.</exception>
-        /// <returns>The <see cref="Guid"/> with the given name, or a null reference.</returns>
-        Guild FindByName(string name);
+        /// <returns>The object with the given identifier, or a null reference.</returns>
+        Task<Guild> FindAsync(Guid identifier);
+
+        /// <summary>Finds the object with the given identifier.</summary>
+        /// <param name="identifier">The identifier of the object to find.</param>
+        /// <param name="cancellationToken">The <see cref="CancellationToken"/> that provides cancellation support.</param>
+        /// <exception cref="NotSupportedException">The data source does not support searching by identifier.</exception>
+        /// <exception cref="ServiceException">An error occurred while retrieving data from the data source.</exception>
+        /// <exception cref="TaskCanceledException">A task was canceled.</exception>
+        /// <returns>The object with the given identifier, or a null reference.</returns>
+        Task<Guild> FindAsync(Guid identifier, CancellationToken cancellationToken);
 
         /// <summary>Finds the <see cref="Guild"/> with the given name.</summary>
         /// <param name="name">The name of the <see cref="Guild"/> to find.</param>
