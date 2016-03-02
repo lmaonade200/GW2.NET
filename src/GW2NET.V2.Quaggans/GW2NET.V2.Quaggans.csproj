@@ -49,12 +49,8 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Converters\QuagganConverter.cs" />
-    <Compile Include="Json\QuagganDTO.cs" />
-    <Compile Include="QuagganBulkRequest.cs" />
-    <Compile Include="QuagganDetailsRequest.cs" />
-    <Compile Include="QuagganDiscoveryRequest.cs" />
-    <Compile Include="QuagganPageRequest.cs" />
+    <Compile Include="QuagganConverter.cs" />
+    <Compile Include="QuagganDataContract.cs" />
     <Compile Include="QuagganRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="$(SolutionDir)SharedAssemblyInfo.cs">
