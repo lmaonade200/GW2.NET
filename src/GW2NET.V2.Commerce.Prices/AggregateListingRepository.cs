@@ -5,12 +5,7 @@
 namespace GW2NET.V2.Commerce.Prices
 {
     using System;
-    using System.Collections.Concurrent;
-    using System.Collections.Generic;
-    using System.Linq;
     using System.Net.Http;
-    using System.Threading;
-    using System.Threading.Tasks;
 
     using GW2NET.Caching;
     using GW2NET.Commerce;
@@ -29,25 +24,20 @@ namespace GW2NET.V2.Commerce.Prices
     ///     </item>
     /// </list>
     /// </remarks>
-    public class AggregateListingRepository : CachedRepository<AggregateListing>, IApiService<int, AggregateListing>, IDiscoverService<int>
+    public sealed class AggregateListingRepository : CachedRepository<int, AggregateListing>, IDiscoverableNew<int>, ICachedRepositoryNew<int, AggregateListingDataContract, AggregateListing>
     {
-        private readonly IConverter<int, int> identifiersConverter;
-
-        private readonly IConverter<AggregateListingDataContract, AggregateListing> aggregateListingConverter;
-
-
         /// <summary>Initializes a new instance of the <see cref="AggregateListingRepository"/> class.</summary>
         /// <param name="httpClient"></param>
         /// <param name="cache"></param>
         /// <param name="identifiersConverter"></param>
-        /// <param name="aggregateListingConverter"></param>
+        /// <param name="modelConverter"></param>
         /// <param name="httpResponseConverter"></param>
         public AggregateListingRepository(
             HttpClient httpClient,
-            ResponseConverterBase httpResponseConverter,
-            ICache<AggregateListing> cache,
+            IResponseConverter httpResponseConverter,
+            ICache<int, AggregateListing> cache,
             IConverter<int, int> identifiersConverter,
-            IConverter<AggregateListingDataContract, AggregateListing> aggregateListingConverter)
+            IConverter<AggregateListingDataContract, AggregateListing> modelConverter)
             : base(httpClient, httpResponseConverter, cache)
         {
             if (identifiersConverter == null)
@@ -55,105 +45,28 @@ namespace GW2NET.V2.Commerce.Prices
                 throw new ArgumentNullException(nameof(identifiersConverter));
             }
 
-            if (aggregateListingConverter == null)
+            if (modelConverter == null)
             {
-                throw new ArgumentNullException(nameof(aggregateListingConverter));
+                throw new ArgumentNullException(nameof(modelConverter));
             }
 
-            this.identifiersConverter = identifiersConverter;
-            this.aggregateListingConverter = aggregateListingConverter;
+            this.IdentifiersConverter = identifiersConverter;
+            this.ModelConverter = modelConverter;
         }
 
         /// <inheritdoc />
-        public Task<IEnumerable<int>> DiscoverAsync()
-        {
-            return this.DiscoverAsync(CancellationToken.None);
-        }
+        public IConverter<int, int> IdentifiersConverter { get; }
 
         /// <inheritdoc />
-        public async Task<IEnumerable<int>> DiscoverAsync(CancellationToken cancellationToken)
-        {
-            HttpRequestMessage request = ApiMessageBuilder.Init().Version(ApiVersion.V2).OnEndpoint("commerce/prices").Build();
-            return await this.ResponseConverter.ConvertSetAsync(await this.Client.SendAsync(request, cancellationToken), this.identifiersConverter);
-        }
+        public IConverter<AggregateListingDataContract, AggregateListing> ModelConverter { get; }
 
         /// <inheritdoc />
-        public Task<AggregateListing> GetAsync(int identifier)
+        public IParameterizedBuilder ServiceLocation
         {
-            return this.GetAsync(identifier, CancellationToken.None);
-        }
-
-        /// <inheritdoc />
-        public async Task<AggregateListing> GetAsync(int identifier, CancellationToken cancellationToken)
-        {
-            AggregateListing cacheItem = this.Cache.Get(i => i.ItemId == identifier).SingleOrDefault();
-            if (cacheItem != null)
+            get
             {
-                return cacheItem;
+                return ApiMessageBuilder.Init().Version(ApiVersion.V2).OnEndpoint("commerce/prices");
             }
-
-            HttpRequestMessage request = ApiMessageBuilder.Init().Version(ApiVersion.V2).OnEndpoint("commerce/prices").WithIdentifier(identifier).Build();
-
-            return await this.ResponseConverter.ConvertElementAsync(await this.Client.SendAsync(request, cancellationToken), this.aggregateListingConverter);
-        }
-
-        /// <inheritdoc />
-        public Task<IEnumerable<AggregateListing>> GetAsync()
-        {
-            return this.GetAsync(CancellationToken.None);
-        }
-
-        /// <inheritdoc />
-        public async Task<IEnumerable<AggregateListing>> GetAsync(CancellationToken cancellationToken)
-        {
-            // We need to do this, so we get all non stale items
-            List<AggregateListing> cacheListings = this.Cache.Get(l => true).ToList();
-
-            IEnumerable<int> idsToQuery = (await this.DiscoverAsync(cancellationToken)).SymmetricExcept(cacheListings.Select(l => l.ItemId));
-
-            IEnumerable<AggregateListing> listings = (await this.GetAsync(idsToQuery, cancellationToken)).Union(cacheListings);
-
-            return listings.Union(cacheListings);
-        }
-
-        /// <inheritdoc />
-        public Task<IEnumerable<AggregateListing>> GetAsync(IEnumerable<int> identifiers)
-        {
-            return this.GetAsync(identifiers, CancellationToken.None);
-        }
-
-        /// <inheritdoc />
-        public async Task<IEnumerable<AggregateListing>> GetAsync(IEnumerable<int> identifiers, CancellationToken cancellationToken)
-        {
-            IList<int> ids = identifiers as IList<int> ?? identifiers.ToList();
-
-            // We need to do this, so we get all non stale items
-            List<AggregateListing> cacheListings = this.Cache.Get(l => ids.All(id => id == l.ItemId)).ToList();
-            if (cacheListings.Count == ids.Count)
-            {
-                return cacheListings;
-            }
-
-            IEnumerable<IEnumerable<int>> idListList = this.CalculatePages((await this.DiscoverAsync(cancellationToken)).SymmetricExcept(cacheListings.Select(l => l.ItemId)));
-
-            ConcurrentBag<AggregateListing> aggregateListings = new ConcurrentBag<AggregateListing>(cacheListings);
-            Parallel.ForEach(idListList,
-                             async idList =>
-                             {
-                                 HttpRequestMessage request = ApiMessageBuilder.Init()
-                                                      .Version(ApiVersion.V2)
-                                                      .OnEndpoint("commerce/prices")
-                                                      .WithIdentifiers(idList)
-                                                      .Build();
-                                 HttpResponseMessage response = await this.Client.SendAsync(request, cancellationToken);
-
-                                 foreach (AggregateListing aggregateListing in await this.ResponseConverter.ConvertSetAsync(response, this.aggregateListingConverter))
-                                 {
-                                     aggregateListings.Add(aggregateListing);
-                                 }
-                             });
-
-            return aggregateListings;
         }
     }
 }

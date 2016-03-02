@@ -4,13 +4,8 @@
 
 namespace GW2NET.V2.Colors
 {
-    using System.Collections.Concurrent;
-    using System.Collections.Generic;
     using System.Globalization;
-    using System.Linq;
     using System.Net.Http;
-    using System.Threading;
-    using System.Threading.Tasks;
 
     using GW2NET.Caching;
     using GW2NET.Colors;
@@ -19,23 +14,19 @@ namespace GW2NET.V2.Colors
     using GW2NET.Common.Messages;
 
     /// <summary>Provides methods and properties to retrive colors from the GW2 api.</summary>
-    public class ColorRepository : CachedRepository<ColorPalette>, IDiscoverService<int>, IApiService<int, ColorPalette>, ILocalizable
+    public sealed class ColorRepository : CachedRepository<int, ColorPalette>, IDiscoverableNew<int>, ICachedRepositoryNew<int, ColorPaletteDataContract, ColorPalette>, ILocalizable
     {
-        private readonly IConverter<int, int> identifiersConverter;
-
-        private readonly IConverter<ColorPaletteDataContract, ColorPalette> colorConverter;
-
         /// <summary>Initializes a new instance of the <see cref="ColorRepository"/> class.</summary>
         /// <param name="httpClient">The <see cref="HttpClient"/> used to make requests against the api.</param>
         /// <param name="responseConverter">A instance of the <see cref="HttpResponseConverter"/> class used to convert api responses.</param>
         /// <param name="cache">The cache used to cache results.</param>
         /// <param name="identifiersConverter">The converter used to convert identifiers.</param>
-        /// <param name="colorConverter">The converter to convert single color responses.</param>
-        public ColorRepository(HttpClient httpClient, ResponseConverterBase responseConverter, ICache<ColorPalette> cache, IConverter<int, int> identifiersConverter, IConverter<ColorPaletteDataContract, ColorPalette> colorConverter)
+        /// <param name="modelConverter">The converter to convert single color responses.</param>
+        public ColorRepository(HttpClient httpClient, IResponseConverter responseConverter, ICache<int, ColorPalette> cache, IConverter<int, int> identifiersConverter, IConverter<ColorPaletteDataContract, ColorPalette> modelConverter)
             : base(httpClient, responseConverter, cache)
         {
-            this.identifiersConverter = identifiersConverter;
-            this.colorConverter = colorConverter;
+            this.IdentifiersConverter = identifiersConverter;
+            this.ModelConverter = modelConverter;
 
             this.Culture = new CultureInfo("iv");
         }
@@ -44,110 +35,18 @@ namespace GW2NET.V2.Colors
         public CultureInfo Culture { get; set; }
 
         /// <inheritdoc />
-        public Task<IEnumerable<int>> DiscoverAsync()
-        {
-            return this.DiscoverAsync(CancellationToken.None);
-        }
+        public IConverter<int, int> IdentifiersConverter { get; }
 
         /// <inheritdoc />
-        public async Task<IEnumerable<int>> DiscoverAsync(CancellationToken cancellationToken)
-        {
-            HttpRequestMessage request = ApiMessageBuilder.Init().Version(ApiVersion.V2).OnEndpoint("colors").Build();
-            HttpResponseMessage response = await this.Client.SendAsync(request, cancellationToken);
-
-            return await this.ResponseConverter.ConvertSetAsync(response, this.identifiersConverter);
-        }
+        public IConverter<ColorPaletteDataContract, ColorPalette> ModelConverter { get; }
 
         /// <inheritdoc />
-        public Task<IEnumerable<ColorPalette>> GetAsync()
+        public IParameterizedBuilder ServiceLocation
         {
-            return this.GetAsync(CancellationToken.None);
-        }
-
-        /// <inheritdoc />
-        public async Task<IEnumerable<ColorPalette>> GetAsync(CancellationToken cancellationToken)
-        {
-            IEnumerable<ColorPalette> cacheColors = this.Cache.Get(cp => cp.Culture.Equals(this.Culture)).ToList();
-
-            IEnumerable<int> ids = (await this.DiscoverAsync(cancellationToken)).SymmetricExcept(cacheColors.Select(c => c.ColorId));
-
-            return (await this.GetAsync(ids, cancellationToken)).Union(cacheColors);
-        }
-
-        /// <inheritdoc />
-        public Task<IEnumerable<ColorPalette>> GetAsync(IEnumerable<int> identifiers)
-        {
-            return this.GetAsync(identifiers, CancellationToken.None);
-        }
-
-        /// <inheritdoc />
-        public async Task<IEnumerable<ColorPalette>> GetAsync(IEnumerable<int> identifiers, CancellationToken cancellationToken)
-        {
-            IList<int> ids = identifiers as IList<int> ?? identifiers.ToList();
-            IList<ColorPalette> cacheColors = this.Cache.Get(c => ids.All(i => i != c.ColorId) && c.Culture.Equals(this.Culture)).ToList();
-
-            if (cacheColors.Count == ids.Count)
+            get
             {
-                return cacheColors;
+                return ApiMessageBuilder.Init().Version(ApiVersion.V2).OnEndpoint("colors");
             }
-
-            // If the id count is greater than 200 we need to partition
-            IEnumerable<IEnumerable<int>> idListList = this.CalculatePages((await this.DiscoverAsync(cancellationToken)).SymmetricExcept(cacheColors.Select(l => l.ColorId)));
-
-            ConcurrentBag<ColorPalette> colors = new ConcurrentBag<ColorPalette>(cacheColors);
-
-            Parallel.ForEach(idListList,
-                async idList =>
-                {
-                    HttpRequestMessage request =
-                        ApiMessageBuilder.Init()
-                                         .Version(ApiVersion.V2)
-                                         .OnEndpoint("colors")
-                                         .ForCulture(this.Culture)
-                                         .WithIdentifiers(idList)
-                                         .Build();
-
-                    HttpResponseMessage response = await this.Client.SendAsync(request, cancellationToken);
-
-                    foreach (ColorPalette color in await this.ResponseConverter.ConvertSetAsync(response, this.colorConverter))
-                    {
-                        colors.Add(color);
-                    }
-                });
-
-            return colors;
-        }
-
-        /// <inheritdoc />
-        public Task<ColorPalette> GetAsync(int identifier)
-        {
-            return this.GetAsync(identifier, CancellationToken.None);
-        }
-
-        /// <inheritdoc />
-        public async Task<ColorPalette> GetAsync(int identifier, CancellationToken cancellationToken)
-        {
-            // Check if the requested object is in the cache
-            ColorPalette color = this.Cache.Get(c => c.ColorId == identifier && c.Culture.Equals(this.Culture)).SingleOrDefault();
-
-            if (color != null)
-            {
-                return color;
-            }
-
-            // If the opbject is not in the cache, request it from the api
-            HttpRequestMessage request = ApiMessageBuilder.Init()
-                .Version(ApiVersion.V2)
-                .OnEndpoint("colors")
-                .ForCulture(this.Culture)
-                .WithIdentifier(identifier)
-                .Build();
-
-            // Send the request
-            HttpResponseMessage response = await this.Client.SendAsync(request, cancellationToken);
-
-            // Convert the response and return the object
-            return await this.ResponseConverter.ConvertElementAsync(response, this.colorConverter);
         }
     }
 }

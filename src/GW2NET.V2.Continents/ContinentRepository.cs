@@ -5,13 +5,8 @@
 namespace GW2NET.V2.Continents
 {
     using System;
-    using System.Collections.Concurrent;
-    using System.Collections.Generic;
     using System.Globalization;
-    using System.Linq;
     using System.Net.Http;
-    using System.Threading;
-    using System.Threading.Tasks;
 
     using GW2NET.Caching;
     using GW2NET.Common;
@@ -20,20 +15,16 @@ namespace GW2NET.V2.Continents
     using GW2NET.Maps;
 
     /// <summary>Represents a repository that retrieves data from the /v2/continents interface.</summary>
-    public sealed class ContinentRepository : CachedRepository<Continent>, IApiService<int, Continent>, IDiscoverService<int>, ILocalizable
+    public sealed class ContinentRepository : CachedRepository<int, Continent>, IDiscoverableNew<int>, ICachedRepositoryNew<int, ContinentDataContract, Continent>, ILocalizable
     {
-        private readonly IConverter<int, int> identifiersConverter;
-
-        private readonly IConverter<ContinentDataContract, Continent> continentConverter;
-
         /// <summary>Initializes a new instance of the <see cref="ContinentRepository"/> class.</summary>
         /// <param name="httpClient">The <see cref="HttpClient"/> used to make connections with the ArenaNet servers.</param>
-        /// <param name="responseConverter">The <see cref="ResponseConverterBase"/> used to convert <see cref="HttpResponseMessage"/> into objects.</param>
-        /// <param name="cache">The <see cref="ICache{T}"/> used to cache api responses.</param>
+        /// <param name="responseConverter">The <see cref="IResponseConverter"/> used to convert <see cref="HttpResponseMessage"/> into objects.</param>
+        /// <param name="cache">The <see cref="ICache{TKey, TValue}"/> used to cache api responses.</param>
         /// <param name="identifiersConverter">A converter used to convert identifiers.</param>
-        /// <param name="continentConverter">A converter used to convert data contracts into objects.</param>
+        /// <param name="modelConverter">A converter used to convert data contracts into objects.</param>
         /// <exception cref="ArgumentNullException">Thrown when either parameter is null.</exception>
-        public ContinentRepository(HttpClient httpClient, ResponseConverterBase responseConverter, ICache<Continent> cache, IConverter<int, int> identifiersConverter, IConverter<ContinentDataContract, Continent> continentConverter)
+        public ContinentRepository(HttpClient httpClient, IResponseConverter responseConverter, ICache<int, Continent> cache, IConverter<int, int> identifiersConverter, IConverter<ContinentDataContract, Continent> modelConverter)
             : base(httpClient, responseConverter, cache)
         {
             if (identifiersConverter == null)
@@ -41,110 +32,31 @@ namespace GW2NET.V2.Continents
                 throw new ArgumentNullException(nameof(identifiersConverter));
             }
 
-            if (continentConverter == null)
+            if (modelConverter == null)
             {
-                throw new ArgumentNullException(nameof(continentConverter));
+                throw new ArgumentNullException(nameof(modelConverter));
             }
 
-            this.identifiersConverter = identifiersConverter;
-            this.continentConverter = continentConverter;
+            this.IdentifiersConverter = identifiersConverter;
+            this.ModelConverter = modelConverter;
         }
 
         /// <summary>Gets or sets the locale.</summary>
         public CultureInfo Culture { get; set; }
 
         /// <inheritdoc />
-        public Task<IEnumerable<int>> DiscoverAsync()
-        {
-            return this.DiscoverAsync(CancellationToken.None);
-        }
+        public IConverter<int, int> IdentifiersConverter { get; }
 
         /// <inheritdoc />
-        public async Task<IEnumerable<int>> DiscoverAsync(CancellationToken cancellationToken)
-        {
-            HttpRequestMessage request = ApiMessageBuilder.Init().Version(ApiVersion.V2).OnEndpoint("continents").Build();
-            return await this.ResponseConverter.ConvertSetAsync(await this.Client.SendAsync(request, cancellationToken), this.identifiersConverter);
-        }
+        public IConverter<ContinentDataContract, Continent> ModelConverter { get; }
 
         /// <inheritdoc />
-        public Task<Continent> GetAsync(int identifier)
+        public IParameterizedBuilder ServiceLocation
         {
-            return this.GetAsync(identifier, CancellationToken.None);
-        }
-
-        /// <inheritdoc />
-        public async Task<Continent> GetAsync(int identifier, CancellationToken cancellationToken)
-        {
-            Continent cacheItem = this.Cache.Get(i => i.ContinentId == identifier).SingleOrDefault();
-            if (cacheItem != null)
+            get
             {
-                return cacheItem;
+                return ApiMessageBuilder.Init().Version(ApiVersion.V2).OnEndpoint("continents");
             }
-
-            HttpRequestMessage request = ApiMessageBuilder.Init().Version(ApiVersion.V2).OnEndpoint("continents").ForCulture(this.Culture).WithIdentifier(identifier).Build();
-            return await this.ResponseConverter.ConvertElementAsync(await this.Client.SendAsync(request, cancellationToken), this.continentConverter);
-        }
-
-        /// <inheritdoc />
-        public Task<IEnumerable<Continent>> GetAsync()
-        {
-            return this.GetAsync(CancellationToken.None);
-        }
-
-        /// <inheritdoc />
-        public async Task<IEnumerable<Continent>> GetAsync(CancellationToken cancellationToken)
-        {
-            List<Continent> cacheItems = this.Cache.Get(i => true).ToList();
-            IEnumerable<int> ids = (await this.DiscoverAsync(cancellationToken)).SymmetricExcept(cacheItems.Select(i => i.ContinentId));
-
-            return (await this.GetItemsAsync(ids, this.continentConverter, cancellationToken)).Union(cacheItems);
-        }
-
-        /// <inheritdoc />
-        public Task<IEnumerable<Continent>> GetAsync(IEnumerable<int> identifiers)
-        {
-            return this.GetAsync(identifiers, CancellationToken.None);
-        }
-
-        /// <inheritdoc />
-        public async Task<IEnumerable<Continent>> GetAsync(IEnumerable<int> identifiers, CancellationToken cancellationToken)
-        {
-            IList<int> ids = identifiers as IList<int> ?? identifiers.ToList();
-            List<Continent> cacheItems = this.Cache.Get(i => ids.All(id => id != i.ContinentId)).ToList();
-
-            if (cacheItems.Count == ids.Count)
-            {
-                return cacheItems;
-            }
-
-            return (await this.GetItemsAsync(ids.SymmetricExcept(cacheItems.Select(i => i.ContinentId)), this.continentConverter, cancellationToken)).Union(cacheItems);
-        }
-
-        private async Task<IEnumerable<TValue>> GetItemsAsync<TKey, TDataContract, TValue>(IEnumerable<TKey> ids, IConverter<TDataContract, TValue> itemConverter, CancellationToken cancellationToken)
-        {
-            IEnumerable<IEnumerable<TKey>> idListList = this.CalculatePages(ids);
-
-            ConcurrentBag<TValue> items = new ConcurrentBag<TValue>();
-            Parallel.ForEach(idListList,
-                             async idList =>
-                             {
-                                 HttpRequestMessage request =
-                                     ApiMessageBuilder.Init()
-                                                      .Version(ApiVersion.V2)
-                                                      .OnEndpoint("continents")
-                                                      .ForCulture(this.Culture)
-                                                      .WithIdentifiers(idList)
-                                                      .Build();
-
-                                 Task<IEnumerable<TValue>> responseItems = this.ResponseConverter.ConvertSetAsync(await this.Client.SendAsync(request, cancellationToken), itemConverter);
-
-                                 foreach (TValue item in await responseItems)
-                                 {
-                                     items.Add(item);
-                                 }
-                             });
-
-            return items;
         }
     }
 }
