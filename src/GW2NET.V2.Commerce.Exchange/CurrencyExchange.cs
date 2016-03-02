@@ -15,7 +15,7 @@ namespace GW2NET.V2.Commerce.Exchange
     using GW2NET.Common.Messages;
 
     /// <summary>Represents a currency exchange service that retrieves data from the /v2/commerce/exchange interface.</summary>
-    public class CurrencyExchange : RepositoryBase<Exchange>, ICurrencyExchange
+    public sealed class CurrencyExchange : RepositoryBase, ICurrencyExchange
     {
         private readonly IConverter<ExchangeDataContract, Exchange> exchangeConverter;
 
@@ -23,7 +23,7 @@ namespace GW2NET.V2.Commerce.Exchange
         /// <param name="httpClient">The client used to make requests against the api.</param>
         /// <param name="responseConverter">The converter used to convert the <see cref="HttpResponseMessage"/>.</param>
         /// <param name="exchangeConverter">The connverter used to convert data contracts into actual objects.</param>
-        public CurrencyExchange(HttpClient httpClient, ResponseConverterBase responseConverter, IConverter<ExchangeDataContract, Exchange> exchangeConverter)
+        public CurrencyExchange(HttpClient httpClient, IResponseConverter responseConverter, IConverter<ExchangeDataContract, Exchange> exchangeConverter)
             : base(httpClient, responseConverter)
         {
             if (exchangeConverter == null)

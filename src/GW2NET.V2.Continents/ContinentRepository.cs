@@ -15,7 +15,7 @@ namespace GW2NET.V2.Continents
     using GW2NET.Maps;
 
     /// <summary>Represents a repository that retrieves data from the /v2/continents interface.</summary>
-    public sealed class ContinentRepository : CachedRepository<int, Continent>, IDiscoverableNew<int>, ICachedRepositoryNew<int, ContinentDataContract, Continent>, ILocalizable
+    public sealed class ContinentRepository : CachedRepository<int, Continent>, IDiscoverableNew<int>, ICachedRepository<int, ContinentDataContract, Continent>, ILocalizable
     {
         /// <summary>Initializes a new instance of the <see cref="ContinentRepository"/> class.</summary>
         /// <param name="httpClient">The <see cref="HttpClient"/> used to make connections with the ArenaNet servers.</param>

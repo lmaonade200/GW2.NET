@@ -19,7 +19,7 @@ namespace GW2NET.V2.Skins
     /// <remarks>
     /// This implementation does not retrieve associated entities.
     /// </remarks>
-    public sealed class SkinRepository : CachedRepository<int, Skin>, IDiscoverableNew<int>, ICachedRepositoryNew<int, SkinDTO, Skin>, ILocalizable
+    public sealed class SkinRepository : CachedRepository<int, Skin>, IDiscoverableNew<int>, ICachedRepository<int, SkinDTO, Skin>, ILocalizable
     {
         /// <summary>Initializes a new instance of the <see cref="SkinRepository"/> class.</summary>
         /// <param name="httpClient">The <see cref="HttpClient"/> used to make connections with the ArenaNet servers.</param>

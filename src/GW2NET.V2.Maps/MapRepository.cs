@@ -18,7 +18,7 @@ namespace GW2NET.V2.Maps
     /// <remarks>
     /// This implementation does not retrieve associated entities.
     /// </remarks>
-    public sealed class MapRepository : CachedRepository<int, Map>, IDiscoverableNew<int>, ICachedRepositoryNew<int, MapDataContract, Map>, ILocalizable
+    public sealed class MapRepository : CachedRepository<int, Map>, IDiscoverableNew<int>, ICachedRepository<int, MapDataContract, Map>, ILocalizable
     {
         /// <summary>Initializes a new instance of the <see cref="MapRepository"/> class.</summary>
         /// <param name="httpClient">The <see cref="HttpClient"/> used to make connections with the ArenaNet servers.</param>

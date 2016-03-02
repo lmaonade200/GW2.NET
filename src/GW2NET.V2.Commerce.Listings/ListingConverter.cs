@@ -55,7 +55,7 @@ namespace GW2NET.V2.Commerce.Listings
                 ItemId = value.Id,
                 BuyOffers = this.offerCollectionConverter.Convert(value.BuyOffers, value),
                 SellOffers = this.offerCollectionConverter.Convert(value.SellOffers, value),
-                Timestamp = response.Date
+                Timestamp = response.RequestDate
             };
         }
     }

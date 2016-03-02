@@ -16,7 +16,7 @@ namespace GW2NET.V2.Builds
 
     /// <summary>Represents a service that retrieves data from the /v1/build.json interface.</summary>
     /// <remarks>See <a href="http://wiki.guildwars2.com/wiki/API:2/build">wiki</a> for more information.</remarks>
-    public class BuildRepository : RepositoryBase<Build>, IBuildRepository
+    public sealed class BuildRepository : RepositoryBase, IBuildRepository
     {
         private readonly IConverter<BuildDataContract, Build> buildConverter;
 
@@ -25,7 +25,7 @@ namespace GW2NET.V2.Builds
         /// <param name="buildConverter">The converter for <see cref="Build"/>.</param>
         /// <param name="responseConverter"></param>
         /// <exception cref="ArgumentNullException">The value of <paramref name="httpClient"/> or <paramref name="buildConverter"/> is a null reference.</exception>
-        public BuildRepository(HttpClient httpClient, ResponseConverterBase responseConverter, IConverter<BuildDataContract, Build> buildConverter)
+        public BuildRepository(HttpClient httpClient, IResponseConverter responseConverter, IConverter<BuildDataContract, Build> buildConverter)
             : base(httpClient, responseConverter)
         {
             if (buildConverter == null)

@@ -14,7 +14,7 @@ namespace GW2NET.V2.Files
     using GW2NET.Files;
 
     /// <summary>Represents a repository that retrieves data from the /v2/files interface.</summary>
-    public sealed class FileRepository : CachedRepository<string, Asset>, IDiscoverableNew<string>, ICachedRepositoryNew<string, FileDataContract, Asset>
+    public sealed class FileRepository : CachedRepository<string, Asset>, IDiscoverableNew<string>, ICachedRepository<string, FileDataContract, Asset>
     {
         /// <summary>Initializes a new instance of the <see cref="FileRepository"/> class.</summary>
         /// <param name="httpClient">The <see cref="HttpClient"/> used to make connections with the ArenaNet servers.</param>

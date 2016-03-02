@@ -4,6 +4,7 @@
 
 namespace GW2NET.V2.Accounts
 {
+    using System;
     using System.Net.Http;
     using System.Threading;
     using System.Threading.Tasks;
@@ -14,7 +15,7 @@ namespace GW2NET.V2.Accounts
     using GW2NET.Common.Messages;
 
     /// <summary>Represents a repository that retrieves data from the authorized /v2/account interface.</summary>
-    public class AccountRepository : CachedRepository<Account>, IAccountRepository
+    public sealed class AccountRepository : CachedRepository<Guid, Account>, IAccountRepository
     {
         /// <summary>Converts an account data contract into an account model.</summary>
         private readonly IConverter<AccountDataContract, Account> accountConverter;
@@ -24,7 +25,7 @@ namespace GW2NET.V2.Accounts
         /// <param name="responseConverter">The response converter.</param>
         /// <param name="cache">The cache used to cache results.</param>
         /// <param name="accountConverter">The converter to convert the data contract into the appropriate model.</param>
-        public AccountRepository(HttpClient httpClient, ResponseConverterBase responseConverter, ICache<Account> cache, IConverter<AccountDataContract, Account> accountConverter)
+        public AccountRepository(HttpClient httpClient, IResponseConverter responseConverter, ICache<Guid, Account> cache, IConverter<AccountDataContract, Account> accountConverter)
             : base(httpClient, responseConverter, cache)
         {
             this.accountConverter = accountConverter;

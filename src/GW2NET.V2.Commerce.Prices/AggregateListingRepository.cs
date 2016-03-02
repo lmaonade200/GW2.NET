@@ -24,7 +24,7 @@ namespace GW2NET.V2.Commerce.Prices
     ///     </item>
     /// </list>
     /// </remarks>
-    public sealed class AggregateListingRepository : CachedRepository<int, AggregateListing>, IDiscoverableNew<int>, ICachedRepositoryNew<int, AggregateListingDataContract, AggregateListing>
+    public sealed class AggregateListingRepository : CachedRepository<int, AggregateListing>, IDiscoverableNew<int>, ICachedRepository<int, AggregateListingDataContract, AggregateListing>
     {
         /// <summary>Initializes a new instance of the <see cref="AggregateListingRepository"/> class.</summary>
         /// <param name="httpClient"></param>

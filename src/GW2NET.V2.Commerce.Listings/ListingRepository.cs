@@ -24,7 +24,7 @@ namespace GW2NET.V2.Commerce.Listings
     ///     </item>
     /// </list>
     /// </remarks>
-    public sealed class ListingRepository : CachedRepository<int, Listing>, IDiscoverableNew<int>, ICachedRepositoryNew<int, ListingDataContract, Listing>
+    public sealed class ListingRepository : CachedRepository<int, Listing>, IDiscoverableNew<int>, ICachedRepository<int, ListingDataContract, Listing>
     {
 
         /// <summary>Initializes a new instance of the <see cref="ListingRepository"/> class.</summary>
