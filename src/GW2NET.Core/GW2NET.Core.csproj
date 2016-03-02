@@ -25,6 +25,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <CodeAnalysisRuleSet>$(SolutionDir)GW2NET.ruleset</CodeAnalysisRuleSet>
+    <DocumentationFile>bin\Debug\GW2NET.Core.XML</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -41,11 +42,10 @@
     <Compile Include="Accounts\IAccountRepository.cs" />
     <Compile Include="Builds\Build.cs" />
     <Compile Include="Builds\IBuildRepository.cs" />
-    <Compile Include="Caching\ICache{T}.cs" />
+    <Compile Include="Caching\ICache{TKey,TValue}.cs" />
     <Compile Include="Caching\MemoryCache.cs" />
     <Compile Include="Characters\Character.cs" />
     <Compile Include="Characters\Gender.cs" />
-    <Compile Include="Characters\ICharacterRepository.cs" />
     <Compile Include="ChatLinks\ChatLink.cs" />
     <Compile Include="ChatLinks\ChatLinkFactory.cs" />
     <Compile Include="ChatLinks\CoinChatLink.cs" />
@@ -63,22 +63,20 @@
     <Compile Include="Commerce\AggregateListing.cs" />
     <Compile Include="Commerce\AggregateOffer.cs" />
     <Compile Include="Commerce\Exchange.cs" />
-    <Compile Include="Commerce\IAggregateListingRepository.cs" />
     <Compile Include="Commerce\ICurrencyExchange.cs" />
-    <Compile Include="Commerce\IListingRepository.cs" />
     <Compile Include="Commerce\Listing.cs" />
     <Compile Include="Commerce\Offer.cs" />
-    <Compile Include="Common\CachedRepository{T}.cs" />
+    <Compile Include="Common\CachedRepositoryExtensions.cs" />
+    <Compile Include="Common\CachedRepository{TKey,TValue}.cs" />
     <Compile Include="Common\Converters\ApiMetadata.cs" />
-    <Compile Include="Common\Converters\ResponseConverterBase.cs" />
+    <Compile Include="Common\Converters\IResponseConverter.cs" />
     <Compile Include="Common\Converters\Base64Converter.cs" />
-    <Compile Include="Common\Converters\CollectionPageResponseConverter.cs" />
-    <Compile Include="Common\Converters\CollectionResponseConverter.cs" />
-    <Compile Include="Common\Converters\DictionaryRangeResponseConverter.cs" />
     <Compile Include="Common\Converters\HttpResponseConverter.cs" />
-    <Compile Include="Common\Converters\ResponseConverter.cs" />
+    <Compile Include="Common\DiscoverableExtensions.cs" />
     <Compile Include="Common\IApiService.cs" />
-    <Compile Include="Common\IDiscoverService.cs" />
+    <Compile Include="Common\ICachedRepository{TKey,TDataContract,TValue}.cs" />
+    <Compile Include="Common\IDiscoverableNew.cs" />
+    <Compile Include="Common\IRepository.cs" />
     <Compile Include="Common\KeyUtilities.cs" />
     <Compile Include="Common\LinqExtensions.cs" />
     <Compile Include="Common\Messages\ApiCultures.cs" />
@@ -90,54 +88,27 @@
     <Compile Include="Common\Messages\IPagedBuilder.cs" />
     <Compile Include="Common\Messages\IParameterizedBuilder.cs" />
     <Compile Include="Common\Messages\IVersionedBuilder.cs" />
-    <Compile Include="Common\RepositoryBase{T}.cs" />
-    <Compile Include="Common\TypeExtensions.cs" />
-    <Compile Include="Common\ServiceClientAuthorized.cs" />
-    <Compile Include="Common\BulkRequest.cs" />
-    <Compile Include="Common\CollectionPage.cs" />
+    <Compile Include="Common\RepositoryBase.cs" />
+    <Compile Include="Common\RepositoryExtensions.cs" />
     <Compile Include="Common\Converters\ConverterAdapter.cs" />
     <Compile Include="Common\Converters\CollectionConverter.cs" />
-    <Compile Include="Common\Converters\DictionaryConverter.cs" />
-    <Compile Include="Common\IResponse.cs" />
-    <Compile Include="Common\DetailsRequest.cs" />
-    <Compile Include="Common\DictionaryRange.cs" />
-    <Compile Include="Common\DiscoveryRequest.cs" />
     <Compile Include="Common\Drawing\Rectangle.cs" />
     <Compile Include="Common\Drawing\Size2D.cs" />
     <Compile Include="Common\Drawing\Vector2D.cs" />
     <Compile Include="Common\Drawing\Vector3D.cs" />
     <Compile Include="Common\ErrorResult.cs" />
-    <Compile Include="Common\IBulkRequest.cs" />
-    <Compile Include="Common\ICollectionPage.cs" />
     <Compile Include="Common\IConverter.cs" />
-    <Compile Include="Common\IDetailsRequest.cs" />
-    <Compile Include="Common\IDictionaryRange.cs" />
-    <Compile Include="Common\IDiscoverable.cs" />
     <Compile Include="Common\ILocalizable.cs" />
-    <Compile Include="Common\IPageContext.cs" />
-    <Compile Include="Common\IPageRequest.cs" />
-    <Compile Include="Common\IPaginator.cs" />
     <Compile Include="Common\IRenderable.cs" />
-    <Compile Include="Common\IRepository.cs" />
-    <Compile Include="Common\IRequest.cs" />
-    <Compile Include="Common\IResponse{T}.cs" />
-    <Compile Include="Common\IServiceClient.cs" />
-    <Compile Include="Common\ISubsetContext.cs" />
     <Compile Include="Common\ITimeSensitive.cs" />
-    <Compile Include="Common\PageContextPatchUtility.cs" />
-    <Compile Include="Common\PageRequest.cs" />
-    <Compile Include="Common\Paginator.cs" />
     <Compile Include="Common\Profession.cs" />
     <Compile Include="Common\Race.cs" />
-    <Compile Include="Common\Response.cs" />
-    <Compile Include="Common\ResponseExtensions.cs" />
     <Compile Include="Common\SerializationException.cs" />
     <Compile Include="Common\Serializers\BinarySerializer.cs" />
     <Compile Include="Common\Serializers\DataContractJsonSerializer.cs" />
     <Compile Include="Common\Serializers\DataContractSerializer.cs" />
     <Compile Include="Common\Serializers\ISerializer.cs" />
     <Compile Include="Common\Serializers\ISerializerFactory.cs" />
-    <Compile Include="Common\ServiceClient.cs" />
     <Compile Include="Common\ServiceException.cs" />
     <Compile Include="Common\UrlEncodedForm.cs" />
     <Compile Include="DynamicEvents\CylinderLocation.cs" />
@@ -147,14 +118,11 @@
     <Compile Include="DynamicEvents\DynamicEventRotation.cs" />
     <Compile Include="DynamicEvents\DynamicEventState.cs" />
     <Compile Include="DynamicEvents\EventState.cs" />
-    <Compile Include="DynamicEvents\IEventNameRepository.cs" />
-    <Compile Include="DynamicEvents\IEventRepository.cs" />
     <Compile Include="DynamicEvents\Location.cs" />
     <Compile Include="DynamicEvents\PolygonLocation.cs" />
     <Compile Include="DynamicEvents\SphereLocation.cs" />
     <Compile Include="DynamicEvents\UnknownLocation.cs" />
     <Compile Include="Files\Asset.cs" />
-    <Compile Include="Files\IFileRepository.cs" />
     <Compile Include="Guilds\Emblem.cs" />
     <Compile Include="Guilds\EmblemTransformations.cs" />
     <Compile Include="Guilds\Guild.cs" />
@@ -246,7 +214,6 @@
     <Compile Include="Items\Gizmos\RentableContractNpc.cs" />
     <Compile Include="Items\Gizmos\UnknownGizmo.cs" />
     <Compile Include="Items\Gizmos\UnlimitedConsumable.cs" />
-    <Compile Include="Items\IItemRepository.cs" />
     <Compile Include="Items\Item.cs" />
     <Compile Include="Items\ItemFlags.cs" />
     <Compile Include="Items\ItemRarity.cs" />
@@ -305,10 +272,6 @@
     <Compile Include="Maps\Continent.cs" />
     <Compile Include="Maps\Dungeon.cs" />
     <Compile Include="Maps\Floor.cs" />
-    <Compile Include="Maps\IContinentRepository.cs" />
-    <Compile Include="Maps\IFloorRepository.cs" />
-    <Compile Include="Maps\IMapNameRepository.cs" />
-    <Compile Include="Maps\IMapRepository.cs" />
     <Compile Include="Maps\Landmark.cs" />
     <Compile Include="Maps\Map.cs" />
     <Compile Include="Maps\MapName.cs" />
@@ -321,7 +284,6 @@
     <Compile Include="Maps\UnknownPointOfInterest.cs" />
     <Compile Include="Maps\Vista.cs" />
     <Compile Include="Maps\Waypoint.cs" />
-    <Compile Include="Quaggans\IQuagganRepository.cs" />
     <Compile Include="Quaggans\Quaggan.cs" />
     <Compile Include="Recipes\AmuletRecipe.cs" />
     <Compile Include="Recipes\AxeRecipe.cs" />
@@ -379,9 +341,6 @@
     <Compile Include="Recipes\UpgradeComponentRecipe.cs" />
     <Compile Include="Recipes\WarHornRecipe.cs" />
     <Compile Include="Rendering\IRenderRepository.cs" />
-    <Compile Include="Rendering\IRenderRequest.cs" />
-    <Compile Include="Rendering\IRenderService.cs" />
-    <Compile Include="Rendering\RenderRequest.cs" />
     <Compile Include="Rendering\RenderRepository.cs" />
     <Compile Include="Skins\ArmorSkin.cs" />
     <Compile Include="Skins\AxeSkin.cs" />
@@ -398,7 +357,6 @@
     <Compile Include="Skins\HarpoonSkin.cs" />
     <Compile Include="Skins\HelmAquaticSkin.cs" />
     <Compile Include="Skins\HelmSkin.cs" />
-    <Compile Include="Skins\ISkinRepository.cs" />
     <Compile Include="Skins\LargeBundleSkin.cs" />
     <Compile Include="Skins\LeggingsSkin.cs" />
     <Compile Include="Skins\LoggingToolSkin.cs" />
@@ -427,7 +385,6 @@
     <Compile Include="Skins\UnknownWeaponSkin.cs" />
     <Compile Include="Skins\WarHornSkin.cs" />
     <Compile Include="Skins\WeaponSkin.cs" />
-    <Compile Include="Worlds\IWorldRepository.cs" />
     <Compile Include="Worlds\Population.cs" />
     <Compile Include="Worlds\World.cs" />
     <Compile Include="WorldVersusWorld\Bloodlust.cs" />
@@ -435,8 +392,6 @@
     <Compile Include="WorldVersusWorld\CompetitiveMap.cs" />
     <Compile Include="WorldVersusWorld\EternalBattlegrounds.cs" />
     <Compile Include="WorldVersusWorld\GreenBorderlands.cs" />
-    <Compile Include="WorldVersusWorld\IMatchRepository.cs" />
-    <Compile Include="WorldVersusWorld\IObjectiveNameRepository.cs" />
     <Compile Include="WorldVersusWorld\MapBonus.cs" />
     <Compile Include="WorldVersusWorld\Match.cs" />
     <Compile Include="WorldVersusWorld\Matchup.cs" />

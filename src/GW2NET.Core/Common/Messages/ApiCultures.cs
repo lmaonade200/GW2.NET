@@ -4,9 +4,13 @@
 
 namespace GW2NET.Common.Messages
 {
+    using System.Collections;
+    using System.Collections.Generic;
     using System.Globalization;
+    using System.Linq;
+    using System.Reflection;
 
-    public static class ApiCultures
+    public class ApiCultures : IEnumerable<CultureInfo>
     {
         public static CultureInfo English
         {
@@ -54,6 +58,18 @@ namespace GW2NET.Common.Messages
             {
                 return new CultureInfo("zh");
             }
+        }
+
+        /// <inheritdoc />
+        public IEnumerator<CultureInfo> GetEnumerator()
+        {
+            return typeof(ApiCultures).GetRuntimeProperties().Select(f => f.GetValue(null)).OfType<CultureInfo>().GetEnumerator();
+        }
+
+        /// <inheritdoc />
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return this.GetEnumerator();
         }
     }
 }
