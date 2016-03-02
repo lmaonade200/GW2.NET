@@ -77,12 +77,8 @@
     <Compile Include="Converters\WeightClassConverter.cs" />
     <Compile Include="Converters\DamageTypeConverter.cs" />
     <Compile Include="Json\DetailsDTO.cs" />
-    <Compile Include="SkinBulkRequest.cs" />
     <Compile Include="Converters\SkinConverter.cs" />
     <Compile Include="Json\SkinDTO.cs" />
-    <Compile Include="SkinDetailsRequest.cs" />
-    <Compile Include="SkinDiscoveryRequest.cs" />
-    <Compile Include="SkinPageRequest.cs" />
     <Compile Include="SkinRepository.cs" />
     <Compile Include="Converters\WeaponSkinConverter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

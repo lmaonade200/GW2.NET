@@ -13,6 +13,7 @@ namespace GW2NET.V2.Skins.Converters
     using System.Collections.Generic;
 
     using GW2NET.Common;
+    using GW2NET.Common.Converters;
     using GW2NET.Items;
     using GW2NET.Skins;
     using GW2NET.V2.Skins.Json;
@@ -36,50 +37,50 @@ namespace GW2NET.V2.Skins.Converters
         {
             if (itemRestrictionsConverter == null)
             {
-                throw new ArgumentNullException("itemRestrictionsConverter");
+                throw new ArgumentNullException(nameof(itemRestrictionsConverter));
             }
 
             if (skinFlagsConverter == null)
             {
-                throw new ArgumentNullException("skinFlagsConverter");
+                throw new ArgumentNullException(nameof(skinFlagsConverter));
             }
 
             this.itemRestrictionsConverter = itemRestrictionsConverter;
             this.skinFlagsConverter = skinFlagsConverter;
         }
 
-        partial void Merge(Skin entity, SkinDTO dto, object state)
+        partial void Merge(Skin entity, SkinDTO dataContract, object state)
         {
             if (state == null)
             {
-                throw new ArgumentNullException("state", "Precondition: state is IResponse");
+                throw new ArgumentNullException(nameof(state), "Precondition: state is IResponse");
             }
 
-            var response = state as IResponse;
+            ApiMetadata response = state as ApiMetadata;
             if (response == null)
             {
-                throw new ArgumentException("Precondition: state is IResponse", "state");
+                throw new ArgumentException("Could not cast to ApiMetadata", nameof(state));
             }
 
-            entity.Culture = response.Culture;
-            entity.SkinId = dto.Id;
-            entity.Name = dto.Name;
+            entity.Culture = response.ContentLanguage;
+            entity.SkinId = dataContract.Id;
+            entity.Name = dataContract.Name;
 
-            if (dto.Flags != null)
+            if (dataContract.Flags != null)
             {
-                entity.Flags = this.skinFlagsConverter.Convert(dto.Flags, state);
+                entity.Flags = this.skinFlagsConverter.Convert(dataContract.Flags, state);
             }
 
-            if (dto.Restrictions != null)
+            if (dataContract.Restrictions != null)
             {
-                entity.Restrictions = this.itemRestrictionsConverter.Convert(dto.Restrictions, state);
+                entity.Restrictions = this.itemRestrictionsConverter.Convert(dataContract.Restrictions, state);
             }
 
             // Process the URI. Note since the V2 api the URI doesn't have to be built by hand anymore.
             // It is stored as a a string in the response.
             // Question: Shouled we split the URI for user convenience or not??
             // TODO: yes we should split the URI. Not for convencience, but because 'Skin' implements 'IRenderable'
-            entity.IconFileUrl = new Uri(dto.IconUrl, UriKind.Absolute);
+            entity.IconFileUrl = new Uri(dataContract.IconUrl, UriKind.Absolute);
         }
     }
 }

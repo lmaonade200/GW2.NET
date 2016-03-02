@@ -14,7 +14,7 @@ namespace GW2NET.V2.Skins.Converters
 
     using GW2NET.Common;
     using GW2NET.Skins;
-	using SkinDTO = GW2NET.V2.Skins.Json.SkinDTO;
+    using GW2NET.V2.Skins.Json;
 
     public sealed partial class WeaponSkinConverter : IConverter<SkinDTO, WeaponSkin>
 	{
@@ -46,7 +46,7 @@ namespace GW2NET.V2.Skins.Converters
 		}
 
 		// Implement this method in a buddy class to set properties that are specific to 'WeaponSkin' (if any)
-    	partial void Merge(WeaponSkin entity, SkinDTO dto, object state);
+    	partial void Merge(WeaponSkin entity, SkinDTO dataContract, object state);
 
 		/*
 		// Use this template
@@ -73,7 +73,7 @@ namespace GW2NET.V2.Skins.Converters
         }
 
     	// Implement this method in a buddy class to set properties that are specific to 'AxeSkin' (if any)
-    	partial void Merge(AxeSkin entity, SkinDTO dto, object state);
+    	partial void Merge(AxeSkin entity, SkinDTO dataContract, object state);
 
 		/*
 		// Use this template
@@ -101,7 +101,7 @@ namespace GW2NET.V2.Skins.Converters
         }
 
     	// Implement this method in a buddy class to set properties that are specific to 'DaggerSkin' (if any)
-    	partial void Merge(DaggerSkin entity, SkinDTO dto, object state);
+    	partial void Merge(DaggerSkin entity, SkinDTO dataContract, object state);
 
 		/*
 		// Use this template
@@ -129,7 +129,7 @@ namespace GW2NET.V2.Skins.Converters
         }
 
     	// Implement this method in a buddy class to set properties that are specific to 'FocusSkin' (if any)
-    	partial void Merge(FocusSkin entity, SkinDTO dto, object state);
+    	partial void Merge(FocusSkin entity, SkinDTO dataContract, object state);
 
 		/*
 		// Use this template
@@ -157,7 +157,7 @@ namespace GW2NET.V2.Skins.Converters
         }
 
     	// Implement this method in a buddy class to set properties that are specific to 'GreatSwordSkin' (if any)
-    	partial void Merge(GreatSwordSkin entity, SkinDTO dto, object state);
+    	partial void Merge(GreatSwordSkin entity, SkinDTO dataContract, object state);
 
 		/*
 		// Use this template
@@ -185,7 +185,7 @@ namespace GW2NET.V2.Skins.Converters
         }
 
     	// Implement this method in a buddy class to set properties that are specific to 'HammerSkin' (if any)
-    	partial void Merge(HammerSkin entity, SkinDTO dto, object state);
+    	partial void Merge(HammerSkin entity, SkinDTO dataContract, object state);
 
 		/*
 		// Use this template
@@ -213,7 +213,7 @@ namespace GW2NET.V2.Skins.Converters
         }
 
     	// Implement this method in a buddy class to set properties that are specific to 'HarpoonSkin' (if any)
-    	partial void Merge(HarpoonSkin entity, SkinDTO dto, object state);
+    	partial void Merge(HarpoonSkin entity, SkinDTO dataContract, object state);
 
 		/*
 		// Use this template
@@ -241,7 +241,7 @@ namespace GW2NET.V2.Skins.Converters
         }
 
     	// Implement this method in a buddy class to set properties that are specific to 'LargeBundleSkin' (if any)
-    	partial void Merge(LargeBundleSkin entity, SkinDTO dto, object state);
+    	partial void Merge(LargeBundleSkin entity, SkinDTO dataContract, object state);
 
 		/*
 		// Use this template
@@ -269,7 +269,7 @@ namespace GW2NET.V2.Skins.Converters
         }
 
     	// Implement this method in a buddy class to set properties that are specific to 'LongBowSkin' (if any)
-    	partial void Merge(LongBowSkin entity, SkinDTO dto, object state);
+    	partial void Merge(LongBowSkin entity, SkinDTO dataContract, object state);
 
 		/*
 		// Use this template
@@ -297,7 +297,7 @@ namespace GW2NET.V2.Skins.Converters
         }
 
     	// Implement this method in a buddy class to set properties that are specific to 'MaceSkin' (if any)
-    	partial void Merge(MaceSkin entity, SkinDTO dto, object state);
+    	partial void Merge(MaceSkin entity, SkinDTO dataContract, object state);
 
 		/*
 		// Use this template
@@ -325,7 +325,7 @@ namespace GW2NET.V2.Skins.Converters
         }
 
     	// Implement this method in a buddy class to set properties that are specific to 'PistolSkin' (if any)
-    	partial void Merge(PistolSkin entity, SkinDTO dto, object state);
+    	partial void Merge(PistolSkin entity, SkinDTO dataContract, object state);
 
 		/*
 		// Use this template
@@ -353,7 +353,7 @@ namespace GW2NET.V2.Skins.Converters
         }
 
     	// Implement this method in a buddy class to set properties that are specific to 'RifleSkin' (if any)
-    	partial void Merge(RifleSkin entity, SkinDTO dto, object state);
+    	partial void Merge(RifleSkin entity, SkinDTO dataContract, object state);
 
 		/*
 		// Use this template
@@ -381,7 +381,7 @@ namespace GW2NET.V2.Skins.Converters
         }
 
     	// Implement this method in a buddy class to set properties that are specific to 'ScepterSkin' (if any)
-    	partial void Merge(ScepterSkin entity, SkinDTO dto, object state);
+    	partial void Merge(ScepterSkin entity, SkinDTO dataContract, object state);
 
 		/*
 		// Use this template
@@ -409,7 +409,7 @@ namespace GW2NET.V2.Skins.Converters
         }
 
     	// Implement this method in a buddy class to set properties that are specific to 'ShieldSkin' (if any)
-    	partial void Merge(ShieldSkin entity, SkinDTO dto, object state);
+    	partial void Merge(ShieldSkin entity, SkinDTO dataContract, object state);
 
 		/*
 		// Use this template
@@ -437,7 +437,7 @@ namespace GW2NET.V2.Skins.Converters
         }
 
     	// Implement this method in a buddy class to set properties that are specific to 'ShortBowSkin' (if any)
-    	partial void Merge(ShortBowSkin entity, SkinDTO dto, object state);
+    	partial void Merge(ShortBowSkin entity, SkinDTO dataContract, object state);
 
 		/*
 		// Use this template
@@ -465,7 +465,7 @@ namespace GW2NET.V2.Skins.Converters
         }
 
     	// Implement this method in a buddy class to set properties that are specific to 'SmallBundleSkin' (if any)
-    	partial void Merge(SmallBundleSkin entity, SkinDTO dto, object state);
+    	partial void Merge(SmallBundleSkin entity, SkinDTO dataContract, object state);
 
 		/*
 		// Use this template
@@ -493,7 +493,7 @@ namespace GW2NET.V2.Skins.Converters
         }
 
     	// Implement this method in a buddy class to set properties that are specific to 'SpearGunSkin' (if any)
-    	partial void Merge(SpearGunSkin entity, SkinDTO dto, object state);
+    	partial void Merge(SpearGunSkin entity, SkinDTO dataContract, object state);
 
 		/*
 		// Use this template
@@ -521,7 +521,7 @@ namespace GW2NET.V2.Skins.Converters
         }
 
     	// Implement this method in a buddy class to set properties that are specific to 'StaffSkin' (if any)
-    	partial void Merge(StaffSkin entity, SkinDTO dto, object state);
+    	partial void Merge(StaffSkin entity, SkinDTO dataContract, object state);
 
 		/*
 		// Use this template
@@ -549,7 +549,7 @@ namespace GW2NET.V2.Skins.Converters
         }
 
     	// Implement this method in a buddy class to set properties that are specific to 'SwordSkin' (if any)
-    	partial void Merge(SwordSkin entity, SkinDTO dto, object state);
+    	partial void Merge(SwordSkin entity, SkinDTO dataContract, object state);
 
 		/*
 		// Use this template
@@ -577,7 +577,7 @@ namespace GW2NET.V2.Skins.Converters
         }
 
     	// Implement this method in a buddy class to set properties that are specific to 'TorchSkin' (if any)
-    	partial void Merge(TorchSkin entity, SkinDTO dto, object state);
+    	partial void Merge(TorchSkin entity, SkinDTO dataContract, object state);
 
 		/*
 		// Use this template
@@ -605,7 +605,7 @@ namespace GW2NET.V2.Skins.Converters
         }
 
     	// Implement this method in a buddy class to set properties that are specific to 'ToySkin' (if any)
-    	partial void Merge(ToySkin entity, SkinDTO dto, object state);
+    	partial void Merge(ToySkin entity, SkinDTO dataContract, object state);
 
 		/*
 		// Use this template
@@ -633,7 +633,7 @@ namespace GW2NET.V2.Skins.Converters
         }
 
     	// Implement this method in a buddy class to set properties that are specific to 'TridentSkin' (if any)
-    	partial void Merge(TridentSkin entity, SkinDTO dto, object state);
+    	partial void Merge(TridentSkin entity, SkinDTO dataContract, object state);
 
 		/*
 		// Use this template
@@ -661,7 +661,7 @@ namespace GW2NET.V2.Skins.Converters
         }
 
     	// Implement this method in a buddy class to set properties that are specific to 'TwoHandedToySkin' (if any)
-    	partial void Merge(TwoHandedToySkin entity, SkinDTO dto, object state);
+    	partial void Merge(TwoHandedToySkin entity, SkinDTO dataContract, object state);
 
 		/*
 		// Use this template
@@ -689,7 +689,7 @@ namespace GW2NET.V2.Skins.Converters
         }
 
     	// Implement this method in a buddy class to set properties that are specific to 'UnknownWeaponSkin' (if any)
-    	partial void Merge(UnknownWeaponSkin entity, SkinDTO dto, object state);
+    	partial void Merge(UnknownWeaponSkin entity, SkinDTO dataContract, object state);
 
 		/*
 		// Use this template
@@ -717,7 +717,7 @@ namespace GW2NET.V2.Skins.Converters
         }
 
     	// Implement this method in a buddy class to set properties that are specific to 'WarHornSkin' (if any)
-    	partial void Merge(WarHornSkin entity, SkinDTO dto, object state);
+    	partial void Merge(WarHornSkin entity, SkinDTO dataContract, object state);
 
 		/*
 		// Use this template

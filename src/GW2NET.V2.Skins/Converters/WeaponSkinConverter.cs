@@ -27,15 +27,15 @@ namespace GW2NET.V2.Skins.Converters
         {
             if (damageTypeConverter == null)
             {
-                throw new ArgumentNullException("damageTypeConverter");
+                throw new ArgumentNullException(nameof(damageTypeConverter));
             }
 
             this.damageClassConverter = damageTypeConverter;
         }
 
-        partial void Merge(WeaponSkin entity, SkinDTO dto, object state)
+        partial void Merge(WeaponSkin entity, SkinDTO dataContract, object state)
         {
-            var details = dto.Details;
+            var details = dataContract.Details;
             if (details == null)
             {
                 return;

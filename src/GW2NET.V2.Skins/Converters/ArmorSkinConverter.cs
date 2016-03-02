@@ -18,23 +18,21 @@ namespace GW2NET.V2.Skins.Converters
         /// <summary>Initializes a new instance of the <see cref="ArmorSkinConverter" /> class.</summary>
         /// <param name="converterFactory"></param>
         /// <param name="weightClassConverter">The converter for <see cref="WeightClass" />.</param>
-        /// <exception cref="ArgumentNullException"></exception>
-        public ArmorSkinConverter(
-            ITypeConverterFactory<SkinDTO, ArmorSkin> converterFactory,
-            IConverter<string, WeightClass> weightClassConverter)
+        /// <exception cref="ArgumentNullException">Thrown when the weight converter is null.</exception>
+        public ArmorSkinConverter(ITypeConverterFactory<SkinDTO, ArmorSkin> converterFactory, IConverter<string, WeightClass> weightClassConverter)
             : this(converterFactory)
         {
             if (weightClassConverter == null)
             {
-                throw new ArgumentNullException("weightClassConverter");
+                throw new ArgumentNullException(nameof(weightClassConverter));
             }
 
             this.weightClassConverter = weightClassConverter;
         }
 
-        partial void Merge(ArmorSkin entity, SkinDTO dto, object state)
+        partial void Merge(ArmorSkin entity, SkinDTO dataContract, object state)
         {
-            var details = dto.Details;
+            var details = dataContract.Details;
             if (details == null)
             {
                 return;

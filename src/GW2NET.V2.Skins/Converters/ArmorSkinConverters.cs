@@ -52,7 +52,7 @@ namespace GW2NET.V2.Skins.Converters
 		// Use this template
 		public partial class ArmorSkinConverter
 		{
-		    partial void Merge(ArmorSkin entity, SkinDTO dto, object state)
+		    partial void Merge(ArmorSkin entity, SkinDataContract dto, object state)
 			{
 			    throw new NotImplementedException();
 			}
@@ -79,7 +79,7 @@ namespace GW2NET.V2.Skins.Converters
 		// Use this template
 		public partial class BootsSkinConverter
 		{
-		    partial void Merge(BootsSkin entity, SkinDTO dto, object state)
+		    partial void Merge(BootsSkin entity, SkinDataContract dto, object state)
 			{
 			    throw new NotImplementedException();
 			}
@@ -107,7 +107,7 @@ namespace GW2NET.V2.Skins.Converters
 		// Use this template
 		public partial class CoatSkinConverter
 		{
-		    partial void Merge(CoatSkin entity, SkinDTO dto, object state)
+		    partial void Merge(CoatSkin entity, SkinDataContract dto, object state)
 			{
 			    throw new NotImplementedException();
 			}
@@ -135,7 +135,7 @@ namespace GW2NET.V2.Skins.Converters
 		// Use this template
 		public partial class GlovesSkinConverter
 		{
-		    partial void Merge(GlovesSkin entity, SkinDTO dto, object state)
+		    partial void Merge(GlovesSkin entity, SkinDataContract dto, object state)
 			{
 			    throw new NotImplementedException();
 			}
@@ -163,7 +163,7 @@ namespace GW2NET.V2.Skins.Converters
 		// Use this template
 		public partial class HelmAquaticSkinConverter
 		{
-		    partial void Merge(HelmAquaticSkin entity, SkinDTO dto, object state)
+		    partial void Merge(HelmAquaticSkin entity, SkinDataContract dto, object state)
 			{
 			    throw new NotImplementedException();
 			}
@@ -191,7 +191,7 @@ namespace GW2NET.V2.Skins.Converters
 		// Use this template
 		public partial class HelmSkinConverter
 		{
-		    partial void Merge(HelmSkin entity, SkinDTO dto, object state)
+		    partial void Merge(HelmSkin entity, SkinDataContract dto, object state)
 			{
 			    throw new NotImplementedException();
 			}
@@ -219,7 +219,7 @@ namespace GW2NET.V2.Skins.Converters
 		// Use this template
 		public partial class LeggingsSkinConverter
 		{
-		    partial void Merge(LeggingsSkin entity, SkinDTO dto, object state)
+		    partial void Merge(LeggingsSkin entity, SkinDataContract dto, object state)
 			{
 			    throw new NotImplementedException();
 			}
@@ -247,7 +247,7 @@ namespace GW2NET.V2.Skins.Converters
 		// Use this template
 		public partial class ShouldersSkinConverter
 		{
-		    partial void Merge(ShouldersSkin entity, SkinDTO dto, object state)
+		    partial void Merge(ShouldersSkin entity, SkinDataContract dto, object state)
 			{
 			    throw new NotImplementedException();
 			}
@@ -275,7 +275,7 @@ namespace GW2NET.V2.Skins.Converters
 		// Use this template
 		public partial class UnknownArmorSkinConverter
 		{
-		    partial void Merge(UnknownArmorSkin entity, SkinDTO dto, object state)
+		    partial void Merge(UnknownArmorSkin entity, SkinDataContract dto, object state)
 			{
 			    throw new NotImplementedException();
 			}

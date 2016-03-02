@@ -14,7 +14,7 @@ namespace GW2NET.V2.Skins.Converters
 
     using GW2NET.Common;
     using GW2NET.Skins;
-	using SkinDTO = GW2NET.V2.Skins.Json.SkinDTO;
+    using GW2NET.V2.Skins.Json;
 
     public sealed partial class SkinConverter : IConverter<SkinDTO, Skin>
 	{
@@ -46,7 +46,7 @@ namespace GW2NET.V2.Skins.Converters
 		}
 
 		// Implement this method in a buddy class to set properties that are specific to 'Skin' (if any)
-    	partial void Merge(Skin entity, SkinDTO dto, object state);
+    	partial void Merge(Skin entity, SkinDTO dataContract, object state);
 
 		/*
 		// Use this template
@@ -73,7 +73,7 @@ namespace GW2NET.V2.Skins.Converters
         }
 
     	// Implement this method in a buddy class to set properties that are specific to 'BackpackSkin' (if any)
-    	partial void Merge(BackpackSkin entity, SkinDTO dto, object state);
+    	partial void Merge(BackpackSkin entity, SkinDTO dataContract, object state);
 
 		/*
 		// Use this template
@@ -101,7 +101,7 @@ namespace GW2NET.V2.Skins.Converters
         }
 
     	// Implement this method in a buddy class to set properties that are specific to 'UnknownSkin' (if any)
-    	partial void Merge(UnknownSkin entity, SkinDTO dto, object state);
+    	partial void Merge(UnknownSkin entity, SkinDTO dataContract, object state);
 
 		/*
 		// Use this template

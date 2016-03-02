@@ -14,7 +14,7 @@ namespace GW2NET.V2.Skins.Converters
 
     using GW2NET.Common;
     using GW2NET.Skins;
-	using SkinDTO = GW2NET.V2.Skins.Json.SkinDTO;
+    using GW2NET.V2.Skins.Json;
 
     public sealed partial class GatheringToolSkinConverter : IConverter<SkinDTO, GatheringToolSkin>
 	{
@@ -46,7 +46,7 @@ namespace GW2NET.V2.Skins.Converters
 		}
 
 		// Implement this method in a buddy class to set properties that are specific to 'GatheringToolSkin' (if any)
-    	partial void Merge(GatheringToolSkin entity, SkinDTO dto, object state);
+    	partial void Merge(GatheringToolSkin entity, SkinDTO dataContract, object state);
 
 		/*
 		// Use this template
@@ -73,7 +73,7 @@ namespace GW2NET.V2.Skins.Converters
         }
 
     	// Implement this method in a buddy class to set properties that are specific to 'ForagingToolSkin' (if any)
-    	partial void Merge(ForagingToolSkin entity, SkinDTO dto, object state);
+    	partial void Merge(ForagingToolSkin entity, SkinDTO dataContract, object state);
 
 		/*
 		// Use this template
@@ -101,7 +101,7 @@ namespace GW2NET.V2.Skins.Converters
         }
 
     	// Implement this method in a buddy class to set properties that are specific to 'LoggingToolSkin' (if any)
-    	partial void Merge(LoggingToolSkin entity, SkinDTO dto, object state);
+    	partial void Merge(LoggingToolSkin entity, SkinDTO dataContract, object state);
 
 		/*
 		// Use this template
@@ -129,7 +129,7 @@ namespace GW2NET.V2.Skins.Converters
         }
 
     	// Implement this method in a buddy class to set properties that are specific to 'MiningToolSkin' (if any)
-    	partial void Merge(MiningToolSkin entity, SkinDTO dto, object state);
+    	partial void Merge(MiningToolSkin entity, SkinDTO dataContract, object state);
 
 		/*
 		// Use this template
@@ -157,7 +157,7 @@ namespace GW2NET.V2.Skins.Converters
         }
 
     	// Implement this method in a buddy class to set properties that are specific to 'UnknownGatheringToolSkin' (if any)
-    	partial void Merge(UnknownGatheringToolSkin entity, SkinDTO dto, object state);
+    	partial void Merge(UnknownGatheringToolSkin entity, SkinDTO dataContract, object state);
 
 		/*
 		// Use this template
