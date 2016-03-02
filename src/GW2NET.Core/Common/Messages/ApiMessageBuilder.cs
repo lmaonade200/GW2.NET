@@ -104,7 +104,7 @@ namespace GW2NET.Common.Messages
         // ReSharper disable once ParameterHidesMember
         IBaseBuilder IParameterizedBuilder.WithIdentifiers<TKey>(IEnumerable<TKey> identifiers)
         {
-            this.identifiers.AddRange(this.identifiers.Select(i => i.ToString()));
+            this.identifiers.AddRange(identifiers.Select(i => i.ToString()));
 
             return this;
         }
