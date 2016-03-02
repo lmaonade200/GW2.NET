@@ -20,10 +20,10 @@ namespace GW2NET.V1.Guilds
 
         /// <summary>Initializes a new instance of the <see cref="GuildRepository"/> class.</summary>
         /// <param name="httpClient">The <see cref="HttpClient"/> used to make connections with the ArenaNet servers.</param>
-        /// <param name="responseConverter">The <see cref="ResponseConverterBase"/> used to convert <see cref="HttpResponseMessage"/> into objects.</param>
+        /// <param name="responseConverter">The <see cref="IResponseConverter"/> used to convert <see cref="HttpResponseMessage"/> into objects.</param>
         /// <param name="modelConverter">A converter used to convert data contracts into objects.</param>
         /// <exception cref="ArgumentNullException">Thrown when either parameter is null.</exception>
-        public GuildRepository(HttpClient httpClient, ResponseConverterBase responseConverter, IConverter<GuildDataContract, Guild> modelConverter)
+        public GuildRepository(HttpClient httpClient, IResponseConverter responseConverter, IConverter<GuildDataContract, Guild> modelConverter)
             : base(httpClient, responseConverter)
         {
             if (modelConverter == null)

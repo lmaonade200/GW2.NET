@@ -11,6 +11,7 @@ namespace GW2NET.V2.Colors
 
     using GW2NET.Colors;
     using GW2NET.Common;
+    using GW2NET.Common.Converters;
 
     /// <summary>Converts objects of type <see cref="ColorDataContract"/> to objects of type <see cref="ColorPalette"/>.</summary>
     public sealed class ColorPaletteConverter : IConverter<ColorPaletteDataContract, ColorPalette>
@@ -26,12 +27,12 @@ namespace GW2NET.V2.Colors
         {
             if (colorConverter == null)
             {
-                throw new ArgumentNullException("colorConverter");
+                throw new ArgumentNullException(nameof(colorConverter));
             }
 
             if (colorModelConverter == null)
             {
-                throw new ArgumentNullException("colorModelConverter");
+                throw new ArgumentNullException(nameof(colorModelConverter));
             }
 
             this.colorConverter = colorConverter;
@@ -43,18 +44,18 @@ namespace GW2NET.V2.Colors
         {
             if (value == null)
             {
-                throw new ArgumentNullException("value");
+                throw new ArgumentNullException(nameof(value));
             }
 
             if (state == null)
             {
-                throw new ArgumentNullException("state");
+                throw new ArgumentNullException(nameof(state));
             }
 
-            IResponse response = state as IResponse;
+            ApiMetadata response = state as ApiMetadata;
             if (response == null)
             {
-                throw new ArgumentException("Precondition: state is IResponse", "state");
+                throw new ArgumentException("Could not cast to ApiMetadata", nameof(state));
             }
 
             ColorPalette entity = new ColorPalette
@@ -65,7 +66,7 @@ namespace GW2NET.V2.Colors
                 Cloth = this.colorModelConverter.Convert(value.Cloth, value),
                 Leather = this.colorModelConverter.Convert(value.Leather, value),
                 Metal = this.colorModelConverter.Convert(value.Metal, value),
-                Culture = response.Culture
+                Culture = response.ContentLanguage
             };
 
             if (value.Categories == null)

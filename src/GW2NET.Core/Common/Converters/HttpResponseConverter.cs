@@ -1,3 +1,7 @@
+// <copyright file="HttpResponseConverter.cs" company="GW2.NET Coding Team">
+// This product is licensed under the GNU General Public License version 2 (GPLv2). See the License in the project root folder or the following page: http://www.gnu.org/licenses/gpl-2.0.html
+// </copyright>
+
 namespace GW2NET.Common.Converters
 {
     using System;
@@ -12,7 +16,7 @@ namespace GW2NET.Common.Converters
 
     using GW2NET.Common.Serializers;
 
-    public class HttpResponseConverter : ResponseConverterBase
+    public class HttpResponseConverter : IResponseConverter
     {
         private readonly ISerializerFactory serializerFactory;
 
@@ -27,45 +31,27 @@ namespace GW2NET.Common.Converters
             this.errorSerializerFactory = errorSerializerFactory;
         }
 
-        public override async Task<IEnumerable<TOutput>> ConvertSetAsync<TInput, TOutput>(HttpResponseMessage responseMessage, IConverter<TInput, TOutput> innerConverter)
+        public async Task<IEnumerable<TOutput>> ConvertSetAsync<TInput, TOutput>(HttpResponseMessage responseMessage, IConverter<TInput, TOutput> innerConverter)
         {
             IEnumerable<TInput> response = await this.GetContentAsync<IEnumerable<TInput>>(responseMessage);
             ApiMetadata metadata = this.GetMetadata(responseMessage);
 
             ConcurrentBag<TOutput> items = new ConcurrentBag<TOutput>();
 
-            // Conversion is currently done, so the old converter
-            // infrastructure can be kept intact for now.
-            // This should be changed later down the road.
-            Response<TInput> responseState = new Response<TInput>
-            {
-                Culture = metadata.ContentLanguage,
-                Date = metadata.RequestDate
-            };
-
             Parallel.ForEach(response, item =>
-            {
-                items.Add(innerConverter.Convert(item, responseState));
-            });
+             {
+                 items.Add(innerConverter.Convert(item, metadata));
+             });
 
             return items;
         }
 
-        public override async Task<TOutput> ConvertElementAsync<TInput, TOutput>(HttpResponseMessage responseMessage, IConverter<TInput, TOutput> innerConverter)
+        public async Task<TOutput> ConvertElementAsync<TInput, TOutput>(HttpResponseMessage responseMessage, IConverter<TInput, TOutput> innerConverter)
         {
             TInput response = await this.GetContentAsync<TInput>(responseMessage);
             ApiMetadata metadata = this.GetMetadata(responseMessage);
 
-            // Conversion is currently done, so the old converter
-            // infrastructure can be kept intact for now.
-            // This should be changed later down the road.
-            Response<TInput> responseState = new Response<TInput>
-            {
-                Culture = metadata.ContentLanguage,
-                Date = metadata.RequestDate
-            };
-
-            return innerConverter.Convert(response, responseState);
+            return innerConverter.Convert(response, metadata);
         }
 
         private async Task<TResult> DeserializeAsync<TResult>(HttpContent content, ISerializerFactory serializer, IConverter<Stream, Stream> compressionConverter)

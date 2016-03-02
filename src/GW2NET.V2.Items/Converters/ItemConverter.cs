@@ -12,6 +12,7 @@ namespace GW2NET.V2.Items.Converters
     using System.Collections.Generic;
 
     using GW2NET.Common;
+    using GW2NET.Common.Converters;
     using GW2NET.Items;
     using GW2NET.V2.Items.Json;
 
@@ -42,22 +43,22 @@ namespace GW2NET.V2.Items.Converters
         {
             if (itemRarityConverter == null)
             {
-                throw new ArgumentNullException("itemRarityConverter");
+                throw new ArgumentNullException(nameof(itemRarityConverter));
             }
 
             if (gameTypesConverter == null)
             {
-                throw new ArgumentNullException("gameTypesConverter");
+                throw new ArgumentNullException(nameof(gameTypesConverter));
             }
 
             if (itemFlagsConverter == null)
             {
-                throw new ArgumentNullException("itemFlagsConverter");
+                throw new ArgumentNullException(nameof(itemFlagsConverter));
             }
 
             if (itemRestrictionsConverter == null)
             {
-                throw new ArgumentNullException("itemRestrictionsConverter");
+                throw new ArgumentNullException(nameof(itemRestrictionsConverter));
             }
 
             this.itemRarityConverter = itemRarityConverter;
@@ -70,16 +71,16 @@ namespace GW2NET.V2.Items.Converters
         {
             if (state == null)
             {
-                throw new ArgumentNullException("state", "Precondition: state is IResponse");
+                throw new ArgumentNullException(nameof(state), "Precondition: state is IResponse");
             }
 
-            var response = state as IResponse;
+            ApiMetadata response = state as ApiMetadata;
             if (response == null)
             {
-                throw new ArgumentException("Precondition: state is IResponse", "state");
+                throw new ArgumentException("Could not cast to ApiMetadata", nameof(state));
             }
 
-            entity.Culture = response.Culture;
+            entity.Culture = response.ContentLanguage;
             entity.ItemId = dto.Id;
             entity.ChatLink = dto.ChatLink;
             entity.Name = dto.Name;
@@ -87,19 +88,19 @@ namespace GW2NET.V2.Items.Converters
             entity.Level = dto.Level;
             entity.Rarity = this.itemRarityConverter.Convert(dto.Rarity, dto);
             entity.VendorValue = dto.VendorValue;
-            var gameTypes = dto.GameTypes;
+            ICollection<string> gameTypes = dto.GameTypes;
             if (gameTypes != null)
             {
                 entity.GameTypes = this.gameTypesConverter.Convert(gameTypes, dto);
             }
 
-            var flags = dto.Flags;
+            ICollection<string> flags = dto.Flags;
             if (flags != null)
             {
                 entity.Flags = this.itemFlagsConverter.Convert(flags, dto);
             }
 
-            var restrictions = dto.Restrictions;
+            ICollection<string> restrictions = dto.Restrictions;
             if (restrictions != null)
             {
                 entity.Restrictions = this.itemRestrictionsConverter.Convert(restrictions, dto);
@@ -114,7 +115,7 @@ namespace GW2NET.V2.Items.Converters
 
                 // Split the path into segments
                 // Format: /file/{signature}/{identifier}.{extension}
-                var segments = icon.LocalPath.Split('.')[0].Split('/');
+                string[] segments = icon.LocalPath.Split('.')[0].Split('/');
 
                 // Set the icon file signature
                 if (segments.Length >= 3 && segments[2] != null)

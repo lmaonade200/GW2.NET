@@ -12,6 +12,7 @@ namespace GW2NET.V2.Recipes.Converters
     using System.Collections.Generic;
 
     using GW2NET.Common;
+    using GW2NET.Common.Converters;
     using GW2NET.Items;
     using GW2NET.Recipes;
     using GW2NET.V2.Recipes.Json;
@@ -38,17 +39,17 @@ namespace GW2NET.V2.Recipes.Converters
         {
             if (craftingDisciplineCollectionConverter == null)
             {
-                throw new ArgumentNullException("craftingDisciplineCollectionConverter");
+                throw new ArgumentNullException(nameof(craftingDisciplineCollectionConverter));
             }
 
             if (recipeFlagCollectionConverter == null)
             {
-                throw new ArgumentNullException("recipeFlagCollectionConverter");
+                throw new ArgumentNullException(nameof(recipeFlagCollectionConverter));
             }
 
             if (ingredientsCollectionConverter == null)
             {
-                throw new ArgumentNullException("ingredientsCollectionConverter");
+                throw new ArgumentNullException(nameof(ingredientsCollectionConverter));
             }
 
             this.craftingDisciplineCollectionConverter = craftingDisciplineCollectionConverter;
@@ -60,16 +61,16 @@ namespace GW2NET.V2.Recipes.Converters
         {
             if (state == null)
             {
-                throw new ArgumentNullException("state", "Precondition: state is IResponse");
+                throw new ArgumentNullException(nameof(state), "Precondition: state is IResponse");
             }
 
-            var response = state as IResponse;
+            var response = state as ApiMetadata;
             if (response == null)
             {
-                throw new ArgumentException("Precondition: state is IResponse", "state");
+                throw new ArgumentException("Could not cast to ApiMetadata", nameof(state));
             }
 
-            entity.Culture = response.Culture;
+            entity.Culture = response.ContentLanguage;
             entity.RecipeId = dto.Id;
             entity.ChatLink = dto.ChatLink;
             entity.OutputItemId = dto.OutputItemId;
