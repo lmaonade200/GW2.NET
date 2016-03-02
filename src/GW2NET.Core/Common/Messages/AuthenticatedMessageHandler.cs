@@ -8,8 +8,11 @@ namespace GW2NET.Common.Messages
 
     public class AuthenticatedMessageHandler : DelegatingHandler
     {
-        public AuthenticatedMessageHandler(HttpMessageHandler innerHandler)
+        private readonly string apiKey;
+
+        public AuthenticatedMessageHandler(HttpMessageHandler innerHandler, string apiKey)
         {
+            this.apiKey = KeyUtilities.IsValid(apiKey) ? apiKey : string.Empty;
             this.InnerHandler = innerHandler;
         }
 
