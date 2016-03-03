@@ -60,8 +60,6 @@
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
     </Compile>
-    <Compile Include="Converters\ItemRestrictionCollectionConverter.cs" />
-    <Compile Include="Converters\ItemRestrictionConverter.cs" />
     <Compile Include="Converters\ArmorSkinConverters.cs">
       <DependentUpon>ArmorSkinConverters.tt</DependentUpon>
       <AutoGen>True</AutoGen>

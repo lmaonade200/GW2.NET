@@ -72,6 +72,8 @@
     <Compile Include="Common\Converters\IResponseConverter.cs" />
     <Compile Include="Common\Converters\Base64Converter.cs" />
     <Compile Include="Common\Converters\HttpResponseConverter.cs" />
+    <Compile Include="Common\Converters\ItemRestrictionCollectionConverter.cs" />
+    <Compile Include="Common\Converters\ItemRestrictionConverter.cs" />
     <Compile Include="Common\DiscoverableExtensions.cs" />
     <Compile Include="Common\IApiService.cs" />
     <Compile Include="Common\ICachedRepository{TKey,TDataContract,TValue}.cs" />
