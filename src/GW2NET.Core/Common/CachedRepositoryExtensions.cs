@@ -55,7 +55,32 @@ namespace GW2NET.Common
 
             return apiItem;
         }
-        
+
+        /// <summary>Gets items from the Guild Wars 2 api.</summary>
+        /// <typeparam name="TKey">The type of key used to identify items.</typeparam>
+        /// <typeparam name="TDataContract">The type of data returned by the api.</typeparam>
+        /// <typeparam name="TValue">The type of data to convert the api data into.</typeparam>
+        /// <param name="repository">The repository used to make connections and store the data.</param>
+        /// <returns>An <see cref="IEnumerable{T}"/> of type <see cref="TValue"/> with data from the api.</returns>
+        public static Task<IEnumerable<TValue>> GetAsync<TKey, TDataContract, TValue>(this ICachedRepository<TKey, TDataContract, TValue> repository)
+        {
+            return GetAsync(repository, CancellationToken.None);
+        }
+
+        /// <summary>Gets items from the Guild Wars 2 api.</summary>
+        /// <typeparam name="TKey">The type of key used to identify items.</typeparam>
+        /// <typeparam name="TDataContract">The type of data returned by the api.</typeparam>
+        /// <typeparam name="TValue">The type of data to convert the api data into.</typeparam>
+        /// <param name="repository">The repository used to make connections and store the data.</param>
+        /// <param name="cancellationToken">A token signalling the cancellation of the operation.</param>
+        /// <returns>An <see cref="IEnumerable{T}"/> of type <see cref="TValue"/> with data from the api.</returns>
+        public static async Task<IEnumerable<TValue>> GetAsync<TKey, TDataContract, TValue>(this ICachedRepository<TKey, TDataContract, TValue> repository, CancellationToken cancellationToken)
+        {
+            IEnumerable<TKey> serviceIds = await ((IDiscoverable<TKey>)repository).DiscoverAsync(cancellationToken);
+
+            return await repository.GetAsync(serviceIds, cancellationToken);
+        }
+
         /// <summary>Gets a set of items with the specified ids from the Guild Wars 2 api.</summary>
         /// <typeparam name="TKey">The type of key used to identify items.</typeparam>
         /// <typeparam name="TDataContract">The type of data returned by the api.</typeparam>
