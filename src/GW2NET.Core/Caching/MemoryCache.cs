@@ -90,7 +90,7 @@ namespace GW2NET.Caching
         public IEnumerable<TValue> GetByIdentifier(TKey identifier)
         {
             IList<TValue> items;
-            return this.items.TryGetValue(identifier, out items) ? items : null;
+            return this.items.TryGetValue(identifier, out items) ? items : new List<TValue>(0);
         }
 
         /// <inheritdoc />
@@ -156,7 +156,7 @@ namespace GW2NET.Caching
                 return false;
             }
 
-            return timesensitiveItem.Expires >= DateTimeOffset.UtcNow;
+            return timesensitiveItem.Expires.UtcDateTime >= DateTimeOffset.UtcNow;
         }
     }
 }
