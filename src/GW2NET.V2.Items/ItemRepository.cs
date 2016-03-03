@@ -42,7 +42,7 @@ namespace GW2NET.V2.Items
     ///     </item>
     /// </list>
     /// </remarks>
-    public sealed class ItemRepository : CachedRepository<int, Item>, IDiscoverableNew<int>, ICachedRepository<int, ItemDTO, Item>, ILocalizable
+    public sealed class ItemRepository : CachedRepository<int, Item>, IDiscoverable<int>, ICachedRepository<int, ItemDTO, Item>, ILocalizable
     {
         /// <summary>Initializes a new instance of the <see cref="ItemRepository"/> class.</summary>
         /// <param name="httpClient">The <see cref="HttpClient"/> used to make connections with the ArenaNet servers.</param>

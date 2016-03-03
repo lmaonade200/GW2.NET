@@ -38,7 +38,7 @@ namespace GW2NET.V2.Colors.Tests
             IConverter<int, int> idConverter = new ConverterAdapter<int>();
             ColorPaletteConverter colorConverter = new ColorPaletteConverter(new ColorConverter(), new ColorModelConverter(new ColorConverter()));
 
-            ColorRepository repository = new ColorRepository(client, responseConverter, new MemoryCache<ColorPalette>(), idConverter, colorConverter);
+            ColorRepository repository = new ColorRepository(client, responseConverter, new MemoryCache<int, ColorPalette>(), idConverter, colorConverter);
 
             IEnumerable<int> ids = await repository.DiscoverAsync();
 
@@ -56,12 +56,12 @@ namespace GW2NET.V2.Colors.Tests
             JsonSerializerFactory jsonSerializerFactory = new JsonSerializerFactory();
             GzipInflator gzipInflator = new GzipInflator();
 
-            ResponseConverterBase responseConverter = new HttpResponseConverter(jsonSerializerFactory, jsonSerializerFactory, gzipInflator);
+            IResponseConverter responseConverter = new HttpResponseConverter(jsonSerializerFactory, jsonSerializerFactory, gzipInflator);
 
             IConverter<int, int> idConverter = new ConverterAdapter<int>();
             ColorPaletteConverter colorConverter = new ColorPaletteConverter(new ColorConverter(), new ColorModelConverter(new ColorConverter()));
 
-            ColorRepository repository = new ColorRepository(client, responseConverter, new MemoryCache<ColorPalette>(), idConverter, colorConverter);
+            ColorRepository repository = new ColorRepository(client, responseConverter, new MemoryCache<int, ColorPalette>(), idConverter, colorConverter);
 
             ColorPalette color = await repository.GetAsync(10, CancellationToken.None);
 
@@ -80,17 +80,18 @@ namespace GW2NET.V2.Colors.Tests
             JsonSerializerFactory jsonSerializerFactory = new JsonSerializerFactory();
             GzipInflator gzipInflator = new GzipInflator();
 
-            ResponseConverterBase responseConverter = new HttpResponseConverter(jsonSerializerFactory, jsonSerializerFactory, gzipInflator);
+            IResponseConverter responseConverter = new HttpResponseConverter(jsonSerializerFactory, jsonSerializerFactory, gzipInflator);
 
             IConverter<int, int> idConverter = new ConverterAdapter<int>();
             ColorPaletteConverter colorConverter = new ColorPaletteConverter(new ColorConverter(), new ColorModelConverter(new ColorConverter()));
 
-            ColorRepository repository = new ColorRepository(client, responseConverter, new MemoryCache<ColorPalette>(), idConverter, colorConverter);
+            ColorRepository repository = new ColorRepository(client, responseConverter, new MemoryCache<int, ColorPalette>(), idConverter, colorConverter);
 
-            var ids = (await repository.DiscoverAsync()).Take(20);
-            var color = await repository.GetAsync(ids, CancellationToken.None);
+            IEnumerable<int> ids = (await repository.DiscoverAsync()).Take(400);
+            List<ColorPalette> color = (await repository.GetAsync(ids, CancellationToken.None)).ToList();
 
             Assert.NotNull(color);
+            Assert.True(color.Count == 400);
         }
     }
 }

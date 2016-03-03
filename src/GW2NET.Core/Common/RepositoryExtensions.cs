@@ -74,7 +74,7 @@ namespace GW2NET.Common
         /// <returns>An <see cref="IEnumerable{T}"/> of type <see cref="TValue"/> with data from the api.</returns>
         public static async Task<IEnumerable<TValue>> GetAsync<TKey, TDataContract, TValue>(this IRepository<TDataContract, TValue> repository, CancellationToken cancellationToken)
         {
-            IEnumerable<TKey> serviceIds = await ((IDiscoverableNew<TKey>)repository).DiscoverAsync(cancellationToken);
+            IEnumerable<TKey> serviceIds = await ((IDiscoverable<TKey>)repository).DiscoverAsync(cancellationToken);
 
             return await repository.GetAsync(serviceIds, cancellationToken);
         }

@@ -14,7 +14,7 @@ namespace GW2NET.V2.Colors
     using GW2NET.Common.Messages;
 
     /// <summary>Provides methods and properties to retrive colors from the GW2 api.</summary>
-    public sealed class ColorRepository : CachedRepository<int, ColorPalette>, IDiscoverableNew<int>, ICachedRepository<int, ColorPaletteDataContract, ColorPalette>, ILocalizable
+    public sealed class ColorRepository : CachedRepository<int, ColorPalette>, IDiscoverable<int>, ICachedRepository<int, ColorPaletteDataContract, ColorPalette>, ILocalizable
     {
         /// <summary>Initializes a new instance of the <see cref="ColorRepository"/> class.</summary>
         /// <param name="httpClient">The <see cref="HttpClient"/> used to make requests against the api.</param>

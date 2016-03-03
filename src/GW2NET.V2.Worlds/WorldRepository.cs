@@ -15,7 +15,7 @@ namespace GW2NET.V2.Worlds
     using GW2NET.Worlds;
 
     /// <summary>Represents a repository that retrieves data from the /v2/worlds interface.</summary>
-    public class WorldRepository : CachedRepository<int, World>, IDiscoverableNew<int>, ICachedRepository<int, WorldDataContract, World>, ILocalizable
+    public class WorldRepository : CachedRepository<int, World>, IDiscoverable<int>, ICachedRepository<int, WorldDataContract, World>, ILocalizable
     {
         /// <summary>Initializes a new instance of the <see cref="WorldRepository"/> class.</summary>
         /// <param name="httpClient">The <see cref="HttpClient"/> used to make connections with the ArenaNet servers.</param>

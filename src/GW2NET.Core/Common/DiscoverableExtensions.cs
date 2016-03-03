@@ -7,12 +7,12 @@ namespace GW2NET.Common
 
     public static class DiscoverableExtensions
     {
-        public static Task<IEnumerable<T>> DiscoverAsync<T>(this IDiscoverableNew<T> discoverable)
+        public static Task<IEnumerable<T>> DiscoverAsync<T>(this IDiscoverable<T> discoverable)
         {
             return DiscoverAsync(discoverable, CancellationToken.None);
         }
 
-        public static async Task<IEnumerable<T>> DiscoverAsync<T>(this IDiscoverableNew<T> discoverable, CancellationToken cancellationToken)
+        public static async Task<IEnumerable<T>> DiscoverAsync<T>(this IDiscoverable<T> discoverable, CancellationToken cancellationToken)
         {
             HttpRequestMessage request = discoverable.ServiceLocation.Build();
 

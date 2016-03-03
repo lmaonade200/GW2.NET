@@ -14,7 +14,7 @@ namespace GW2NET.V2.Quaggans
     using GW2NET.Quaggans;
 
     /// <summary>Represents a repository that retrieves data from the /v2/quaggans interface.</summary>
-    public class QuagganRepository : CachedRepository<string, Quaggan>, IDiscoverableNew<string>, ICachedRepository<string, QuagganDataContract, Quaggan>
+    public class QuagganRepository : CachedRepository<string, Quaggan>, IDiscoverable<string>, ICachedRepository<string, QuagganDataContract, Quaggan>
     {
         /// <summary>Initializes a new instance of the <see cref="QuagganRepository"/> class.</summary>
         /// <param name="httpClient">The <see cref="HttpClient"/> used to make connections with the ArenaNet servers.</param>

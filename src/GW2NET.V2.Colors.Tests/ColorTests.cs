@@ -4,7 +4,12 @@
 
 namespace GW2NET.V2.Colors.Tests
 {
+    using System.Collections.Generic;
     using System.Linq;
+    using System.Threading;
+
+    using GW2NET.Colors;
+    using GW2NET.Common;
 
     using Xunit;
     using Xunit.Abstractions;
@@ -23,8 +28,8 @@ namespace GW2NET.V2.Colors.Tests
         [Fact]
         public async void DiscoverAsync()
         {
-            var repository = GW2.Services.Colors;
-            var result = await repository.DiscoverAsync();
+            ColorRepository repository = GW2.Services.Colors;
+            IEnumerable<int> result = await repository.DiscoverAsync();
             Assert.NotNull(result);
             Assert.NotEmpty(result);
         }
@@ -35,8 +40,8 @@ namespace GW2NET.V2.Colors.Tests
         [InlineData(3)]
         public async void GetAsync(int identifier)
         {
-            var repository = GW2.Services.Colors;
-            var result = await repository.GetAsync(identifier);
+            ColorRepository repository = GW2.Services.Colors;
+            ColorPalette result = await repository.GetAsync(identifier);
             Assert.NotNull(result);
             Assert.StrictEqual(identifier, result.ColorId);
         }
@@ -44,11 +49,11 @@ namespace GW2NET.V2.Colors.Tests
         [Fact]
         public async void FindAllAsync()
         {
-            var repository = GW2.Services.Colors;
-            var result = (await repository.GetAsync()).ToList();
+            ColorRepository repository = GW2.Services.Colors;
+            List<ColorPalette> result = (await repository.GetAsync<int, ColorPaletteDataContract, ColorPalette>()).ToList();
             Assert.NotNull(result);
             Assert.NotEmpty(result);
-            foreach (var kvp in result)
+            foreach (ColorPalette kvp in result)
             {
                 Assert.NotNull(kvp);
             }
@@ -58,14 +63,15 @@ namespace GW2NET.V2.Colors.Tests
         [InlineData(new[] { 1, 2, 3 })]
         public async void FindAllAsync_WithIdList(int[] filter)
         {
-            var repository = GW2.Services.Colors;
-            var result = (await repository.GetAsync(filter)).ToList();
+            ColorRepository repository = GW2.Services.Colors;
+            IList<ColorPalette> result = (await repository.GetAsync<int, ColorPaletteDataContract, ColorPalette>(filter, CancellationToken.None)).OrderBy(e => e.ColorId).ToList();
             Assert.NotNull(result);
             Assert.StrictEqual(filter.Length, result.Count);
-            foreach (var identifier in filter)
+
+            for (int i = 0; i < filter.Length; i++)
             {
-                Assert.NotNull(result[identifier]);
-                Assert.StrictEqual(identifier, result[identifier].ColorId);
+                Assert.NotNull(result[i]);
+                Assert.StrictEqual(filter[i], result[i].ColorId);
             }
         }
     }

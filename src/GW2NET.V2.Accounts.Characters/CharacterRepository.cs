@@ -14,7 +14,7 @@ namespace GW2NET.V2.Accounts.Characters
     using GW2NET.Common.Messages;
 
     /// <summary>Represents a repository that retrieves data from the /v2/characters interface.</summary>
-    public sealed class CharacterRepository : CachedRepository<string, Character>, IDiscoverableNew<string>, ICachedRepository<string, CharacterDataContract, Character>
+    public sealed class CharacterRepository : CachedRepository<string, Character>, IDiscoverable<string>, ICachedRepository<string, CharacterDataContract, Character>
     {
         /// <summary>Initializes a new instance of the <see cref="CharacterRepository"/> class.</summary>
         /// <param name="client"></param>

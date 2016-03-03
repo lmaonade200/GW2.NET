@@ -33,7 +33,7 @@ namespace GW2NET.V2.Recipes
     ///     </item>
     /// </list>
     /// </remarks>
-    public class RecipeRepository : CachedRepository<int, Recipe>, IRecipeRepository, IDiscoverableNew<int>, ICachedRepository<int, RecipeDTO, Recipe>, ILocalizable
+    public class RecipeRepository : CachedRepository<int, Recipe>, IRecipeRepository, IDiscoverable<int>, ICachedRepository<int, RecipeDTO, Recipe>, ILocalizable
     {
         /// <summary>Initializes a new instance of the <see cref="RecipeRepository"/> class.</summary>
         /// <param name="httpClient">The <see cref="HttpClient"/> used to make connections with the ArenaNet servers.</param>
