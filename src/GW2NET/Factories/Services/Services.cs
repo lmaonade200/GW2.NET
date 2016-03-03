@@ -1,82 +1,142 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="FactoryForV2.cs" company="GW2.NET Coding Team">
-//   This product is licensed under the GNU General Public License version 2 (GPLv2). See the License in the project root folder or the following page: http://www.gnu.org/licenses/gpl-2.0.html
+﻿// <copyright file="Services.cs" company="GW2.NET Coding Team">
+// This product is licensed under the GNU General Public License version 2 (GPLv2). See the License in the project root folder or the following page: http://www.gnu.org/licenses/gpl-2.0.html
 // </copyright>
-// <summary>
-//   Provides access to version 2 of the public API.
-// </summary>
-// --------------------------------------------------------------------------------------------------------------------
 
-namespace GW2NET.Factories.V2
+namespace GW2NET.Factories.Services
 {
-    using System;
+    using System.Collections.Generic;
+    using System.Net.Http;
+
+    using DryIoc;
 
     using GW2NET.Builds;
+    using GW2NET.Caching;
+    using GW2NET.Colors;
     using GW2NET.Common;
     using GW2NET.Common.Converters;
+    using GW2NET.Common.Drawing;
+    using GW2NET.Factories.V2;
+    using GW2NET.Files;
     using GW2NET.Guilds;
+    using GW2NET.Items;
+    using GW2NET.Maps;
     using GW2NET.Quaggans;
+    using GW2NET.Recipes;
+    using GW2NET.Skins;
     using GW2NET.V1.Guilds;
-    using GW2NET.V1.Guilds.Converters;
     using GW2NET.V2.Builds;
-    using GW2NET.V2.Builds.Converters;
+    using GW2NET.V2.Colors;
+    using GW2NET.V2.Continents;
+    using GW2NET.V2.Files;
+    using GW2NET.V2.Items;
+    using GW2NET.V2.Items.Converters;
+    using GW2NET.V2.Items.Json;
+    using GW2NET.V2.Maps;
     using GW2NET.V2.Quaggans;
-    using GW2NET.V2.Quaggans.Converters;
-    using GW2NET.V2.Quaggans.Json;
+    using GW2NET.V2.Recipes;
+    using GW2NET.V2.Recipes.Converters;
+    using GW2NET.V2.Recipes.Json;
+    using GW2NET.V2.Skins;
+    using GW2NET.V2.Skins.Converters;
+    using GW2NET.V2.Skins.Json;
+    using GW2NET.V2.Worlds;
+    using GW2NET.Worlds;
 
-    /// <summary>Provides access to version 2 of the public API.</summary>
-    public class Services : ServiceFactoryBase
+    using IocContainer = DryIoc.Container;
+
+    /// <summary>Provides access to the public Guild Wars 2 api.</summary>
+    public class Services
     {
-        /// <summary>Initializes a new instance of the <see cref="Services"/> class. Initializes a new instance of the <see cref="ServiceFactoryBase"/> class.</summary>
-        /// <param name="serviceClient"></param>
-        /// <exception cref="ArgumentNullException">The value of <paramref name="serviceClient"/> is a null reference.</exception>
-        public Services(IServiceClient serviceClient)
-            : base(serviceClient)
+        private readonly IocContainer iocContainer;
+
+        /// <summary>Initializes a new instance of the <see cref="Services"/> class.</summary>
+        /// <param name="iocContainer">The container to resolve repositories against.</param>
+        public Services(IocContainer iocContainer)
         {
+            this.iocContainer = iocContainer;
         }
 
         /// <summary>Gets access to the v2 build service.</summary>
-        public IBuildService Builds
+        public IBuildRepository Builds
         {
             get
             {
-                return new BuildService(this.ServiceClient, new BuildConverter());
+                this.iocContainer.Register<IBuildRepository, BuildRepository>(
+                    Made.Of(() => new BuildRepository(
+                        Arg.Of<HttpClient>("RepositoryClient"),
+                        Arg.Of<IResponseConverter>(),
+                        Arg.Of<IConverter<BuildDataContract, Build>>())));
+                this.iocContainer.Register<IConverter<BuildDataContract, Build>, BuildConverter>();
+
+                return this.iocContainer.Resolve<IBuildRepository>();
             }
         }
 
         /// <summary>Gets access to the colors data source.</summary>
-        public ColorRepositoryFactory Colors
+        public ColorRepository Colors
         {
             get
             {
-                return new ColorRepositoryFactory(this.ServiceClient);
+                this.iocContainer.Register(
+                Made.Of(() => new ColorRepository(
+                    Arg.Of<HttpClient>("RepositoryClient"),
+                    Arg.Of<IResponseConverter>(),
+                    Arg.Of<ICache<int, ColorPalette>>(),
+                    Arg.Of<IConverter<int, int>>(),
+                    Arg.Of<IConverter<ColorPaletteDataContract, ColorPalette>>())));
+
+                this.iocContainer.Register<IConverter<ColorPaletteDataContract, ColorPalette>, ColorPaletteConverter>();
+                this.iocContainer.Register<IConverter<int[], Color>, ColorConverter>();
+                this.iocContainer.Register<IConverter<ColorDataContract, ColorModel>, ColorModelConverter>();
+
+                return this.iocContainer.Resolve<ColorRepository>();
             }
         }
 
         /// <summary>Gets access to commerce data sources.</summary>
-        public FactoryForV2Commerce Commerce
+        public CommerceFactory Commerce
         {
             get
             {
-                return new FactoryForV2Commerce(this.ServiceClient);
+                return new CommerceFactory(this.iocContainer);
             }
         }
 
         /// <summary>Gets access to the continents data sources.</summary>
-        public ContinentRepositoryFactory Continents
+        public ContinentRepository Continents
         {
             get
             {
-                return new ContinentRepositoryFactory(this.ServiceClient);
+                this.iocContainer.Register(
+                Made.Of(() => new ContinentRepository(
+                    Arg.Of<HttpClient>("RepositoryClient"),
+                    Arg.Of<IResponseConverter>(),
+                    Arg.Of<ICache<int, Continent>>(),
+                    Arg.Of<IConverter<int, int>>(),
+                    Arg.Of<IConverter<ContinentDataContract, Continent>>())));
+
+                this.iocContainer.Register<IConverter<ContinentDataContract, Continent>>();
+
+                return this.iocContainer.Resolve<ContinentRepository>();
             }
         }
 
         /// <summary>Gets access to the files data sources.</summary>
-        public FileRepositoryFactory Files
+        public FileRepository Files
         {
             get
             {
-                return new FileRepositoryFactory(this.ServiceClient);
+                this.iocContainer.Register(
+               Made.Of(() => new FileRepository(
+                   Arg.Of<HttpClient>("RepositoryClient"),
+                   Arg.Of<IResponseConverter>(),
+                   Arg.Of<ICache<string, Asset>>(),
+                   Arg.Of<IConverter<string, string>>(),
+                   Arg.Of<IConverter<FileDataContract, Asset>>())));
+
+                this.iocContainer.Register<IConverter<FileDataContract, Asset>, AssetConverter>();
+
+                return this.iocContainer.Resolve<FileRepository>();
             }
         }
 
@@ -85,69 +145,150 @@ namespace GW2NET.Factories.V2
         {
             get
             {
-                var emblemTransformationConverter = new EmblemTransformationConverter();
-                var emblemTransformationsConverter = new EmblemTransformationCollectionConverter(emblemTransformationConverter);
-                var emblemConverter = new EmblemConverter(emblemTransformationsConverter);
-                return new GuildRepository(this.ServiceClient, new GuildConverter(emblemConverter));
+                this.iocContainer.Register<IGuildRepository, GuildRepository>(
+                    Made.Of(() => new GuildRepository(
+                        Arg.Of<HttpClient>("RepositoryClient"),
+                        Arg.Of<IResponseConverter>(),
+                        Arg.Of<IConverter<GuildDataContract, Guild>>())));
+
+                this.iocContainer.Register<IConverter<GuildDataContract, Guild>>();
+                this.iocContainer.Register<IConverter<EmblemDataContract, Emblem>>();
+                this.iocContainer.Register<IConverter<string, EmblemTransformations>, EmblemTransformationConverter>();
+                this.iocContainer.Register<IConverter<ICollection<string>, EmblemTransformations>, EmblemTransformationCollectionConverter>();
+
+                return this.iocContainer.Resolve<GuildRepository>();
             }
         }
 
         /// <summary>Gets access to the items data source.</summary>
-        public ItemRepositoryFactory Items
+        public ItemRepository Items
         {
             get
             {
-                return new ItemRepositoryFactory(this.ServiceClient);
+                this.iocContainer.Register(
+                    Made.Of(() => new ItemRepository(
+                        Arg.Of<HttpClient>("RepositoryClient"),
+                        Arg.Of<IResponseConverter>(),
+                        Arg.Of<ICache<int, Item>>(),
+                        Arg.Of<IConverter<int, int>>(),
+                        Arg.Of<IConverter<ItemDTO, Item>>())));
+
+                this.iocContainer.Register<IConverter<ItemDTO, Item>, ItemConverter>();
+                this.iocContainer.Register<IConverter<ICollection<string>, ItemRestrictions>, ItemRestrictionCollectionConverter>();
+                this.iocContainer.Register<IConverter<string, ItemRestrictions>, ItemRestrictionConverter>();
+                this.iocContainer.Register<IConverter<ICollection<string>, ItemFlags>, ItemFlagCollectionConverter>();
+                this.iocContainer.Register<IConverter<string, ItemFlags>, ItemFlagConverter>();
+                this.iocContainer.Register<IConverter<ICollection<string>, GameTypes>, GameTypeCollectionConverter>();
+                this.iocContainer.Register<IConverter<string, GameTypes>, GameTypeConverter>();
+                this.iocContainer.Register<IConverter<string, ItemRarity>, ItemRarityConverter>();
+                this.iocContainer.Register<ITypeConverterFactory<ItemDTO, Item>, ItemConverterFactory>();
+
+                return this.iocContainer.Resolve<ItemRepository>();
             }
         }
 
         /// <summary>Gets access to the maps data source.</summary>
-        public MapsRepositoryFactory Maps
+        public MapRepository Maps
         {
             get
             {
-                return new MapsRepositoryFactory(this.ServiceClient);
+                this.iocContainer.Register(
+                    Made.Of(() => new MapRepository(
+                        Arg.Of<HttpClient>("RepositoryClient"),
+                        Arg.Of<IResponseConverter>(),
+                        Arg.Of<ICache<int, Map>>(),
+                        Arg.Of<IConverter<int, int>>(),
+                        Arg.Of<IConverter<MapDataContract, Map>>())));
+
+                this.iocContainer.Register<IConverter<MapDataContract, Map>, MapConverter>();
+                this.iocContainer.Register<IConverter<double[][], Rectangle>, RectangleConverter>();
+
+                return this.iocContainer.Resolve<MapRepository>();
             }
         }
 
         /// <summary>Gets access to the Quaggans data source.</summary>
-        public IQuagganRepository Quaggans
+        public QuagganRepository Quaggans
         {
             get
             {
-                var identifiersResponseConverter = new CollectionResponseConverter<string, string>(new ConverterAdapter<string>());
-                var quagganConverter = new QuagganConverter();
-                var responseConverter = new ResponseConverter<QuagganDTO, Quaggan>(quagganConverter);
-                var dictionaryRangeResponseConverter = new DictionaryRangeResponseConverter<QuagganDTO, string, Quaggan>(quagganConverter, quaggan => quaggan.Id);
-                var collectionPageResponseConverter = new CollectionPageResponseConverter<QuagganDTO, Quaggan>(quagganConverter);
-                return new QuagganRepository(this.ServiceClient, identifiersResponseConverter, responseConverter, dictionaryRangeResponseConverter, collectionPageResponseConverter);
+                this.iocContainer.Register(
+                    Made.Of(() => new QuagganRepository(
+                        Arg.Of<HttpClient>("RepositoryClient"),
+                        Arg.Of<IResponseConverter>(),
+                        Arg.Of<ICache<string, Quaggan>>(),
+                        Arg.Of<IConverter<string, string>>(),
+                        Arg.Of<IConverter<QuagganDataContract, Quaggan>>())));
+
+                this.iocContainer.Register<IConverter<QuagganDataContract, Quaggan>, QuagganConverter>();
+
+                return this.iocContainer.Resolve<QuagganRepository>();
             }
         }
 
         /// <summary>Gets access to the recipe data source.</summary>
-        public RecipeRepositoryFactory Recipes
+        public RecipeRepository Recipes
         {
             get
             {
-                return new RecipeRepositoryFactory(this.ServiceClient);
+                this.iocContainer.Register(
+                    Made.Of(() => new RecipeRepository(
+                        Arg.Of<HttpClient>("RepositoryClient"),
+                        Arg.Of<IResponseConverter>(),
+                        Arg.Of<ICache<int, Recipe>>(),
+                        Arg.Of<IConverter<int, int>>(),
+                        Arg.Of<IConverter<RecipeDTO, Recipe>>())));
+                this.iocContainer.Register<RecipeConverter>();
+                this.iocContainer.Register<IConverter<ICollection<IngredientDTO>, ICollection<ItemQuantity>>, CollectionConverter<IngredientDTO, ItemQuantity>>();
+                this.iocContainer.Register<IConverter<IngredientDTO, ItemQuantity>, ItemQuantityConverter>();
+                this.iocContainer.Register<IConverter<ICollection<string>, RecipeFlags>, RecipeFlagCollectionConverter>();
+                this.iocContainer.Register<IConverter<string, RecipeFlags>, RecipeFlagConverter>();
+                this.iocContainer.Register<IConverter<ICollection<string>, CraftingDisciplines>, CraftingDisciplineCollectionConverter>();
+                this.iocContainer.Register<IConverter<string, CraftingDisciplines>, CraftingDisciplineConverter>();
+                this.iocContainer.Register<ITypeConverterFactory<RecipeDTO, Recipe>, RecipeConverterFactory>();
+
+                return this.iocContainer.Resolve<RecipeRepository>();
             }
         }
 
         /// <summary>Gets access to the skins data source.</summary>
-        public SkinRepositoryFactory Skins
+        public SkinRepository Skins
         {
             get
             {
-                return new SkinRepositoryFactory(this.ServiceClient);
+                this.iocContainer.Register(
+                    Made.Of(() => new SkinRepository(
+                        Arg.Of<HttpClient>("RepositoryClient"),
+                        Arg.Of<IResponseConverter>(),
+                        Arg.Of<ICache<int, Skin>>(),
+                        Arg.Of<IConverter<int, int>>(),
+                        Arg.Of<IConverter<SkinDTO, Skin>>())));
+                this.iocContainer.Register<IConverter<SkinDTO, Skin>, SkinConverter>();
+                this.iocContainer.Register<IConverter<ICollection<string>, SkinFlags>, SkinFlagCollectionConverter>();
+                this.iocContainer.Register<IConverter<string, SkinFlags>, SkinFlagConverter>();
+                this.iocContainer.Register<IConverter<ICollection<string>, ItemRestrictions>, ItemRestrictionCollectionConverter>();
+                this.iocContainer.Register<IConverter<string, ItemRestrictions>, ItemRestrictionConverter>();
+                this.iocContainer.Register<ITypeConverterFactory<SkinDTO, Skin>, SkinConverterFactory>();
+
+                return this.iocContainer.Resolve<SkinRepository>();
             }
         }
 
         /// <summary>Gets access to the worlds data source.</summary>
-        public WorldRepositoryFactory Worlds
+        public WorldRepository Worlds
         {
             get
             {
-                return new WorldRepositoryFactory(this.ServiceClient);
+                this.iocContainer.Register(
+                    Made.Of(() => new WorldRepository(
+                        Arg.Of<HttpClient>("RepositoryClient"),
+                        Arg.Of<IResponseConverter>(),
+                        Arg.Of<ICache<int, World>>(),
+                        Arg.Of<IConverter<int, int>>(),
+                        Arg.Of<IConverter<WorldDataContract, World>>())));
+                this.iocContainer.Register<IConverter<WorldDataContract, World>, WorldConverter>();
+
+                return this.iocContainer.Resolve<WorldRepository>();
             }
         }
     }

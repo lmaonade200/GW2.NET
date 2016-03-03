@@ -15,8 +15,6 @@ namespace GW2NET.Factories.Services
     using GW2NET.Common.Converters;
     using GW2NET.V2.Commerce.Exchange;
     using GW2NET.V2.Commerce.Listings;
-    using GW2NET.V2.Commerce.Listings.Converters;
-    using GW2NET.V2.Commerce.Listings.Json;
     using GW2NET.V2.Commerce.Prices;
 
     /// <summary>Provides access to commerce data sources based on the /v2/ api.</summary>
@@ -24,7 +22,7 @@ namespace GW2NET.Factories.Services
     {
         private readonly Container iocContainer;
 
-        /// <summary>Initializes a new instance of the <see cref="CommerceFactory"/> class. Initializes a new instance of the <see cref="ServiceFactoryBase"/> class.</summary>
+        /// <summary>Initializes a new instance of the <see cref="CommerceFactory"/> class.</summary>
         /// <param name="iocContainer"></param>
         /// <exception cref="ArgumentNullException">The value of <paramref name="iocContainer"/> is a null reference.</exception>
         public CommerceFactory(Container iocContainer)
@@ -51,8 +49,8 @@ namespace GW2NET.Factories.Services
             this.iocContainer.Register(
                 Made.Of(() => new ListingRepository(
                     Arg.Of<HttpClient>("RepositoryClient"),
-                    Arg.Of<ResponseConverterBase>(),
-                    Arg.Of<ICache<Listing>>(),
+                    Arg.Of<IResponseConverter>(),
+                    Arg.Of<ICache<int, Listing>>(),
                     Arg.Of<IConverter<int, int>>(),
                     Arg.Of<IConverter<ListingDataContract, Listing>>())));
 
@@ -66,8 +64,8 @@ namespace GW2NET.Factories.Services
             this.iocContainer.Register(
                 Made.Of(() => new AggregateListingRepository(
                     Arg.Of<HttpClient>("RepositoryClient"),
-                    Arg.Of<ResponseConverterBase>(),
-                    Arg.Of<ICache<AggregateListing>>(),
+                    Arg.Of<IResponseConverter>(),
+                    Arg.Of<ICache<int, AggregateListing>>(),
                     Arg.Of<IConverter<int, int>>(),
                     Arg.Of<IConverter<AggregateListingDataContract, AggregateListing>>())));
 
