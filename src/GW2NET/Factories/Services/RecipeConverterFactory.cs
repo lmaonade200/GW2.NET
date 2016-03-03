@@ -7,6 +7,7 @@ namespace GW2NET.Factories.V2
     using System.Diagnostics;
     using GW2NET.Common;
     using GW2NET.Recipes;
+    using GW2NET.V2.Recipes;
     using GW2NET.V2.Recipes.Converters;
     using GW2NET.V2.Recipes.Json;
 
