@@ -114,7 +114,7 @@ namespace GW2NET.Common.Converters
 
             using (HttpContent content = message.Content)
             {
-                metadata.ContentLanguage = new CultureInfo(content.Headers.ContentLanguage.First());
+                metadata.ContentLanguage = content.Headers.ContentLanguage.Count == 0 ? new CultureInfo("iv") : new CultureInfo(content.Headers.ContentLanguage.First());
                 metadata.RequestDate = message.Headers.Date ?? default(DateTimeOffset);
                 metadata.ExpireDate = content.Headers.Expires ?? default(DateTimeOffset);
 
