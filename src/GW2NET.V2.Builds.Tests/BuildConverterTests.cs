@@ -2,11 +2,12 @@
 // This product is licensed under the GNU General Public License version 2 (GPLv2). See the License in the project root folder or the following page: http://www.gnu.org/licenses/gpl-2.0.html
 // </copyright>
 
-namespace GW2NET.V2.Builds.Converters
+namespace GW2NET.V2.Builds
 {
     using System;
 
-    using GW2NET.Common;
+    using GW2NET.Builds;
+    using GW2NET.Common.Converters;
 
     using Xunit;
 
@@ -23,16 +24,35 @@ namespace GW2NET.V2.Builds.Converters
         [InlineData(100000, "Tue, 26 May 2015 18:46:01 GMT")]
         public void CanConvert(int buildId, DateTime date)
         {
-            var value = new BuildDataContract { BuildId = buildId };
-            var state = new Response<BuildDataContract>
-                            {
-                                Content = value,
-                                Date = date
-                            };
-            var result = this.converter.Convert(value, state);
+            BuildDataContract value = new BuildDataContract { BuildId = buildId };
+            ApiMetadata state = new ApiMetadata
+            {
+                RequestDate = date
+            };
+            Build result = this.converter.Convert(value, state);
             Assert.NotNull(result);
             Assert.Equal(buildId, result.BuildId);
             Assert.Equal(date, result.Timestamp);
+        }
+
+        [Fact]
+        public void ValueNull()
+        {
+            Assert.Throws<ArgumentNullException>(() => this.converter.Convert(null, null));
+        }
+
+        [Fact]
+        public void StateNull()
+        {
+            BuildDataContract value = new BuildDataContract { BuildId = 0 };
+            Assert.Throws<ArgumentNullException>(() => this.converter.Convert(value, null));
+        }
+
+        [Fact]
+        public void CannotConvert()
+        {
+            BuildDataContract value = new BuildDataContract { BuildId = 0 };
+            Assert.Throws<ArgumentException>(() => this.converter.Convert(value, new object()));
         }
     }
 }
