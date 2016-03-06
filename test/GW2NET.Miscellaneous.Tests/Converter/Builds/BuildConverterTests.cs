@@ -6,6 +6,13 @@ namespace GW2NET.Miscellaneous
 {
     using System;
 
+    using GW2NET.Builds;
+    using GW2NET.Common.Converters;
+    using GW2NET.Miscellaneous.ApiModels;
+    using GW2NET.Miscellaneous.Converter;
+
+    using Xunit;
+
     public class BuildConverterTests
     {
         private readonly BuildConverter converter = new BuildConverter();
@@ -19,7 +26,7 @@ namespace GW2NET.Miscellaneous
         [InlineData(100000, "Tue, 26 May 2015 18:46:01 GMT")]
         public void CanConvert(int buildId, DateTime date)
         {
-            BuildDataContract value = new BuildDataContract { BuildId = buildId };
+            BuildDataModel value = new BuildDataModel { BuildId = buildId };
             ApiMetadata state = new ApiMetadata
             {
                 RequestDate = date
@@ -39,14 +46,14 @@ namespace GW2NET.Miscellaneous
         [Fact]
         public void StateNull()
         {
-            BuildDataContract value = new BuildDataContract { BuildId = 0 };
+            BuildDataModel value = new BuildDataModel { BuildId = 0 };
             Assert.Throws<ArgumentNullException>(() => this.converter.Convert(value, null));
         }
 
         [Fact]
         public void CannotConvert()
         {
-            BuildDataContract value = new BuildDataContract { BuildId = 0 };
+            BuildDataModel value = new BuildDataModel { BuildId = 0 };
             Assert.Throws<ArgumentException>(() => this.converter.Convert(value, new object()));
         }
     }

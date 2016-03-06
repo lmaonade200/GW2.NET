@@ -6,15 +6,26 @@ namespace GW2NET.Miscellaneous
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using System.Net.Http;
     using System.Threading;
+
+    using GW2NET.Caching;
+    using GW2NET.Colors;
+    using GW2NET.Common;
+    using GW2NET.Common.Converters;
+    using GW2NET.Common.Serializers;
+    using GW2NET.Compression;
+    using GW2NET.Miscellaneous.Converter;
+
+    using Xunit;
 
     public class ColorServiceTests
     {
         [Fact]
         public async void DiscoverTest()
         {
-            HttpClient client = new HttpClient(new HttpClientHandler(), false)
+            HttpClient client = new HttpClient(new MockColorMessageHandler(), false)
             {
                 BaseAddress = new Uri("https://api.guildwars2.com/")
             };
@@ -37,7 +48,7 @@ namespace GW2NET.Miscellaneous
         [Fact]
         public async void ElementTest()
         {
-            HttpClient client = new HttpClient(new HttpClientHandler(), false)
+            HttpClient client = new HttpClient(new MockColorMessageHandler(), false)
             {
                 BaseAddress = new Uri("https://api.guildwars2.com/")
             };
@@ -61,7 +72,7 @@ namespace GW2NET.Miscellaneous
         [Fact]
         public async void SetTest()
         {
-            HttpClient client = new HttpClient(new HttpClientHandler(), false)
+            HttpClient client = new HttpClient(new MockColorMessageHandler(), false)
             {
                 BaseAddress = new Uri("https://api.guildwars2.com/")
             };

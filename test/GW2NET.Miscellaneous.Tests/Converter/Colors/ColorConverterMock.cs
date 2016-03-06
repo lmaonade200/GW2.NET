@@ -1,17 +1,20 @@
-﻿// <copyright file="ColorModelConverterMock.cs" company="GW2.NET Coding Team">
+﻿// <copyright file="ColorConverterMock.cs" company="GW2.NET Coding Team">
 // This product is licensed under the GNU General Public License version 2 (GPLv2). See the License in the project root folder or the following page: http://www.gnu.org/licenses/gpl-2.0.html
 // </copyright>
 
 namespace GW2NET.Miscellaneous.Converter
 {
-    public class ColorModelConverterMock : IConverter<ColorDataContract, ColorModel>
+    using GW2NET.Colors;
+    using GW2NET.Common;
+
+    public class ColorConverterMock : IConverter<int[], Color>
     {
         public int ConvertCount { get; set; }
 
-        public ColorModel Convert(ColorDataContract value, object state)
+        public Color Convert(int[] value, object state)
         {
             this.ConvertCount += 1;
-            return default(ColorModel);
+            return default(Color);
         }
     }
 }

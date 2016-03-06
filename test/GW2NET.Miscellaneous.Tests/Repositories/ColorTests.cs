@@ -5,7 +5,15 @@
 namespace GW2NET.Miscellaneous
 {
     using System.Collections.Generic;
+    using System.Linq;
     using System.Threading;
+
+    using GW2NET.Colors;
+    using GW2NET.Common;
+    using GW2NET.Miscellaneous.ApiModels;
+
+    using Xunit;
+    using Xunit.Abstractions;
 
     public class ColorTests
     {
@@ -43,7 +51,7 @@ namespace GW2NET.Miscellaneous
         public async void FindAllAsync()
         {
             ColorRepository repository = GW2.Services.Colors;
-            List<ColorPalette> result = (await repository.GetAsync<int, ColorPaletteDataContract, ColorPalette>()).ToList();
+            List<ColorPalette> result = (await repository.GetAsync<int, ColorPaletteDataModel, ColorPalette>()).ToList();
             Assert.NotNull(result);
             Assert.NotEmpty(result);
             foreach (ColorPalette kvp in result)
@@ -57,7 +65,7 @@ namespace GW2NET.Miscellaneous
         public async void FindAllAsync_WithIdList(int[] filter)
         {
             ColorRepository repository = GW2.Services.Colors;
-            IList<ColorPalette> result = (await repository.GetAsync<int, ColorPaletteDataContract, ColorPalette>(filter, CancellationToken.None)).OrderBy(e => e.ColorId).ToList();
+            IList<ColorPalette> result = (await repository.GetAsync<int, ColorPaletteDataModel, ColorPalette>(filter, CancellationToken.None)).OrderBy(e => e.ColorId).ToList();
             Assert.NotNull(result);
             Assert.StrictEqual(filter.Length, result.Count);
 

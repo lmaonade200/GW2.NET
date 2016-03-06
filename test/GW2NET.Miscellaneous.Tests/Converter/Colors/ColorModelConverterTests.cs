@@ -4,6 +4,10 @@
 
 namespace GW2NET.Miscellaneous.Converter
 {
+    using GW2NET.Miscellaneous.ApiModels;
+
+    using Xunit;
+
     public class ColorModelConverterTests
     {
         private readonly ColorConverterMock colorConverter;
@@ -22,7 +26,7 @@ namespace GW2NET.Miscellaneous.Converter
         [InlineData(5, 1.05469, 38, 0.101563, 1.36719, new[] { 96, 91, 83 })]
         public void CanConvert(int brightness, double contrast, int hue, double saturation, double lightness, int[] rgb)
         {
-            var value = new ColorDataContract
+            var value = new ColorDataModel
             {
                 Brightness = brightness,
                 Contrast = contrast,

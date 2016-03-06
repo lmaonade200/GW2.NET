@@ -50,18 +50,18 @@ namespace GW2NET.Factories.Services
         }
 
         /// <summary>Gets access to the v2 build service.</summary>
-        public IBuildRepository Builds
+        public BuildRepository Builds
         {
             get
             {
-                this.iocContainer.Register<IBuildRepository, BuildRepository>(
+                this.iocContainer.Register(
                     Made.Of(() => new BuildRepository(
                         Arg.Of<HttpClient>("RepositoryClient"),
                         Arg.Of<IResponseConverter>(),
                         Arg.Of<IConverter<BuildDataModel, Build>>())));
                 this.iocContainer.Register<IConverter<BuildDataModel, Build>, BuildConverter>();
 
-                return this.iocContainer.Resolve<IBuildRepository>();
+                return this.iocContainer.Resolve<BuildRepository>();
             }
         }
 

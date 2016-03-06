@@ -6,6 +6,11 @@ namespace GW2NET.Miscellaneous.Converter
 {
     using System.Globalization;
 
+    using GW2NET.Common.Converters;
+    using GW2NET.Miscellaneous.ApiModels;
+
+    using Xunit;
+
     public class ColorPaletteConverterTests
     {
         private readonly ColorConverterMock colorConverterMock;
@@ -26,25 +31,24 @@ namespace GW2NET.Miscellaneous.Converter
         [InlineData("fr", 1, "Dissolvant pour teinture", new[] { 128, 26, 26 })]
         public void CanConvert(string lang, int id, string name, int[] baseRgb)
         {
-            var value = new ColorPaletteDataContract
+            var value = new ColorPaletteDataModel
             {
                 Id = id,
                 Name = name,
                 BaseRgb = baseRgb,
-                Cloth = new ColorDataContract(),
-                Leather = new ColorDataContract(),
-                Metal = new ColorDataContract()
+                Cloth = new ColorDataModel(),
+                Leather = new ColorDataModel(),
+                Metal = new ColorDataModel()
             };
-
-            var state = new Response<ColorPaletteDataContract>
+            
+            var state = new ApiMetadata
             {
-                Content = value,
-                Culture = new CultureInfo(lang)
+                ContentLanguage = new CultureInfo(lang)
             };
 
             var result = this.colorPaletteConverter.Convert(value, state);
             Assert.NotNull(result);
-            Assert.Equal(state.Culture, result.Culture);
+            Assert.Equal(state.ContentLanguage, result.Culture);
             Assert.Equal(id, result.ColorId);
             Assert.Equal(name, result.Name);
             Assert.Equal(1, this.colorConverterMock.ConvertCount);

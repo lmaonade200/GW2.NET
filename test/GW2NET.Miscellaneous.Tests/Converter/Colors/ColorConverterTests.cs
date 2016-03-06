@@ -4,6 +4,8 @@
 
 namespace GW2NET.Miscellaneous.Converter
 {
+    using Xunit;
+
     public class ColorConverterTests
     {
         private readonly ColorConverter converter = new ColorConverter();

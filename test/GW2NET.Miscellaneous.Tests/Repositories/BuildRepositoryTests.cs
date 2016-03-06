@@ -5,12 +5,22 @@
 namespace GW2NET.Miscellaneous
 {
     using System;
+    using System.Linq;
     using System.Net.Http;
     using System.Threading;
 
+    using GW2NET.Builds;
+    using GW2NET.Common;
+    using GW2NET.Common.Converters;
+    using GW2NET.Common.Serializers;
+    using GW2NET.Compression;
+    using GW2NET.Miscellaneous.Converter;
+
+    using Xunit;
+
     public class BuildRepositoryTests
     {
-        private readonly IBuildRepository buildRepository;
+        private readonly BuildRepository buildRepository;
 
         public BuildRepositoryTests()
         {
@@ -44,7 +54,7 @@ namespace GW2NET.Miscellaneous
         [Fact]
         public async void GetBuildAsync()
         {
-            Build result = await this.buildRepository.GetBuildAsync();
+            Build result = (await this.buildRepository.DiscoverAsync()).First();
             Assert.NotNull(result);
             Assert.NotInRange(result.BuildId, int.MinValue, 0);
             Assert.NotStrictEqual(default(DateTimeOffset), result.Timestamp);
@@ -53,7 +63,7 @@ namespace GW2NET.Miscellaneous
         [Fact]
         public async void GetBuildAsyncCancellationToken()
         {
-            Build result = await this.buildRepository.GetBuildAsync(CancellationToken.None);
+            Build result = (await this.buildRepository.DiscoverAsync(CancellationToken.None)).First();
             Assert.NotNull(result);
             Assert.NotInRange(result.BuildId, int.MinValue, 0);
             Assert.NotStrictEqual(default(DateTimeOffset), result.Timestamp);

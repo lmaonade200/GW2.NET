@@ -4,6 +4,10 @@
 
 namespace GW2NET.Miscellaneous.Converter
 {
+    using GW2NET.Miscellaneous.ApiModels;
+
+    using Xunit;
+
     public class AssetConverterTests
     {
         private readonly AssetConverter converter = new AssetConverter();
@@ -12,7 +16,7 @@ namespace GW2NET.Miscellaneous.Converter
         [InlineData("map_complete", 528724, "5A4E663071250EC72668C09E3C082E595A380BF7", "https://render.guildwars2.com/file/5A4E663071250EC72668C09E3C082E595A380BF7/528724.png")]
         public void CanConvert(string identifier, int fileId, string fileSignature, string icon)
         {
-            var value = new FileDataContract
+            var value = new FileDataModel
             {
                 Id = identifier,
                 Icon = icon
