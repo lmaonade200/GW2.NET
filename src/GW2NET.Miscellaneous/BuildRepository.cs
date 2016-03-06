@@ -6,8 +6,6 @@ namespace GW2NET.Miscellaneous
 {
     using System;
     using System.Net.Http;
-    using System.Threading;
-    using System.Threading.Tasks;
 
     using GW2NET.Builds;
     using GW2NET.Common;
@@ -17,38 +15,34 @@ namespace GW2NET.Miscellaneous
 
     /// <summary>Represents a service that retrieves data from the /v1/build.json interface.</summary>
     /// <remarks>See <a href="http://wiki.guildwars2.com/wiki/API:2/build">wiki</a> for more information.</remarks>
-    public sealed class BuildRepository : RepositoryBase, IBuildRepository
+    public sealed class BuildRepository : RepositoryBase, IDiscoverable<BuildDataModel, Build>
     {
-        private readonly IConverter<BuildDataModel, Build> buildConverter;
-
         /// <summary>Initializes a new instance of the <see cref="BuildRepository"/> class.</summary>
         /// <param name="httpClient"></param>
-        /// <param name="buildConverter">The converter for <see cref="Build"/>.</param>
+        /// <param name="identifiersConverter">The converter for <see cref="Build"/>.</param>
         /// <param name="responseConverter"></param>
-        /// <exception cref="ArgumentNullException">The value of <paramref name="httpClient"/> or <paramref name="buildConverter"/> is a null reference.</exception>
-        public BuildRepository(HttpClient httpClient, IResponseConverter responseConverter, IConverter<BuildDataModel, Build> buildConverter)
+        /// <exception cref="ArgumentNullException">The value of <paramref name="httpClient"/> or <paramref name="identifiersConverter"/> is a null reference.</exception>
+        public BuildRepository(HttpClient httpClient, IResponseConverter responseConverter, IConverter<BuildDataModel, Build> identifiersConverter)
             : base(httpClient, responseConverter)
         {
-            if (buildConverter == null)
+            if (identifiersConverter == null)
             {
-                throw new ArgumentNullException(nameof(buildConverter));
+                throw new ArgumentNullException(nameof(identifiersConverter));
             }
 
-            this.buildConverter = buildConverter;
+            this.IdentifiersConverter = identifiersConverter;
         }
+        
+        /// <summary>Gets the <see cref="IConverter{TSource,TTarget}"/> used to convert identifiers.</summary>
+        public IConverter<BuildDataModel, Build> IdentifiersConverter { get; }
 
-        /// <inheritdoc />
-        public Task<Build> GetBuildAsync()
+        /// <summary>Gets the service location without any additional paramters (i.e. culture, identifiers, etc.)</summary>
+        public IParameterizedBuilder ServiceLocation
         {
-            return this.GetBuildAsync(CancellationToken.None);
-        }
-
-        /// <inheritdoc />
-        public async Task<Build> GetBuildAsync(CancellationToken cancellationToken)
-        {
-            HttpRequestMessage request = ApiMessageBuilder.Init().Version(ApiVersion.V2).OnEndpoint("build").Build();
-
-            return await this.ResponseConverter.ConvertElementAsync(await this.Client.SendAsync(request, cancellationToken), this.buildConverter);
+            get
+            {
+                return ApiMessageBuilder.Init().Version(ApiVersion.V2).OnEndpoint("build");
+            }
         }
     }
 }
