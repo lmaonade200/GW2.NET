@@ -19,6 +19,9 @@ namespace GW2NET.Factories.Services
     using GW2NET.Files;
     using GW2NET.Guilds;
     using GW2NET.Items;
+    using GW2NET.MapInformation;
+    using GW2NET.MapInformation.ApiModels;
+    using GW2NET.MapInformation.Converter;
     using GW2NET.Maps;
     using GW2NET.Quaggans;
     using GW2NET.Recipes;
@@ -26,12 +29,10 @@ namespace GW2NET.Factories.Services
     using GW2NET.V1.Guilds;
     using GW2NET.V2.Builds;
     using GW2NET.V2.Colors;
-    using GW2NET.V2.Continents;
     using GW2NET.V2.Files;
     using GW2NET.V2.Items;
     using GW2NET.V2.Items.Converters;
     using GW2NET.V2.Items.Json;
-    using GW2NET.V2.Maps;
     using GW2NET.V2.Quaggans;
     using GW2NET.V2.Recipes;
     using GW2NET.V2.Recipes.Converters;
@@ -39,7 +40,6 @@ namespace GW2NET.Factories.Services
     using GW2NET.V2.Skins;
     using GW2NET.V2.Skins.Converters;
     using GW2NET.V2.Skins.Json;
-    using GW2NET.V2.Worlds;
     using GW2NET.Worlds;
 
     using IocContainer = DryIoc.Container;
