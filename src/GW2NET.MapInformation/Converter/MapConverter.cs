@@ -12,8 +12,8 @@ namespace GW2NET.MapInformation.Converter
     using GW2NET.MapInformation.ApiModels;
     using GW2NET.Maps;
 
-    /// <summary>Converts objects of type <see cref="MapDataContract"/> to objects of type <see cref="Map"/>.</summary>
-    public sealed class MapConverter : IConverter<MapDataContract, Map>
+    /// <summary>Converts objects of type <see cref="MapDataModel"/> to objects of type <see cref="Map"/>.</summary>
+    public sealed class MapConverter : IConverter<MapDataModel, Map>
     {
         private readonly IConverter<double[][], Rectangle> rectangleConverter;
 
@@ -31,7 +31,7 @@ namespace GW2NET.MapInformation.Converter
         }
 
         /// <inheritdoc />
-        public Map Convert(MapDataContract value, object state)
+        public Map Convert(MapDataModel value, object state)
         {
             if (value == null)
             {

@@ -16,7 +16,7 @@ namespace GW2NET.MapInformation
     using GW2NET.Maps;
 
     /// <summary>Represents a repository that retrieves data from the /v2/continents interface.</summary>
-    public sealed class ContinentRepository : CachedRepository<int, Continent>, IDiscoverable<int>, ICachedRepository<int, ContinentDataContract, Continent>, ILocalizable
+    public sealed class ContinentRepository : CachedRepository<int, Continent>, IDiscoverable<int>, ICachedRepository<int, ContinentDataModel, Continent>, ILocalizable
     {
         /// <summary>Initializes a new instance of the <see cref="ContinentRepository"/> class.</summary>
         /// <param name="httpClient">The <see cref="HttpClient"/> used to make connections with the ArenaNet servers.</param>
@@ -25,7 +25,7 @@ namespace GW2NET.MapInformation
         /// <param name="identifiersConverter">A converter used to convert identifiers.</param>
         /// <param name="modelConverter">A converter used to convert data contracts into objects.</param>
         /// <exception cref="ArgumentNullException">Thrown when either parameter is null.</exception>
-        public ContinentRepository(HttpClient httpClient, IResponseConverter responseConverter, ICache<int, Continent> cache, IConverter<int, int> identifiersConverter, IConverter<ContinentDataContract, Continent> modelConverter)
+        public ContinentRepository(HttpClient httpClient, IResponseConverter responseConverter, ICache<int, Continent> cache, IConverter<int, int> identifiersConverter, IConverter<ContinentDataModel, Continent> modelConverter)
             : base(httpClient, responseConverter, cache)
         {
             if (identifiersConverter == null)
@@ -49,7 +49,7 @@ namespace GW2NET.MapInformation
         public IConverter<int, int> IdentifiersConverter { get; }
 
         /// <inheritdoc />
-        public IConverter<ContinentDataContract, Continent> ModelConverter { get; }
+        public IConverter<ContinentDataModel, Continent> ModelConverter { get; }
 
         /// <inheritdoc />
         public IParameterizedBuilder ServiceLocation

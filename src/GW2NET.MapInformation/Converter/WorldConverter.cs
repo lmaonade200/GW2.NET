@@ -11,11 +11,11 @@ namespace GW2NET.MapInformation.Converter
     using GW2NET.MapInformation.ApiModels;
     using GW2NET.Worlds;
 
-    /// <summary>Converts objects of type <see cref="WorldDataContract"/> to objects of type <see cref="World"/>.</summary>
-    public sealed class WorldConverter : IConverter<WorldDataContract, World>
+    /// <summary>Converts objects of type <see cref="WorldDataModel"/> to objects of type <see cref="World"/>.</summary>
+    public sealed class WorldConverter : IConverter<WorldDataModel, World>
     {
         /// <inheritdoc />
-        public World Convert(WorldDataContract value, object state)
+        public World Convert(WorldDataModel value, object state)
         {
             if (value == null)
             {

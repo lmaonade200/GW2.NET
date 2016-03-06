@@ -38,12 +38,12 @@
     <None Include="project.json" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ApiModels\ContinentDataContract.cs" />
-    <Compile Include="ApiModels\MapDataContract.cs" />
+    <Compile Include="ApiModels\ContinentDataModel.cs" />
+    <Compile Include="ApiModels\MapDataModel.cs" />
     <Compile Include="ContinentRepository.cs" />
     <Compile Include="Converter\ContinentConverter.cs" />
     <Compile Include="Converter\RectangleConverter.cs" />
-    <Compile Include="ApiModels\WorldDataContract.cs" />
+    <Compile Include="ApiModels\WorldDataModel.cs" />
     <Compile Include="Converter\MapConverter.cs" />
     <Compile Include="Converter\Vector2DConverter.cs" />
     <Compile Include="Converter\WorldConverter.cs" />

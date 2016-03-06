@@ -19,7 +19,7 @@ namespace GW2NET.MapInformation
     /// <remarks>
     /// This implementation does not retrieve associated entities.
     /// </remarks>
-    public sealed class MapRepository : CachedRepository<int, Map>, IDiscoverable<int>, ICachedRepository<int, MapDataContract, Map>, ILocalizable
+    public sealed class MapRepository : CachedRepository<int, Map>, IDiscoverable<int>, ICachedRepository<int, MapDataModel, Map>, ILocalizable
     {
         /// <summary>Initializes a new instance of the <see cref="MapRepository"/> class.</summary>
         /// <param name="httpClient">The <see cref="HttpClient"/> used to make connections with the ArenaNet servers.</param>
@@ -33,7 +33,7 @@ namespace GW2NET.MapInformation
             IResponseConverter responseConverter,
             ICache<int, Map> cache,
             IConverter<int, int> identifiersConverter,
-            IConverter<MapDataContract, Map> modelConverter)
+            IConverter<MapDataModel, Map> modelConverter)
             : base(httpClient, responseConverter, cache)
         {
             if (identifiersConverter == null)
@@ -57,7 +57,7 @@ namespace GW2NET.MapInformation
         public IConverter<int, int> IdentifiersConverter { get; }
 
         /// <inheritdoc />
-        public IConverter<MapDataContract, Map> ModelConverter { get; }
+        public IConverter<MapDataModel, Map> ModelConverter { get; }
 
         /// <inheritdoc />
         public IParameterizedBuilder ServiceLocation

@@ -9,7 +9,7 @@ namespace GW2NET.MapInformation.ApiModels
 
     [DataContract]
     [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1600:ElementsMustBeDocumented", Justification = "http://wiki.guildwars2.com/wiki/API:2/worlds")]
-    public sealed class WorldDataContract
+    public sealed class WorldDataModel
     {
         [DataMember(Order = 0, Name = "id")]
         public int Id { get; set; }

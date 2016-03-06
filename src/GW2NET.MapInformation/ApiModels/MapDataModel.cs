@@ -8,7 +8,7 @@ namespace GW2NET.MapInformation.ApiModels
 
     /// <summary>Defines the map data contract.</summary>
     [DataContract]
-    public sealed class MapDataContract
+    public sealed class MapDataModel
     {
         /// <summary>
         /// Gets or sets the id.

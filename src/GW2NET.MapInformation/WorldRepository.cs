@@ -16,7 +16,7 @@ namespace GW2NET.MapInformation
     using GW2NET.Worlds;
 
     /// <summary>Represents a repository that retrieves data from the /v2/worlds interface.</summary>
-    public class WorldRepository : CachedRepository<int, World>, IDiscoverable<int>, ICachedRepository<int, WorldDataContract, World>, ILocalizable
+    public class WorldRepository : CachedRepository<int, World>, IDiscoverable<int>, ICachedRepository<int, WorldDataModel, World>, ILocalizable
     {
         /// <summary>Initializes a new instance of the <see cref="WorldRepository"/> class.</summary>
         /// <param name="httpClient">The <see cref="HttpClient"/> used to make connections with the ArenaNet servers.</param>
@@ -25,7 +25,7 @@ namespace GW2NET.MapInformation
         /// <param name="identifiersConverter">A converter used to convert identifiers.</param>
         /// <param name="modelConverter">A converter used to convert data contracts into objects.</param>
         /// <exception cref="ArgumentNullException">Thrown when either parameter is null.</exception>
-        public WorldRepository(HttpClient httpClient, IResponseConverter responseConverter, ICache<int, World> cache, IConverter<int, int> identifiersConverter, IConverter<WorldDataContract, World> modelConverter)
+        public WorldRepository(HttpClient httpClient, IResponseConverter responseConverter, ICache<int, World> cache, IConverter<int, int> identifiersConverter, IConverter<WorldDataModel, World> modelConverter)
             : base(httpClient, responseConverter, cache)
         {
             if (identifiersConverter == null)
@@ -49,7 +49,7 @@ namespace GW2NET.MapInformation
         public IConverter<int, int> IdentifiersConverter { get; }
 
         /// <inheritdoc />
-        public IConverter<WorldDataContract, World> ModelConverter { get; }
+        public IConverter<WorldDataModel, World> ModelConverter { get; }
 
         /// <inheritdoc />
         public IParameterizedBuilder ServiceLocation

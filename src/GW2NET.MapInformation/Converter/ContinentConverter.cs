@@ -12,11 +12,11 @@ namespace GW2NET.MapInformation.Converter
     using GW2NET.MapInformation.ApiModels;
     using GW2NET.Maps;
 
-    /// <summary>Converts a <see cref="ContinentDataContract"/> into the corresponding <see cref="Continent"/>.</summary>
-    public sealed class ContinentConverter : IConverter<ContinentDataContract, Continent>
+    /// <summary>Converts a <see cref="ContinentDataModel"/> into the corresponding <see cref="Continent"/>.</summary>
+    public sealed class ContinentConverter : IConverter<ContinentDataModel, Continent>
     {
         /// <inheritdoc />
-        public Continent Convert(ContinentDataContract value, object state)
+        public Continent Convert(ContinentDataModel value, object state)
         {
             if (value == null)
             {

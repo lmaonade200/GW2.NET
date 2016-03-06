@@ -113,9 +113,9 @@ namespace GW2NET.Factories.Services
                     Arg.Of<IResponseConverter>(),
                     Arg.Of<ICache<int, Continent>>(),
                     Arg.Of<IConverter<int, int>>(),
-                    Arg.Of<IConverter<ContinentDataContract, Continent>>())));
+                    Arg.Of<IConverter<ContinentDataModel, Continent>>())));
 
-                this.iocContainer.Register<IConverter<ContinentDataContract, Continent>>();
+                this.iocContainer.Register<IConverter<ContinentDataModel, Continent>>();
 
                 return this.iocContainer.Resolve<ContinentRepository>();
             }
@@ -198,9 +198,9 @@ namespace GW2NET.Factories.Services
                         Arg.Of<IResponseConverter>(),
                         Arg.Of<ICache<int, Map>>(),
                         Arg.Of<IConverter<int, int>>(),
-                        Arg.Of<IConverter<MapDataContract, Map>>())));
+                        Arg.Of<IConverter<MapDataModel, Map>>())));
 
-                this.iocContainer.Register<IConverter<MapDataContract, Map>, MapConverter>();
+                this.iocContainer.Register<IConverter<MapDataModel, Map>, MapConverter>();
                 this.iocContainer.Register<IConverter<double[][], Rectangle>, RectangleConverter>();
 
                 return this.iocContainer.Resolve<MapRepository>();
@@ -285,8 +285,8 @@ namespace GW2NET.Factories.Services
                         Arg.Of<IResponseConverter>(),
                         Arg.Of<ICache<int, World>>(),
                         Arg.Of<IConverter<int, int>>(),
-                        Arg.Of<IConverter<WorldDataContract, World>>())));
-                this.iocContainer.Register<IConverter<WorldDataContract, World>, WorldConverter>();
+                        Arg.Of<IConverter<WorldDataModel, World>>())));
+                this.iocContainer.Register<IConverter<WorldDataModel, World>, WorldConverter>();
 
                 return this.iocContainer.Resolve<WorldRepository>();
             }

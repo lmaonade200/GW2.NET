@@ -8,7 +8,7 @@ namespace GW2NET.MapInformation.ApiModels
 
     /// <summary>Represents the continent data from the GW2 api.</summary>
     [DataContract]
-    public sealed class ContinentDataContract
+    public sealed class ContinentDataModel
     {
         /// <summary>
         /// Gets or sets the id.
