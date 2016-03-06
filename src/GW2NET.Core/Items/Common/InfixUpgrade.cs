@@ -6,9 +6,8 @@
 //   Represents an item's infixed combat upgrades.
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
-namespace GW2NET.Items
+namespace GW2NET.Items.Common
 {
-    using System;
     using System.Collections.Generic;
     using System.Diagnostics;
 
@@ -27,6 +26,7 @@ namespace GW2NET.Items
                 Debug.Assert(this.attributes != null, "this.attributes != null");
                 return this.attributes;
             }
+
             set
             {
                 this.attributes = value ?? EmptyCombatAttributes;

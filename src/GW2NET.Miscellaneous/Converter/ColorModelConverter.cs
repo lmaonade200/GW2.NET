@@ -15,8 +15,8 @@ namespace GW2NET.Miscellaneous.Converter
     using GW2NET.Common;
     using GW2NET.Miscellaneous.ApiModels;
 
-    /// <summary>Converts objects of type <see cref="ColorDataContract"/> to objects of type <see cref="ColorModel"/>.</summary>
-    public sealed class ColorModelConverter : IConverter<ColorDataContract, ColorModel>
+    /// <summary>Converts objects of type <see cref="ColorDataModel"/> to objects of type <see cref="ColorModel"/>.</summary>
+    public sealed class ColorModelConverter : IConverter<ColorDataModel, ColorModel>
     {
         private readonly IConverter<int[], Color> colorConverter;
 
@@ -33,7 +33,7 @@ namespace GW2NET.Miscellaneous.Converter
         }
 
         /// <inheritdoc />
-        public ColorModel Convert(ColorDataContract value, object state)
+        public ColorModel Convert(ColorDataModel value, object state)
         {
             if (value == null)
             {

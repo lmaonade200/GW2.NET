@@ -27,6 +27,7 @@ namespace GW2NET.DynamicEvents
                 Debug.Assert(this.points != null, "this.points != null");
                 return this.points;
             }
+
             set
             {
                 this.points = value ?? EmptyPoints;

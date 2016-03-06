@@ -1,7 +1,8 @@
-// <copyright file="SkinDataContract.cs" company="GW2.NET Coding Team">
-// This product is licensed under the GNU General Public License version 2 (GPLv2). See the License in the project root folder or the following page: http://www.gnu.org/licenses/gpl-2.0.html
+// <copyright file="SkinDataModel.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
 
+#pragma warning disable 1591
 namespace GW2NET.Items.ApiModels
 {
     using System.Runtime.Serialization;

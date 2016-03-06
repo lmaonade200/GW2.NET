@@ -27,7 +27,6 @@ namespace GW2NET.TradingPost
     /// </remarks>
     public sealed class ListingRepository : CachedRepository<int, Listing>, IDiscoverable<int>, ICachedRepository<int, ListingDataModel, Listing>
     {
-
         /// <summary>Initializes a new instance of the <see cref="ListingRepository"/> class.</summary>
         /// <param name="httpClient">The <see cref="HttpClient"/> used to make connections with the ArenaNet servers.</param>
         /// <param name="responseConverter">The <see cref="IResponseConverter"/> used to convert <see cref="HttpResponseMessage"/> into objects.</param>

@@ -13,10 +13,7 @@ namespace GW2NET.TradingPost.Converter
     /// <summary>Converts objects of type <see cref="AggregateOfferDataModel"/> to objects of type <see cref="AggregateOffer"/>.</summary>
     public sealed class AggregateOfferConverter : IConverter<AggregateOfferDataModel, AggregateOffer>
     {
-        /// <summary>Converts the given object of type <see cref="AggregateOfferDataModel"/> to an object of type <see cref="AggregateOffer"/>.</summary>
-        /// <param name="value">The value to convert.</param>
-        /// <param name="state"></param>
-        /// <returns>The converted value.</returns>
+        /// <inheritdoc />
         public AggregateOffer Convert(AggregateOfferDataModel value, object state)
         {
             if (value == null)

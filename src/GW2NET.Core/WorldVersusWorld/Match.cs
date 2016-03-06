@@ -27,6 +27,7 @@ namespace GW2NET.WorldVersusWorld
                 Debug.Assert(this.maps != null, "this.maps != null");
                 return this.maps;
             }
+
             set
             {
                 this.maps = value ?? EmptyMaps;

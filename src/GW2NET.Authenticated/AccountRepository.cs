@@ -20,14 +20,14 @@ namespace GW2NET.Authenticated
     public sealed class AccountRepository : CachedRepository<Guid, Account>, IAccountRepository
     {
         /// <summary>Converts an account data contract into an account model.</summary>
-        private readonly IConverter<AccountDataContract, Account> accountConverter;
+        private readonly IConverter<AccountDataModel, Account> accountConverter;
 
         /// <summary>Initializes a new instance of the <see cref="AccountRepository"/> class.</summary>
         /// <param name="httpClient">The client used to make requests against the api.</param>
         /// <param name="responseConverter">The response converter.</param>
         /// <param name="cache">The cache used to cache results.</param>
         /// <param name="accountConverter">The converter to convert the data contract into the appropriate model.</param>
-        public AccountRepository(HttpClient httpClient, IResponseConverter responseConverter, ICache<Guid, Account> cache, IConverter<AccountDataContract, Account> accountConverter)
+        public AccountRepository(HttpClient httpClient, IResponseConverter responseConverter, ICache<Guid, Account> cache, IConverter<AccountDataModel, Account> accountConverter)
             : base(httpClient, responseConverter, cache)
         {
             this.accountConverter = accountConverter;

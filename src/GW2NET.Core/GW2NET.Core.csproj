@@ -50,6 +50,10 @@
     <Compile Include="ChatLinks\ChatLinkFactory.cs" />
     <Compile Include="ChatLinks\CoinChatLink.cs" />
     <Compile Include="ChatLinks\DialogChatLink.cs" />
+    <Compile Include="ChatLinks\Interop\Outfit.cs" />
+    <Compile Include="ChatLinks\Interop\Recipe.cs" />
+    <Compile Include="ChatLinks\Interop\Skill.cs" />
+    <Compile Include="ChatLinks\Interop\Skin.cs" />
     <Compile Include="ChatLinks\ItemChatLink.cs" />
     <Compile Include="ChatLinks\OutfitChatLink.cs" />
     <Compile Include="ChatLinks\PointOfInterestChatLink.cs" />
@@ -134,13 +138,9 @@
     <Compile Include="ChatLinks\Interop\Coin.cs" />
     <Compile Include="ChatLinks\Interop\Item.cs" />
     <Compile Include="ChatLinks\Interop\ItemModifiers.cs" />
-    <Compile Include="ChatLinks\Interop\MapChatLink.cs" />
-    <Compile Include="ChatLinks\Interop\OutfitChatLink.cs" />
-    <Compile Include="ChatLinks\Interop\RecipeChatLink.cs" />
-    <Compile Include="ChatLinks\Interop\SkillChatLink.cs" />
-    <Compile Include="ChatLinks\Interop\SkinChatLink.cs" />
-    <Compile Include="ChatLinks\Interop\TextChatLink.cs" />
-    <Compile Include="ChatLinks\Interop\TraitChatLink.cs" />
+    <Compile Include="ChatLinks\Interop\Map.cs" />
+    <Compile Include="ChatLinks\Interop\Text.cs" />
+    <Compile Include="ChatLinks\Interop\Trait.cs" />
     <Compile Include="ChatLinks\Interop\UInt24.cs" />
     <Compile Include="ITypeConverterFactory.cs" />
     <Compile Include="Items\Armors\Armor.cs" />

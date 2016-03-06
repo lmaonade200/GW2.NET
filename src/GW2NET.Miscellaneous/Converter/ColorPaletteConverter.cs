@@ -14,17 +14,17 @@ namespace GW2NET.Miscellaneous.Converter
     using GW2NET.Common.Converters;
     using GW2NET.Miscellaneous.ApiModels;
 
-    /// <summary>Converts objects of type <see cref="ColorDataContract"/> to objects of type <see cref="ColorPalette"/>.</summary>
-    public sealed class ColorPaletteConverter : IConverter<ColorPaletteDataContract, ColorPalette>
+    /// <summary>Converts objects of type <see cref="ColorDataModel"/> to objects of type <see cref="ColorPalette"/>.</summary>
+    public sealed class ColorPaletteConverter : IConverter<ColorPaletteDataModel, ColorPalette>
     {
         private readonly IConverter<int[], Color> colorConverter;
 
-        private readonly IConverter<ColorDataContract, ColorModel> colorModelConverter;
+        private readonly IConverter<ColorDataModel, ColorModel> colorModelConverter;
 
         /// <summary>Initializes a new instance of the <see cref="ColorPaletteConverter"/> class.</summary>
         /// <param name="colorConverter">The converter for <see cref="Color"/>.</param>
         /// <param name="colorModelConverter">The converter for <see cref="ColorModel"/>.</param>
-        public ColorPaletteConverter(IConverter<int[], Color> colorConverter, IConverter<ColorDataContract, ColorModel> colorModelConverter)
+        public ColorPaletteConverter(IConverter<int[], Color> colorConverter, IConverter<ColorDataModel, ColorModel> colorModelConverter)
         {
             if (colorConverter == null)
             {
@@ -41,7 +41,7 @@ namespace GW2NET.Miscellaneous.Converter
         }
 
         /// <inheritdoc />
-        public ColorPalette Convert(ColorPaletteDataContract value, object state)
+        public ColorPalette Convert(ColorPaletteDataModel value, object state)
         {
             if (value == null)
             {

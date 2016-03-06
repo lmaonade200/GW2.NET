@@ -11,11 +11,11 @@ namespace GW2NET.Miscellaneous.Converter
     using GW2NET.Common.Converters;
     using GW2NET.Miscellaneous.ApiModels;
 
-    /// <summary>Converts objects of type <see cref="BuildDataContract"/> to objects of type <see cref="Build"/>.</summary>
-    public sealed class BuildConverter : IConverter<BuildDataContract, Build>
+    /// <summary>Converts objects of type <see cref="BuildDataModel"/> to objects of type <see cref="Build"/>.</summary>
+    public sealed class BuildConverter : IConverter<BuildDataModel, Build>
     {
         /// <inheritdoc />
-        public Build Convert(BuildDataContract value, object state)
+        public Build Convert(BuildDataModel value, object state)
         {
             if (value == null)
             {

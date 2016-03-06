@@ -1,11 +1,13 @@
-﻿// <copyright file="GatheringToolConverter.cs" company="GW2.NET Coding Team">
-// This product is licensed under the GNU General Public License version 2 (GPLv2). See the License in the project root folder or the following page: http://www.gnu.org/licenses/gpl-2.0.html
+﻿// <copyright file="GatheringToolConverter.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
 
 namespace GW2NET.Items.Converter
 {
     using GW2NET.Items.ApiModels;
+    using GW2NET.Items.GatheringTools;
 
+    /// <summary>Convertes a <see cref="ItemDataModel"/> into a <see cref="GatheringTool"/> object.</summary>
     public partial class GatheringToolConverter
     {
         partial void Merge(GatheringTool entity, ItemDataModel dataModel, object state)

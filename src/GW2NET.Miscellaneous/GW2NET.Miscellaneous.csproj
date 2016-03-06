@@ -23,7 +23,8 @@
     <OutputPath>bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
+    <WarningLevel>0</WarningLevel>
+    <DocumentationFile>bin\Debug\GW2NET.Miscellaneous.XML</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -41,11 +42,11 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ApiModels\BuildDataContract.cs" />
-    <Compile Include="ApiModels\ColorDataContract.cs" />
-    <Compile Include="ApiModels\ColorPaletteDataContract.cs" />
-    <Compile Include="ApiModels\FileDataContract.cs" />
-    <Compile Include="ApiModels\QuagganDataContract.cs" />
+    <Compile Include="ApiModels\BuildDataModel.cs" />
+    <Compile Include="ApiModels\ColorDataModel.cs" />
+    <Compile Include="ApiModels\ColorPaletteDataModel.cs" />
+    <Compile Include="ApiModels\FileDataModel.cs" />
+    <Compile Include="ApiModels\QuagganDataModel.cs" />
     <Compile Include="BuildRepository.cs" />
     <Compile Include="ColorRepository.cs" />
     <Compile Include="Converter\AssetConverter.cs" />

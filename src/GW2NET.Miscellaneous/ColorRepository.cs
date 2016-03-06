@@ -15,7 +15,7 @@ namespace GW2NET.Miscellaneous
     using GW2NET.Miscellaneous.ApiModels;
 
     /// <summary>Provides methods and properties to retrive colors from the GW2 api.</summary>
-    public sealed class ColorRepository : CachedRepository<int, ColorPalette>, IDiscoverable<int>, ICachedRepository<int, ColorPaletteDataContract, ColorPalette>, ILocalizable
+    public sealed class ColorRepository : CachedRepository<int, ColorPalette>, IDiscoverable<int>, ICachedRepository<int, ColorPaletteDataModel, ColorPalette>, ILocalizable
     {
         /// <summary>Initializes a new instance of the <see cref="ColorRepository"/> class.</summary>
         /// <param name="httpClient">The <see cref="HttpClient"/> used to make requests against the api.</param>
@@ -23,7 +23,7 @@ namespace GW2NET.Miscellaneous
         /// <param name="cache">The cache used to cache results.</param>
         /// <param name="identifiersConverter">The converter used to convert identifiers.</param>
         /// <param name="modelConverter">The converter to convert single color responses.</param>
-        public ColorRepository(HttpClient httpClient, IResponseConverter responseConverter, ICache<int, ColorPalette> cache, IConverter<int, int> identifiersConverter, IConverter<ColorPaletteDataContract, ColorPalette> modelConverter)
+        public ColorRepository(HttpClient httpClient, IResponseConverter responseConverter, ICache<int, ColorPalette> cache, IConverter<int, int> identifiersConverter, IConverter<ColorPaletteDataModel, ColorPalette> modelConverter)
             : base(httpClient, responseConverter, cache)
         {
             this.IdentifiersConverter = identifiersConverter;
@@ -39,7 +39,7 @@ namespace GW2NET.Miscellaneous
         public IConverter<int, int> IdentifiersConverter { get; }
 
         /// <inheritdoc />
-        public IConverter<ColorPaletteDataContract, ColorPalette> ModelConverter { get; }
+        public IConverter<ColorPaletteDataModel, ColorPalette> ModelConverter { get; }
 
         /// <inheritdoc />
         public IParameterizedBuilder ServiceLocation

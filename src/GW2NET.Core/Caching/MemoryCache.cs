@@ -117,7 +117,7 @@ namespace GW2NET.Caching
                 }
             }
         }
-        
+
         /// <inheritdoc />
         public IEnumerator<TValue> GetEnumerator()
         {

@@ -20,7 +20,7 @@ namespace GW2NET.Common
         /// <summary>Gets the <see cref="IResponseConverter"/> used to convert an <see cref="HttpResponseMessage"/> into useable objects.</summary>
         IResponseConverter ResponseConverter { get; }
 
-        /// <summary>Gets the <see cref="IConverter{TSource,TTarget}"/> used to convert objects of type <see cref="TDataContract"/> into object of type <see cref="TValue"/>.</summary>
+        /// <summary>Gets the <see cref="IConverter{TSource,TTarget}"/> used to convert objects of type TDataContract into object of type TValue.</summary>
         IConverter<TDataContract, TValue> ModelConverter { get; }
 
         /// <summary>Gets the service location without any additional paramters (i.e. culture, identifiers, etc.)</summary>

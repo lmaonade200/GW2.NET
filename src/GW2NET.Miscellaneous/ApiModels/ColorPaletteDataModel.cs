@@ -7,7 +7,7 @@ namespace GW2NET.Miscellaneous.ApiModels
     using System.Runtime.Serialization;
 
     [DataContract]
-    public sealed class ColorPaletteDataContract
+    public sealed class ColorPaletteDataModel
     {
         [DataMember(Name = "id", Order = 0)]
         public int Id { get; set; }
@@ -19,13 +19,13 @@ namespace GW2NET.Miscellaneous.ApiModels
         public int[] BaseRgb { get; set; }
 
         [DataMember(Name = "cloth", Order = 3)]
-        public ColorDataContract Cloth { get; set; }
+        public ColorDataModel Cloth { get; set; }
 
         [DataMember(Name = "leather", Order = 4)]
-        public ColorDataContract Leather { get; set; }
+        public ColorDataModel Leather { get; set; }
 
         [DataMember(Name = "metal", Order = 4)]
-        public ColorDataContract Metal { get; set; }
+        public ColorDataModel Metal { get; set; }
 
         [DataMember(Name = "item", Order = 5)]
         public int ItemId { get; set; }

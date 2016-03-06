@@ -6,8 +6,9 @@
 //   Provides the base class for gathering tool types.
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
-namespace GW2NET.Items
+namespace GW2NET.Items.GatheringTools
 {
+    using GW2NET.Items.Common;
     using GW2NET.Skins;
 
     /// <summary>Provides the base class for gathering tool types.</summary>

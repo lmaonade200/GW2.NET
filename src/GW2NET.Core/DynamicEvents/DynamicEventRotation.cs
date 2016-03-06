@@ -32,6 +32,7 @@ namespace GW2NET.DynamicEvents
                 Debug.Assert(this.shifts != null, "this.shifts != null");
                 return this.shifts;
             }
+
             set
             {
                 this.shifts = value ?? EmptyShifts;

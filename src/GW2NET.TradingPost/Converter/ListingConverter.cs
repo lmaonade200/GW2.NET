@@ -18,7 +18,7 @@ namespace GW2NET.TradingPost.Converter
         private readonly IConverter<ICollection<ListingOfferDataModel>, ICollection<Offer>> offerCollectionConverter;
 
         /// <summary>Initializes a new instance of the <see cref="ListingConverter"/> class.</summary>
-        /// <param name="offerCollectionConverter"></param>
+        /// <param name="offerCollectionConverter">The offer collection converter.</param>
         public ListingConverter(IConverter<ICollection<ListingOfferDataModel>, ICollection<Offer>> offerCollectionConverter)
         {
             if (offerCollectionConverter == null)
@@ -29,10 +29,7 @@ namespace GW2NET.TradingPost.Converter
             this.offerCollectionConverter = offerCollectionConverter;
         }
 
-        /// <summary>Converts the given object of type <see cref="ListingDataModel"/> to an object of type <see cref="Listing"/>.</summary>
-        /// <param name="value">The value to convert.</param>
-        /// <param name="state"></param>
-        /// <returns>The converted value.</returns>
+        /// <inheritdoc />
         public Listing Convert(ListingDataModel value, object state)
         {
             if (value == null)

@@ -49,6 +49,7 @@ namespace GW2NET.Maps
                 Debug.Assert(this.floors != null, "this.floors != null");
                 return this.floors;
             }
+
             set
             {
                 this.floors = value ?? EmptyFloors;

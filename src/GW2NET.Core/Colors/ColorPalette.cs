@@ -43,9 +43,10 @@ namespace GW2NET.Colors
         public virtual int ItemId { get; set; }
 
         /// <summary>Gets or sets the item that unlocks this color.</summary>
-        public virtual Item item { get; set; }
+        public virtual Item Item { get; set; }
 
-        public virtual IList<string> Categories  { get; set; }
+        /// <summary>Gets or sets the color categories.</summary>
+        public virtual IList<string> Categories { get; set; }
 
         /// <summary>Indicates whether an object is equal to another object of the same type.</summary>
         /// <param name="left">The object on the left side.</param>

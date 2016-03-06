@@ -33,7 +33,6 @@ namespace GW2NET.Factories.Services
     using GW2NET.Quaggans;
     using GW2NET.Recipes;
     using GW2NET.Skins;
-    using GW2NET.V2.Skins.Converters;
     using GW2NET.Worlds;
 
     using IocContainer = DryIoc.Container;
@@ -59,8 +58,8 @@ namespace GW2NET.Factories.Services
                     Made.Of(() => new BuildRepository(
                         Arg.Of<HttpClient>("RepositoryClient"),
                         Arg.Of<IResponseConverter>(),
-                        Arg.Of<IConverter<BuildDataContract, Build>>())));
-                this.iocContainer.Register<IConverter<BuildDataContract, Build>, BuildConverter>();
+                        Arg.Of<IConverter<BuildDataModel, Build>>())));
+                this.iocContainer.Register<IConverter<BuildDataModel, Build>, BuildConverter>();
 
                 return this.iocContainer.Resolve<IBuildRepository>();
             }
@@ -77,11 +76,11 @@ namespace GW2NET.Factories.Services
                     Arg.Of<IResponseConverter>(),
                     Arg.Of<ICache<int, ColorPalette>>(),
                     Arg.Of<IConverter<int, int>>(),
-                    Arg.Of<IConverter<ColorPaletteDataContract, ColorPalette>>())));
+                    Arg.Of<IConverter<ColorPaletteDataModel, ColorPalette>>())));
 
-                this.iocContainer.Register<IConverter<ColorPaletteDataContract, ColorPalette>, ColorPaletteConverter>();
+                this.iocContainer.Register<IConverter<ColorPaletteDataModel, ColorPalette>, ColorPaletteConverter>();
                 this.iocContainer.Register<IConverter<int[], Color>, ColorConverter>();
-                this.iocContainer.Register<IConverter<ColorDataContract, ColorModel>, ColorModelConverter>();
+                this.iocContainer.Register<IConverter<ColorDataModel, ColorModel>, ColorModelConverter>();
 
                 return this.iocContainer.Resolve<ColorRepository>();
             }
@@ -126,9 +125,9 @@ namespace GW2NET.Factories.Services
                    Arg.Of<IResponseConverter>(),
                    Arg.Of<ICache<string, Asset>>(),
                    Arg.Of<IConverter<string, string>>(),
-                   Arg.Of<IConverter<FileDataContract, Asset>>())));
+                   Arg.Of<IConverter<FileDataModel, Asset>>())));
 
-                this.iocContainer.Register<IConverter<FileDataContract, Asset>, AssetConverter>();
+                this.iocContainer.Register<IConverter<FileDataModel, Asset>, AssetConverter>();
 
                 return this.iocContainer.Resolve<FileRepository>();
             }
@@ -143,10 +142,10 @@ namespace GW2NET.Factories.Services
                     Made.Of(() => new GuildRepository(
                         Arg.Of<HttpClient>("RepositoryClient"),
                         Arg.Of<IResponseConverter>(),
-                        Arg.Of<IConverter<GuildDataContract, Guild>>())));
+                        Arg.Of<IConverter<GuildDataModel, Guild>>())));
 
-                this.iocContainer.Register<IConverter<GuildDataContract, Guild>>();
-                this.iocContainer.Register<IConverter<EmblemDataContract, Emblem>>();
+                this.iocContainer.Register<IConverter<GuildDataModel, Guild>>();
+                this.iocContainer.Register<IConverter<EmblemDataModel, Emblem>>();
                 this.iocContainer.Register<IConverter<string, EmblemTransformations>, EmblemTransformationConverter>();
                 this.iocContainer.Register<IConverter<ICollection<string>, EmblemTransformations>, EmblemTransformationCollectionConverter>();
 
@@ -212,9 +211,9 @@ namespace GW2NET.Factories.Services
                         Arg.Of<IResponseConverter>(),
                         Arg.Of<ICache<string, Quaggan>>(),
                         Arg.Of<IConverter<string, string>>(),
-                        Arg.Of<IConverter<QuagganDataContract, Quaggan>>())));
+                        Arg.Of<IConverter<QuagganDataModel, Quaggan>>())));
 
-                this.iocContainer.Register<IConverter<QuagganDataContract, Quaggan>, QuagganConverter>();
+                this.iocContainer.Register<IConverter<QuagganDataModel, Quaggan>, QuagganConverter>();
 
                 return this.iocContainer.Resolve<QuagganRepository>();
             }

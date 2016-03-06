@@ -36,7 +36,7 @@ namespace GW2NET.Caching
 
         /// <summary>Gets a set of items with the specified identifier from the cache.</summary>
         /// <param name="identifier">The identifier used to identify the set.</param>
-        /// <returns>An <see cref="IEnumerable{T}"/> ot type <see cref="TValue"/> containing the requested items.</returns>
+        /// <returns>An <see cref="IEnumerable{T}"/> ot type <typeparamref name="TValue"/> containing the requested items.</returns>
         IEnumerable<TValue> GetByIdentifier(TKey identifier);
 
         /// <summary>Removes the specified items from the cache.</summary>

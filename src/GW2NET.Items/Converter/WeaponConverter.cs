@@ -1,6 +1,6 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="WeaponConverter.cs" company="GW2.NET Coding Team">
-//   This product is licensed under the GNU General Public License version 2 (GPLv2). See the License in the project root folder or the following page: http://www.gnu.org/licenses/gpl-2.0.html
+// <copyright file="WeaponConverter.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
 // <summary>
 //   Converts objects of type <see cref="DetailsDTO" /> to objects of type <see cref="Weapon" />.
@@ -14,6 +14,8 @@ namespace GW2NET.Items.Converter
 
     using GW2NET.Common;
     using GW2NET.Items.ApiModels;
+    using GW2NET.Items.Common;
+    using GW2NET.Items.Weapons;
 
     public partial class WeaponConverter
     {
@@ -38,17 +40,17 @@ namespace GW2NET.Items.Converter
         {
             if (damageTypeConverter == null)
             {
-                throw new ArgumentNullException("damageTypeConverter");
+                throw new ArgumentNullException(nameof(damageTypeConverter));
             }
 
             if (infixUpgradeConverter == null)
             {
-                throw new ArgumentNullException("infixUpgradeConverter");
+                throw new ArgumentNullException(nameof(infixUpgradeConverter));
             }
 
             if (infusionSlotCollectionConverter == null)
             {
-                throw new ArgumentNullException("infusionSlotCollectionConverter");
+                throw new ArgumentNullException(nameof(infusionSlotCollectionConverter));
             }
 
             this.damageTypeConverter = damageTypeConverter;

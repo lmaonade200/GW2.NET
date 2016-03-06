@@ -1,6 +1,6 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="InfixUpgradeConverter.cs" company="GW2.NET Coding Team">
-//   This product is licensed under the GNU General Public License version 2 (GPLv2). See the License in the project root folder or the following page: http://www.gnu.org/licenses/gpl-2.0.html
+// <copyright file="InfixUpgradeConverter.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
 // <summary>
 //   Converts objects of type <see cref="InfixUpgradeDTO" /> to objects of type <see cref="InfixUpgrade" />.
@@ -14,6 +14,7 @@ namespace GW2NET.Items.Converter
 
     using GW2NET.Common;
     using GW2NET.Items.ApiModels;
+    using GW2NET.Items.Common;
 
     /// <summary>Converts objects of type <see cref="InfixUpgradeDataModel" /> to objects of type <see cref="InfixUpgrade" />.</summary>
     public sealed class InfixUpgradeConverter : IConverter<InfixUpgradeDataModel, InfixUpgrade>
@@ -32,12 +33,12 @@ namespace GW2NET.Items.Converter
         {
             if (combatAttributeCollectionConverter == null)
             {
-                throw new ArgumentNullException("combatAttributeCollectionConverter");
+                throw new ArgumentNullException(nameof(combatAttributeCollectionConverter));
             }
 
             if (combatBuffConverter == null)
             {
-                throw new ArgumentNullException("combatBuffConverter");
+                throw new ArgumentNullException(nameof(combatBuffConverter));
             }
 
             this.combatAttributeCollectionConverter = combatAttributeCollectionConverter;
@@ -55,7 +56,7 @@ namespace GW2NET.Items.Converter
         {
             if (value == null)
             {
-                throw new ArgumentNullException("value");
+                throw new ArgumentNullException(nameof(value));
             }
 
             var infixUpgrade = new InfixUpgrade();

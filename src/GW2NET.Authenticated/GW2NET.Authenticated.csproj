@@ -24,6 +24,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Debug\GW2NET.Authenticated.XML</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -42,8 +43,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AccountRepository.cs" />
-    <Compile Include="ApiModels\AccountDataContract.cs" />
-    <Compile Include="ApiModels\CharacterDataContract.cs" />
+    <Compile Include="ApiModels\AccountDataModel.cs" />
+    <Compile Include="ApiModels\CharacterDataModel.cs" />
     <Compile Include="CharacterRepository.cs" />
     <Compile Include="Converter\AccountConverter.cs" />
     <Compile Include="Converter\CharacterConverter.cs" />

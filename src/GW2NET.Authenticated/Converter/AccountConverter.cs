@@ -10,11 +10,11 @@ namespace GW2NET.Authenticated.Converter
     using GW2NET.Authenticated.ApiModels;
     using GW2NET.Common;
 
-    /// <summary>Converts objects of type <see cref="AccountDataContract"/> to objects of type <see cref="Account"/>.</summary>
-    public sealed class AccountConverter : IConverter<AccountDataContract, Account>
+    /// <summary>Converts objects of type <see cref="AccountDataModel"/> to objects of type <see cref="Account"/>.</summary>
+    public sealed class AccountConverter : IConverter<AccountDataModel, Account>
     {
         /// <inheritdoc />
-        public Account Convert(AccountDataContract value, object state)
+        public Account Convert(AccountDataModel value, object state)
         {
             if (value == null)
             {

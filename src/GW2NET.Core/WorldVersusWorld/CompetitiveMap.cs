@@ -14,11 +14,11 @@ namespace GW2NET.WorldVersusWorld
     /// <summary>Provides the base class for World versus World maps.</summary>
     public abstract class CompetitiveMap
     {
+        private static readonly Objective[] EmptyObjectives = new Objective[0];
+
         private static readonly MapBonus[] EmptyBonuses = new MapBonus[0];
 
         private ICollection<MapBonus> bonuses = EmptyBonuses;
-
-        private static readonly Objective[] EmptyObjectives = new Objective[0];
 
         private ICollection<Objective> objectives;
 
@@ -30,6 +30,7 @@ namespace GW2NET.WorldVersusWorld
                 Debug.Assert(this.bonuses != null, "this.bonuses != null");
                 return this.bonuses;
             }
+
             set
             {
                 this.bonuses = value ?? EmptyBonuses;
@@ -44,6 +45,7 @@ namespace GW2NET.WorldVersusWorld
                 Debug.Assert(this.objectives != null, "this.objectives != null");
                 return this.objectives;
             }
+
             set
             {
                 this.objectives = value ?? EmptyObjectives;

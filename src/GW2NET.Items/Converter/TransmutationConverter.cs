@@ -1,8 +1,13 @@
-﻿namespace GW2NET.Items.Converter
+﻿// <copyright file="TransmutationConverter.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
+
+namespace GW2NET.Items.Converter
 {
     using System.Collections.Generic;
 
     using GW2NET.Items.ApiModels;
+    using GW2NET.Items.Consumables;
 
     public partial class TransmutationConverter
     {

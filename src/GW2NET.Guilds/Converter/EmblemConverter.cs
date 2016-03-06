@@ -10,13 +10,13 @@ namespace GW2NET.Guilds.Converter
     using GW2NET.Common;
     using GW2NET.Guilds.ApiModels;
 
-    /// <summary>Converts objects of type <see cref="EmblemDataContract"/> to objects of type <see cref="Emblem"/>.</summary>
-    public sealed class EmblemConverter : IConverter<EmblemDataContract, Emblem>
+    /// <summary>Converts objects of type <see cref="EmblemDataModel"/> to objects of type <see cref="Emblem"/>.</summary>
+    public sealed class EmblemConverter : IConverter<EmblemDataModel, Emblem>
     {
         private readonly IConverter<ICollection<string>, EmblemTransformations> emblemTransformationsConverter;
 
         /// <summary>Initializes a new instance of the <see cref="EmblemConverter"/> class.</summary>
-        /// <param name="emblemTransformationsConverter"></param>
+        /// <param name="emblemTransformationsConverter">The emblem transformation converter.</param>
         /// <exception cref="ArgumentNullException">Thrown when the inner converter is null.</exception>
         public EmblemConverter(IConverter<ICollection<string>, EmblemTransformations> emblemTransformationsConverter)
         {
@@ -29,7 +29,7 @@ namespace GW2NET.Guilds.Converter
         }
 
         /// <inheritdoc />
-        public Emblem Convert(EmblemDataContract value, object state)
+        public Emblem Convert(EmblemDataModel value, object state)
         {
             if (value == null)
             {

@@ -15,21 +15,21 @@ namespace GW2NET.Authenticated
     using GW2NET.Common.Messages;
 
     /// <summary>Represents a repository that retrieves data from the /v2/characters interface.</summary>
-    public sealed class CharacterRepository : CachedRepository<string, Character>, IDiscoverable<string>, ICachedRepository<string, CharacterDataContract, Character>
+    public sealed class CharacterRepository : CachedRepository<string, Character>, IDiscoverable<string>, ICachedRepository<string, CharacterDataModel, Character>
     {
         /// <summary>Initializes a new instance of the <see cref="CharacterRepository"/> class.</summary>
-        /// <param name="client"></param>
-        /// <param name="cache"></param>
-        /// <param name="identifiersConverter"></param>
-        /// <param name="responseConverter"></param>
-        /// <param name="modelConverter"></param>
-        /// <exception cref="ArgumentNullException">Thrown when any constructor argument is null.</exception>
-        public CharacterRepository(HttpClient client, IResponseConverter responseConverter, ICache<string, Character> cache, IConverter<string, string> identifiersConverter, IConverter<CharacterDataContract, Character> modelConverter)
-            : base(client, responseConverter, cache)
+        /// <param name="httpClient">The <see cref="HttpClient"/> used to make connections with the ArenaNet servers.</param>
+        /// <param name="responseConverter">The <see cref="IResponseConverter"/> used to convert <see cref="HttpResponseMessage"/> into objects.</param>
+        /// <param name="cache">The <see cref="ICache{TKey, TValue}"/> used to cache api responses.</param>
+        /// <param name="identifiersConverter">A converter used to convert identifiers.</param>
+        /// <param name="modelConverter">A converter used to convert data contracts into objects.</param>
+        /// <exception cref="ArgumentNullException">Thrown when either parameter is null.</exception>
+        public CharacterRepository(HttpClient httpClient, IResponseConverter responseConverter, ICache<string, Character> cache, IConverter<string, string> identifiersConverter, IConverter<CharacterDataModel, Character> modelConverter)
+            : base(httpClient, responseConverter, cache)
         {
-            if (client == null)
+            if (httpClient == null)
             {
-                throw new ArgumentNullException(nameof(client));
+                throw new ArgumentNullException(nameof(httpClient));
             }
 
             if (identifiersConverter == null)
@@ -50,7 +50,7 @@ namespace GW2NET.Authenticated
         public IConverter<string, string> IdentifiersConverter { get; }
 
         /// <inheritdoc />
-        public IConverter<CharacterDataContract, Character> ModelConverter { get; }
+        public IConverter<CharacterDataModel, Character> ModelConverter { get; }
 
         /// <inheritdoc />
         public IParameterizedBuilder ServiceLocation

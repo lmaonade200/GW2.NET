@@ -1,7 +1,8 @@
-﻿// <copyright file="EmblemDataContract.cs" company="GW2.NET Coding Team">
+﻿// <copyright file="EmblemDataModel.cs" company="GW2.NET Coding Team">
 // This product is licensed under the GNU General Public License version 2 (GPLv2). See the License in the project root folder or the following page: http://www.gnu.org/licenses/gpl-2.0.html
 // </copyright>
 
+#pragma warning disable 1591
 namespace GW2NET.Guilds.ApiModels
 {
     using System.Diagnostics.CodeAnalysis;
@@ -9,7 +10,7 @@ namespace GW2NET.Guilds.ApiModels
 
     [DataContract]
     [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1600:ElementsMustBeDocumented", Justification = "http://wiki.guildwars2.com/wiki/API:1/guild_details")]
-    public sealed class EmblemDataContract
+    public sealed class EmblemDataModel
     {
         [DataMember(Name = "background_id", Order = 0)]
         public int BackgroundId { get; set; }

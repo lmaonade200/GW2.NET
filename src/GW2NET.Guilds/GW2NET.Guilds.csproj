@@ -24,6 +24,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Debug\GW2NET.Guilds.XML</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -40,12 +41,12 @@
     <Analyzer Include="..\..\packages\StyleCop.Analyzers.1.0.0\analyzers\dotnet\cs\StyleCop.Analyzers.dll" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ApiModels\EmblemDataContract.cs" />
+    <Compile Include="ApiModels\EmblemDataModel.cs" />
+    <Compile Include="ApiModels\GuildDataModel.cs" />
     <Compile Include="Converter\EmblemConverter.cs" />
     <Compile Include="Converter\EmblemTransformationCollectionConverter.cs" />
     <Compile Include="Converter\EmblemTransformationConverter.cs" />
     <Compile Include="Converter\GuildConverter.cs" />
-    <Compile Include="ApiModels\GuildDataContract.cs" />
     <Compile Include="GuildRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

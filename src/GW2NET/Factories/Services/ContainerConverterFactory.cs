@@ -6,8 +6,8 @@ namespace GW2NET.Factories.V2
 {
     using System.Diagnostics;
     using GW2NET.Common;
-    using GW2NET.Items;
     using GW2NET.Items.ApiModels;
+    using GW2NET.Items.Containers;
     using GW2NET.Items.Converter;
 
     public class ContainerConverterFactory : ITypeConverterFactory<ItemDataModel, Container>

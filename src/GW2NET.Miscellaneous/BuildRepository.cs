@@ -19,14 +19,14 @@ namespace GW2NET.Miscellaneous
     /// <remarks>See <a href="http://wiki.guildwars2.com/wiki/API:2/build">wiki</a> for more information.</remarks>
     public sealed class BuildRepository : RepositoryBase, IBuildRepository
     {
-        private readonly IConverter<BuildDataContract, Build> buildConverter;
+        private readonly IConverter<BuildDataModel, Build> buildConverter;
 
         /// <summary>Initializes a new instance of the <see cref="BuildRepository"/> class.</summary>
         /// <param name="httpClient"></param>
         /// <param name="buildConverter">The converter for <see cref="Build"/>.</param>
         /// <param name="responseConverter"></param>
         /// <exception cref="ArgumentNullException">The value of <paramref name="httpClient"/> or <paramref name="buildConverter"/> is a null reference.</exception>
-        public BuildRepository(HttpClient httpClient, IResponseConverter responseConverter, IConverter<BuildDataContract, Build> buildConverter)
+        public BuildRepository(HttpClient httpClient, IResponseConverter responseConverter, IConverter<BuildDataModel, Build> buildConverter)
             : base(httpClient, responseConverter)
         {
             if (buildConverter == null)

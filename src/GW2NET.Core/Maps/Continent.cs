@@ -19,11 +19,11 @@ namespace GW2NET.Maps
     /// <summary>Represents a continent.</summary>
     public class Continent : IEquatable<Continent>, ILocalizable
     {
+        private static readonly Floor[] EmptyFloors = new Floor[0];
+
         private static readonly int[] EmptyFloorIds = new int[0];
 
         private ICollection<int> floorIds = EmptyFloorIds;
-
-        private static readonly Floor[] EmptyFloors = new Floor[0];
 
         private ICollection<Floor> floors = EmptyFloors;
 
@@ -44,6 +44,7 @@ namespace GW2NET.Maps
                 Debug.Assert(this.floorIds != null, "this.floorIds != null");
                 return this.floorIds;
             }
+
             set
             {
                 this.floorIds = value ?? EmptyFloorIds;
@@ -58,6 +59,7 @@ namespace GW2NET.Maps
                 Debug.Assert(this.floors != null, "this.floors != null");
                 return this.floors;
             }
+
             set
             {
                 this.floors = value ?? EmptyFloors;

@@ -44,6 +44,7 @@ namespace GW2NET.Recipes
                 Debug.Assert(this.ingredients != null, "this.ingredients != null");
                 return this.ingredients;
             }
+
             set
             {
                 this.ingredients = value ?? EmptyIngredients;

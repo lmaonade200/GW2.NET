@@ -5,7 +5,7 @@
 //
 //     Changes to this file may cause incorrect behavior and will be lost if the code is regenerated.
 // </auto-generated>
-// <copyright file="SkinDataContract.cs" company="GW2.NET Coding Team">
+// <copyright file="SkinDataModel.cs" company="GW2.NET Coding Team">
 //     This product is licensed under the GNU General Public License version 2 (GPLv2).
 //     See the License in the project root folder or the following page: http://www.gnu.org/licenses/gpl-2.0.html
 // </copyright>
@@ -19,15 +19,18 @@ namespace GW2NET.Items.Converter
 	using GW2NET.Items.ApiModels;
 	using GW2NET.Skins;
 
+    /// <summary>Convertes a <see cref="SkinDataModel"/> into a <see cref="WeaponSkin"/> object.</summary>
     public sealed partial class WeaponSkinConverter : IConverter<SkinDataModel, WeaponSkin>
 	{
 	    private readonly ITypeConverterFactory<SkinDataModel, WeaponSkin> converterFactory;
 
+		/// <summary>Initalizes a new instance of the <see cref="WeaponSkinConverter"/> class.</summary>
+        /// <param name="converterFactory">The <see cref="ITypeConverterFactory{TSource,TTarget}"/>.</param>
 		private WeaponSkinConverter(ITypeConverterFactory<SkinDataModel, WeaponSkin> converterFactory)
 		{
 		    if (converterFactory == null)
     		{
-    		    throw new ArgumentNullException("converterFactory");
+    		    throw new ArgumentNullException(nameof(converterFactory));
     		}
 
 		    this.converterFactory = converterFactory;
@@ -38,7 +41,7 @@ namespace GW2NET.Items.Converter
 		{
 		    if (value == null)
     		{
-    		    throw new ArgumentNullException("value");
+    		    throw new ArgumentNullException(nameof(value));
     		}
 
 			string discriminator = value.Details.Type;

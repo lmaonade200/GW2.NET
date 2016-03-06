@@ -1,6 +1,6 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="BackpackConverter.cs" company="GW2.NET Coding Team">
-//   This product is licensed under the GNU General Public License version 2 (GPLv2). See the License in the project root folder or the following page: http://www.gnu.org/licenses/gpl-2.0.html
+// <copyright file="BackpackConverter.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
 // <summary>
 //   Converts objects of type <see cref="DetailsDTO" /> to objects of type <see cref="Backpack" />.
@@ -13,6 +13,8 @@ namespace GW2NET.Items.Converter
 
     using GW2NET.Common;
     using GW2NET.Items.ApiModels;
+    using GW2NET.Items.Backpacks;
+    using GW2NET.Items.Common;
 
     public partial class BackpackConverter
     {
@@ -27,12 +29,12 @@ namespace GW2NET.Items.Converter
         {
             if (infusionSlotCollectionConverter == null)
             {
-                throw new ArgumentNullException("infusionSlotCollectionConverter");
+                throw new ArgumentNullException(nameof(infusionSlotCollectionConverter));
             }
 
             if (infixUpgradeConverter == null)
             {
-                throw new ArgumentNullException("infixUpgradeConverter");
+                throw new ArgumentNullException(nameof(infixUpgradeConverter));
             }
 
             this.infusionSlotCollectionConverter = infusionSlotCollectionConverter;

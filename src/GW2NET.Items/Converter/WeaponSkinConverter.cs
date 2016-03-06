@@ -1,5 +1,5 @@
-// <copyright file="WeaponSkinConverter.cs" company="GW2.NET Coding Team">
-// This product is licensed under the GNU General Public License version 2 (GPLv2). See the License in the project root folder or the following page: http://www.gnu.org/licenses/gpl-2.0.html
+// <copyright file="WeaponSkinConverter.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
 
 namespace GW2NET.Items.Converter
@@ -7,8 +7,8 @@ namespace GW2NET.Items.Converter
     using System;
 
     using GW2NET.Common;
-    using GW2NET.Items;
     using GW2NET.Items.ApiModels;
+    using GW2NET.Items.Weapons;
     using GW2NET.Skins;
 
     /// <summary>Converts objects of type <see cref="SkinDataModel" /> to objects of type <see cref="WeaponSkin" />.</summary>

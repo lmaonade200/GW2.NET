@@ -26,7 +26,7 @@ namespace GW2NET.Common.Serializers
             using (var memoryStream = new MemoryStream())
             {
                 int count;
-                while (0 < (count = stream.Read(buffer, 0, buffer.Length)))
+                while ((count = stream.Read(buffer, 0, buffer.Length)) > 0)
                 {
                     memoryStream.Write(buffer, 0, count);
                 }

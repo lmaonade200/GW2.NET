@@ -1,6 +1,6 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="ArmorConverter.cs" company="GW2.NET Coding Team">
-//   This product is licensed under the GNU General Public License version 2 (GPLv2). See the License in the project root folder or the following page: http://www.gnu.org/licenses/gpl-2.0.html
+// <copyright file="ArmorConverter.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
 // <summary>
 //   Converts objects of type <see cref="DetailsDTO" /> to objects of type <see cref="Armor" />.
@@ -13,7 +13,10 @@ namespace GW2NET.Items.Converter
 
     using GW2NET.Common;
     using GW2NET.Items.ApiModels;
+    using GW2NET.Items.Armors;
+    using GW2NET.Items.Common;
 
+    /// <summary>Convertes a <see cref="InfixUpgradeDataModel"/> into a <see cref="InfixUpgrade"/> object.</summary>
     public partial class ArmorConverter
     {
         private readonly IConverter<InfixUpgradeDataModel, InfixUpgrade> infixUpgradeConverter;
@@ -36,17 +39,17 @@ namespace GW2NET.Items.Converter
         {
             if (weightClassConverter == null)
             {
-                throw new ArgumentNullException("weightClassConverter");
+                throw new ArgumentNullException(nameof(weightClassConverter));
             }
 
             if (infusionSlotCollectionConverter == null)
             {
-                throw new ArgumentNullException("infusionSlotCollectionConverter");
+                throw new ArgumentNullException(nameof(infusionSlotCollectionConverter));
             }
 
             if (infixUpgradeConverter == null)
             {
-                throw new ArgumentNullException("infixUpgradeConverter");
+                throw new ArgumentNullException(nameof(infixUpgradeConverter));
             }
 
             this.weightClassConverter = weightClassConverter;

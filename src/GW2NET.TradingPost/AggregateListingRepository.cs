@@ -12,6 +12,7 @@ namespace GW2NET.TradingPost
     using GW2NET.Common;
     using GW2NET.Common.Converters;
     using GW2NET.Common.Messages;
+    using GW2NET.Items;
     using GW2NET.TradingPost.ApiModels;
 
     /// <summary>Represents a repository that retrieves data from the /v2/commerce/prices interface. See the remarks section for important limitations regarding this implementation.</summary>
@@ -27,18 +28,19 @@ namespace GW2NET.TradingPost
     public sealed class AggregateListingRepository : CachedRepository<int, AggregateListing>, IDiscoverable<int>, ICachedRepository<int, AggregateListingDataModel, AggregateListing>
     {
         /// <summary>Initializes a new instance of the <see cref="AggregateListingRepository"/> class.</summary>
-        /// <param name="httpClient"></param>
-        /// <param name="cache"></param>
-        /// <param name="identifiersConverter"></param>
-        /// <param name="modelConverter"></param>
-        /// <param name="httpResponseConverter"></param>
+        /// <param name="httpClient">The <see cref="HttpClient"/> used to make connections with the ArenaNet servers.</param>
+        /// <param name="responseConverter">The <see cref="IResponseConverter"/> used to convert <see cref="HttpResponseMessage"/> into objects.</param>
+        /// <param name="cache">The <see cref="ICache{TKey, TValue}"/> used to cache api responses.</param>
+        /// <param name="identifiersConverter">A converter used to convert identifiers.</param>
+        /// <param name="modelConverter">A converter used to convert data contracts into objects.</param>
+        /// <exception cref="ArgumentNullException">Thrown when either parameter is null.</exception>
         public AggregateListingRepository(
             HttpClient httpClient,
-            IResponseConverter httpResponseConverter,
+            IResponseConverter responseConverter,
             ICache<int, AggregateListing> cache,
             IConverter<int, int> identifiersConverter,
             IConverter<AggregateListingDataModel, AggregateListing> modelConverter)
-            : base(httpClient, httpResponseConverter, cache)
+            : base(httpClient, responseConverter, cache)
         {
             if (identifiersConverter == null)
             {

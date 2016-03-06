@@ -1,6 +1,6 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="InfusionSlotConverter.cs" company="GW2.NET Coding Team">
-//   This product is licensed under the GNU General Public License version 2 (GPLv2). See the License in the project root folder or the following page: http://www.gnu.org/licenses/gpl-2.0.html
+// <copyright file="InfusionSlotConverter.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
 // <summary>
 //   Converts objects of type <see cref="InfusionSlotDTO" /> to objects of type <see cref="InfusionSlot" />.
@@ -14,6 +14,7 @@ namespace GW2NET.Items.Converter
 
     using GW2NET.Common;
     using GW2NET.Items.ApiModels;
+    using GW2NET.Items.Common;
 
     /// <summary>Converts objects of type <see cref="InfusionSlotDataModel" /> to objects of type <see cref="InfusionSlot" />.</summary>
     public sealed class InfusionSlotConverter : IConverter<InfusionSlotDataModel, InfusionSlot>
@@ -27,7 +28,7 @@ namespace GW2NET.Items.Converter
         {
             if (infusionSlotFlagCollectionConverter == null)
             {
-                throw new ArgumentNullException("infusionSlotFlagCollectionConverter");
+                throw new ArgumentNullException(nameof(infusionSlotFlagCollectionConverter));
             }
 
             this.infusionSlotFlagCollectionConverter = infusionSlotFlagCollectionConverter;
@@ -44,7 +45,7 @@ namespace GW2NET.Items.Converter
         {
             if (value == null)
             {
-                throw new ArgumentNullException("value");
+                throw new ArgumentNullException(nameof(value));
             }
 
             var infusionSlot = new InfusionSlot { ItemId = value.ItemId };

@@ -15,7 +15,7 @@ namespace GW2NET.Miscellaneous
     using GW2NET.Miscellaneous.ApiModels;
 
     /// <summary>Represents a repository that retrieves data from the /v2/files interface.</summary>
-    public sealed class FileRepository : CachedRepository<string, Asset>, IDiscoverable<string>, ICachedRepository<string, FileDataContract, Asset>
+    public sealed class FileRepository : CachedRepository<string, Asset>, IDiscoverable<string>, ICachedRepository<string, FileDataModel, Asset>
     {
         /// <summary>Initializes a new instance of the <see cref="FileRepository"/> class.</summary>
         /// <param name="httpClient">The <see cref="HttpClient"/> used to make connections with the ArenaNet servers.</param>
@@ -24,7 +24,7 @@ namespace GW2NET.Miscellaneous
         /// <param name="identifiersConverter">A converter used to convert identifiers.</param>
         /// <param name="modelConverter">A converter used to convert data contracts into objects.</param>
         /// <exception cref="ArgumentNullException">Thrown when either parameter is null.</exception>
-        public FileRepository(HttpClient httpClient, IResponseConverter responseConverter, ICache<string, Asset> cache, IConverter<string, string> identifiersConverter, IConverter<FileDataContract, Asset> modelConverter)
+        public FileRepository(HttpClient httpClient, IResponseConverter responseConverter, ICache<string, Asset> cache, IConverter<string, string> identifiersConverter, IConverter<FileDataModel, Asset> modelConverter)
             : base(httpClient, responseConverter, cache)
         {
             if (identifiersConverter == null)
@@ -45,7 +45,7 @@ namespace GW2NET.Miscellaneous
         public IConverter<string, string> IdentifiersConverter { get; }
 
         /// <inheritdoc />
-        public IConverter<FileDataContract, Asset> ModelConverter { get; }
+        public IConverter<FileDataModel, Asset> ModelConverter { get; }
 
         /// <inheritdoc />
         public IParameterizedBuilder ServiceLocation

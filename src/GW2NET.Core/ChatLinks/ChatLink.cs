@@ -16,7 +16,7 @@ namespace GW2NET.ChatLinks
     /// <summary>Provides the base class for chat links.</summary>
     public abstract class ChatLink
     {
-        private static readonly int Size = Marshal.SizeOf(typeof(ChatLinkStruct));
+        private static readonly int Size = Marshal.SizeOf<ChatLinkStruct>();
 
         /// <summary>Initializes static members of the <see cref="ChatLink"/> class.</summary>
         static ChatLink()

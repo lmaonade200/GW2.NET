@@ -6,21 +6,22 @@
 //   Represents a backpack.
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
-namespace GW2NET.Items
+namespace GW2NET.Items.Backpacks
 {
     using System;
     using System.Collections.Generic;
     using System.Diagnostics;
 
     using GW2NET.ChatLinks;
+    using GW2NET.Items.Common;
     using GW2NET.Skins;
 
     /// <summary>Represents a backpack.</summary>
     public class Backpack : Item, IUpgrade, IUpgradable, ISkinnable
     {
-        private InfixUpgrade infixUpgrade = new InfixUpgrade();
-
         private static readonly InfusionSlot[] EmptyInfusionSlots = new InfusionSlot[0];
+
+        private InfixUpgrade infixUpgrade = new InfixUpgrade();
 
         private ICollection<InfusionSlot> infusionSlots = EmptyInfusionSlots;
 
@@ -58,6 +59,7 @@ namespace GW2NET.Items
                 Debug.Assert(this.infusionSlots != null, "this.infusionSlots != null");
                 return this.infusionSlots;
             }
+
             set
             {
                 this.infusionSlots = value ?? EmptyInfusionSlots;

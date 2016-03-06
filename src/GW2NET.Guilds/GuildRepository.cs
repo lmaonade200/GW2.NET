@@ -17,14 +17,14 @@ namespace GW2NET.Guilds
     /// <summary>Represents a repository that retrieves data from the /v1/guild_details.json interface.</summary>
     public class GuildRepository : RepositoryBase, IGuildRepository
     {
-        private readonly IConverter<GuildDataContract, Guild> modelConverter;
+        private readonly IConverter<GuildDataModel, Guild> modelConverter;
 
         /// <summary>Initializes a new instance of the <see cref="GuildRepository"/> class.</summary>
         /// <param name="httpClient">The <see cref="HttpClient"/> used to make connections with the ArenaNet servers.</param>
         /// <param name="responseConverter">The <see cref="IResponseConverter"/> used to convert <see cref="HttpResponseMessage"/> into objects.</param>
         /// <param name="modelConverter">A converter used to convert data contracts into objects.</param>
         /// <exception cref="ArgumentNullException">Thrown when either parameter is null.</exception>
-        public GuildRepository(HttpClient httpClient, IResponseConverter responseConverter, IConverter<GuildDataContract, Guild> modelConverter)
+        public GuildRepository(HttpClient httpClient, IResponseConverter responseConverter, IConverter<GuildDataModel, Guild> modelConverter)
             : base(httpClient, responseConverter)
         {
             if (modelConverter == null)

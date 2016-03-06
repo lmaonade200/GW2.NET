@@ -10,11 +10,11 @@ namespace GW2NET.Miscellaneous.Converter
     using GW2NET.Files;
     using GW2NET.Miscellaneous.ApiModels;
 
-    /// <summary>Converts a <see cref="FileDataContract"/> to an <see cref="Asset"/>.</summary>
-    public sealed class AssetConverter : IConverter<FileDataContract, Asset>
+    /// <summary>Converts a <see cref="FileDataModel"/> to an <see cref="Asset"/>.</summary>
+    public sealed class AssetConverter : IConverter<FileDataModel, Asset>
     {
         /// <inheritdoc />
-        public Asset Convert(FileDataContract value, object state)
+        public Asset Convert(FileDataModel value, object state)
         {
             if (value == null)
             {

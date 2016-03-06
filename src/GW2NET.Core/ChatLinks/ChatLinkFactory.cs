@@ -17,7 +17,7 @@ namespace GW2NET.ChatLinks
     /// <summary>Factory class. Provides factory methods for creating <see cref="ChatLink"/> instances.</summary>
     public class ChatLinkFactory
     {
-        private static readonly int Size = Marshal.SizeOf(typeof(ChatLinkStruct));
+        private static readonly int Size = Marshal.SizeOf<ChatLinkStruct>();
 
         /// <summary>Decodes chat links.</summary>
         /// <param name="input">A chat link.</param>

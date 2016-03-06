@@ -39,40 +39,6 @@ namespace GW2NET.Factories.Services
             this.InitAggregateListing();
         }
 
-        private void InitCurrencyExchange()
-        {
-            this.iocContainer.Register<IConverter<ExchangeDataModel, Exchange>, ExchangeConverter>();
-        }
-
-        private void InitListings()
-        {
-            this.iocContainer.Register(
-                Made.Of(() => new ListingRepository(
-                    Arg.Of<HttpClient>("RepositoryClient"),
-                    Arg.Of<IResponseConverter>(),
-                    Arg.Of<ICache<int, Listing>>(),
-                    Arg.Of<IConverter<int, int>>(),
-                    Arg.Of<IConverter<ListingDataModel, Listing>>())));
-
-            this.iocContainer.Register<IConverter<ListingDataModel, Listing>, ListingConverter>();
-            this.iocContainer.Register<IConverter<ListingOfferDataModel, Offer>, OfferConverter>();
-            this.iocContainer.Register(Made.Of(() => new CollectionConverter<ListingOfferDataModel, Offer>(Arg.Of<IConverter<ListingOfferDataModel, Offer>>())));
-        }
-
-        private void InitAggregateListing()
-        {
-            this.iocContainer.Register(
-                Made.Of(() => new AggregateListingRepository(
-                    Arg.Of<HttpClient>("RepositoryClient"),
-                    Arg.Of<IResponseConverter>(),
-                    Arg.Of<ICache<int, AggregateListing>>(),
-                    Arg.Of<IConverter<int, int>>(),
-                    Arg.Of<IConverter<AggregateListingDataModel, AggregateListing>>())));
-
-            this.iocContainer.Register<IConverter<AggregateListingDataModel, AggregateListing>, AggregateListingConverter>();
-            this.iocContainer.Register<IConverter<AggregateOfferDataModel, AggregateOffer>, AggregateOfferConverter>();
-        }
-
         /// <summary>Gets access to the gem exchange data source.</summary>
         public ICurrencyExchange Exchange
         {
@@ -98,6 +64,40 @@ namespace GW2NET.Factories.Services
             {
                 return this.iocContainer.Resolve<AggregateListingRepository>();
             }
+        }
+
+        private void InitAggregateListing()
+        {
+            this.iocContainer.Register(
+                Made.Of(() => new AggregateListingRepository(
+                    Arg.Of<HttpClient>("RepositoryClient"),
+                    Arg.Of<IResponseConverter>(),
+                    Arg.Of<ICache<int, AggregateListing>>(),
+                    Arg.Of<IConverter<int, int>>(),
+                    Arg.Of<IConverter<AggregateListingDataModel, AggregateListing>>())));
+
+            this.iocContainer.Register<IConverter<AggregateListingDataModel, AggregateListing>, AggregateListingConverter>();
+            this.iocContainer.Register<IConverter<AggregateOfferDataModel, AggregateOffer>, AggregateOfferConverter>();
+        }
+
+        private void InitListings()
+        {
+            this.iocContainer.Register(
+                Made.Of(() => new ListingRepository(
+                    Arg.Of<HttpClient>("RepositoryClient"),
+                    Arg.Of<IResponseConverter>(),
+                    Arg.Of<ICache<int, Listing>>(),
+                    Arg.Of<IConverter<int, int>>(),
+                    Arg.Of<IConverter<ListingDataModel, Listing>>())));
+
+            this.iocContainer.Register<IConverter<ListingDataModel, Listing>, ListingConverter>();
+            this.iocContainer.Register<IConverter<ListingOfferDataModel, Offer>, OfferConverter>();
+            this.iocContainer.Register(Made.Of(() => new CollectionConverter<ListingOfferDataModel, Offer>(Arg.Of<IConverter<ListingOfferDataModel, Offer>>())));
+        }
+
+        private void InitCurrencyExchange()
+        {
+            this.iocContainer.Register<IConverter<ExchangeDataModel, Exchange>, ExchangeConverter>();
         }
     }
 }

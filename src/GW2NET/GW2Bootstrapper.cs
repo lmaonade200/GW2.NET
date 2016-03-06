@@ -60,12 +60,6 @@ namespace GW2NET
             this.Local = new FactoryForLocal();
         }
 
-        private void RegisterRendering()
-        {
-            this.container.Register<IRenderRepository, RenderRepository>(
-                Made.Of(() => new RenderRepository(Arg.Of<HttpClient>("RenderingClient"))));
-        }
-
         /// <summary>Gets access to specialty services that do not require a network connection.</summary>
         public FactoryForLocal Local { get; private set; }
 
@@ -178,6 +172,12 @@ namespace GW2NET
             this.container.Register<IConverter<string, string>, ConverterAdapter<string>>();
             this.container.Register<IConverter<Stream, Stream>, GzipInflator>(serviceKey: "GzipInflator");
             this.container.Register(typeof(ICache<,>), typeof(MemoryCache<,>));
+        }
+
+        private void RegisterRendering()
+        {
+            this.container.Register<IRenderRepository, RenderRepository>(
+                Made.Of(() => new RenderRepository(Arg.Of<HttpClient>("RenderingClient"))));
         }
     }
 }

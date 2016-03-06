@@ -6,18 +6,19 @@
 //   Provides the base class for upgrade component types.
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
-namespace GW2NET.Items
+namespace GW2NET.Items.UpgradeComponents
 {
     using System.Collections.Generic;
     using System.Diagnostics;
 
+    using GW2NET.Items.Common;
+
     /// <summary>Provides the base class for upgrade component types.</summary>
     public abstract class UpgradeComponent : Item, IUpgrade
     {
-        /// <summary>Backing field for <see cref="InfixUpgrade"/>.</summary>
-        private InfixUpgrade infixUpgrade = new InfixUpgrade();
-       
         private static readonly string[] EmptyBonuses = new string[0];
+
+        private InfixUpgrade infixUpgrade = new InfixUpgrade();
 
         private ICollection<string> bonuses = EmptyBonuses;
 
@@ -29,6 +30,7 @@ namespace GW2NET.Items
                 Debug.Assert(this.bonuses != null, "this.bonuses != null");
                 return this.bonuses;
             }
+
             set
             {
                 this.bonuses = value ?? EmptyBonuses;

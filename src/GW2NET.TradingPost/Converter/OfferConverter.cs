@@ -13,10 +13,7 @@ namespace GW2NET.TradingPost.Converter
     /// <summary>Converts objects of type <see cref="ListingOfferDataModel"/> to objects of type <see cref="Offer"/>.</summary>
     public sealed class OfferConverter : IConverter<ListingOfferDataModel, Offer>
     {
-        /// <summary>Converts the given object of type <see cref="ListingOfferDataModel"/> to an object of type <see cref="Offer"/>.</summary>
-        /// <param name="value">The value to convert.</param>
-        /// <param name="state"></param>
-        /// <returns>The converted value.</returns>
+        /// <inheritdoc />
         public Offer Convert(ListingOfferDataModel value, object state)
         {
             if (value == null)

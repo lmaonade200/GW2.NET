@@ -66,6 +66,7 @@ namespace GW2NET.Maps
                 Debug.Assert(this.pointsOfInterest != null, "this.pointsOfInterest != null");
                 return this.pointsOfInterest;
             }
+
             set
             {
                 this.pointsOfInterest = value ?? EmptyPointsOfInterest;
@@ -77,9 +78,10 @@ namespace GW2NET.Maps
         {
             get
             {
-                Debug.Assert(this.sectors != null   , "this.sectors != null");
+                Debug.Assert(this.sectors != null, "this.sectors != null");
                 return this.sectors;
             }
+
             set
             {
                 this.sectors = value ?? EmptySectors;
@@ -94,6 +96,7 @@ namespace GW2NET.Maps
                 Debug.Assert(this.skillChallenges != null, "this.skillChallenges != null");
                 return this.skillChallenges;
             }
+
             set
             {
                 this.skillChallenges = value ?? EmptySkillChallenges;
@@ -108,6 +111,7 @@ namespace GW2NET.Maps
                 Debug.Assert(this.tasks != null, "this.tasks != null");
                 return this.tasks;
             }
+
             set
             {
                 this.tasks = value ?? EmptyRenownTasks;

@@ -1,6 +1,6 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="UpgradeComponentFlagCollectionConverter.cs" company="GW2.NET Coding Team">
-//   This product is licensed under the GNU General Public License version 2 (GPLv2). See the License in the project root folder or the following page: http://www.gnu.org/licenses/gpl-2.0.html
+// <copyright file="UpgradeComponentFlagCollectionConverter.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
 // <summary>
 //   Converts objects of type <see cref="T:ICollection{string}" /> to objects of type <see cref="UpgradeComponentFlags" />.
@@ -13,6 +13,7 @@ namespace GW2NET.Items.Converter
     using System.Collections.Generic;
 
     using GW2NET.Common;
+    using GW2NET.Items.UpgradeComponents;
 
     /// <summary>
     ///     Converts objects of type <see cref="T:ICollection{string}" /> to objects of type
@@ -29,7 +30,7 @@ namespace GW2NET.Items.Converter
         {
             if (upgradeComponentFlagConverter == null)
             {
-                throw new ArgumentNullException("upgradeComponentFlagConverter");
+                throw new ArgumentNullException(nameof(upgradeComponentFlagConverter));
             }
 
             this.upgradeComponentFlagConverter = upgradeComponentFlagConverter;
@@ -46,7 +47,7 @@ namespace GW2NET.Items.Converter
         {
             if (value == null)
             {
-                throw new ArgumentNullException("value");
+                throw new ArgumentNullException(nameof(value));
             }
 
             var result = default(UpgradeComponentFlags);

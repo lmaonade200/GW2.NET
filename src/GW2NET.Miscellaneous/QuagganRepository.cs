@@ -15,7 +15,7 @@ namespace GW2NET.Miscellaneous
     using GW2NET.Quaggans;
 
     /// <summary>Represents a repository that retrieves data from the /v2/quaggans interface.</summary>
-    public class QuagganRepository : CachedRepository<string, Quaggan>, IDiscoverable<string>, ICachedRepository<string, QuagganDataContract, Quaggan>
+    public class QuagganRepository : CachedRepository<string, Quaggan>, IDiscoverable<string>, ICachedRepository<string, QuagganDataModel, Quaggan>
     {
         /// <summary>Initializes a new instance of the <see cref="QuagganRepository"/> class.</summary>
         /// <param name="httpClient">The <see cref="HttpClient"/> used to make connections with the ArenaNet servers.</param>
@@ -24,7 +24,7 @@ namespace GW2NET.Miscellaneous
         /// <param name="identifiersConverter">A converter used to convert identifiers.</param>
         /// <param name="modelConverter">A converter used to convert data contracts into objects.</param>
         /// <exception cref="ArgumentNullException">Thrown when either parameter is null.</exception>
-        public QuagganRepository(HttpClient httpClient, IResponseConverter responseConverter, ICache<string, Quaggan> cache, IConverter<string, string> identifiersConverter, IConverter<QuagganDataContract, Quaggan> modelConverter)
+        public QuagganRepository(HttpClient httpClient, IResponseConverter responseConverter, ICache<string, Quaggan> cache, IConverter<string, string> identifiersConverter, IConverter<QuagganDataModel, Quaggan> modelConverter)
             : base(httpClient, responseConverter, cache)
         {
             if (identifiersConverter == null)
@@ -46,7 +46,7 @@ namespace GW2NET.Miscellaneous
         public IConverter<string, string> IdentifiersConverter { get; }
 
         /// <inheritdoc />
-        public IConverter<QuagganDataContract, Quaggan> ModelConverter { get; }
+        public IConverter<QuagganDataModel, Quaggan> ModelConverter { get; }
 
         /// <inheritdoc />
         public IParameterizedBuilder ServiceLocation

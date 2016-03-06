@@ -7,10 +7,11 @@
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace GW2NET.V2.Skins.Converters
+namespace GW2NET.Common.Converters
 {
     using System;
     using System.Diagnostics;
+
     using GW2NET.Common;
     using GW2NET.Items;
 

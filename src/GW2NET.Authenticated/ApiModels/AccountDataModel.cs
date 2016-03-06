@@ -1,4 +1,4 @@
-﻿// <copyright file="AccountDataContract.cs" company="GW2.NET Coding Team">
+﻿// <copyright file="AccountDataModel.cs" company="GW2.NET Coding Team">
 // This product is licensed under the GNU General Public License version 2 (GPLv2). See the License in the project root folder or the following page: http://www.gnu.org/licenses/gpl-2.0.html
 // </copyright>
 
@@ -7,7 +7,7 @@ namespace GW2NET.Authenticated.ApiModels
     using System;
 
     /// <summary>Represents the response from the /v2/account api endpoint.</summary>
-    public sealed class AccountDataContract
+    public sealed class AccountDataModel
     {
         /// <summary>Gets or sets the accounts id.</summary>
         public Guid Id { get; set; }

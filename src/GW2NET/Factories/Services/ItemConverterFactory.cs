@@ -9,6 +9,7 @@ namespace GW2NET.Factories.V2
     using GW2NET.Common.Converters;
     using GW2NET.Items;
     using GW2NET.Items.ApiModels;
+    using GW2NET.Items.Common;
     using GW2NET.Items.Converter;
 
     public class ItemConverterFactory : ITypeConverterFactory<ItemDataModel, Item>

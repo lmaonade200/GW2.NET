@@ -10,11 +10,11 @@ namespace GW2NET.Miscellaneous.Converter
     using GW2NET.Miscellaneous.ApiModels;
     using GW2NET.Quaggans;
 
-    /// <summary>Converts objects of type <see cref="QuagganDataContract"/> to objects of type <see cref="Quaggan"/>.</summary>
-    public sealed class QuagganConverter : IConverter<QuagganDataContract, Quaggan>
+    /// <summary>Converts objects of type <see cref="QuagganDataModel"/> to objects of type <see cref="Quaggan"/>.</summary>
+    public sealed class QuagganConverter : IConverter<QuagganDataModel, Quaggan>
     {
         /// <inheritdoc />
-        public Quaggan Convert(QuagganDataContract value, object state)
+        public Quaggan Convert(QuagganDataModel value, object state)
         {
             if (value == null)
             {

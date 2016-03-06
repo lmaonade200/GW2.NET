@@ -9,15 +9,15 @@ namespace GW2NET.Guilds.Converter
     using GW2NET.Common;
     using GW2NET.Guilds.ApiModels;
 
-    /// <summary>Converts objects of type <see cref="GuildDataContract"/> to objects of type <see cref="Guild"/>.</summary>
-    public sealed class GuildConverter : IConverter<GuildDataContract, Guild>
+    /// <summary>Converts objects of type <see cref="GuildDataModel"/> to objects of type <see cref="Guild"/>.</summary>
+    public sealed class GuildConverter : IConverter<GuildDataModel, Guild>
     {
-        private readonly IConverter<EmblemDataContract, Emblem> emblemConverter;
+        private readonly IConverter<EmblemDataModel, Emblem> emblemConverter;
 
         /// <summary>Initializes a new instance of the <see cref="GuildConverter"/> class.</summary>
-        /// <param name="emblemConverter"></param>
+        /// <param name="emblemConverter">The emblem converter.</param>
         /// <exception cref="ArgumentNullException">Thrown when the emblem converter is null.</exception>
-        public GuildConverter(IConverter<EmblemDataContract, Emblem> emblemConverter)
+        public GuildConverter(IConverter<EmblemDataModel, Emblem> emblemConverter)
         {
             if (emblemConverter == null)
             {
@@ -28,7 +28,7 @@ namespace GW2NET.Guilds.Converter
         }
 
         /// <inheritdoc />
-        public Guild Convert(GuildDataContract value, object state)
+        public Guild Convert(GuildDataModel value, object state)
         {
             if (value == null)
             {
@@ -47,7 +47,7 @@ namespace GW2NET.Guilds.Converter
                 guild.GuildId = id;
             }
 
-            EmblemDataContract emblem = value.Emblem;
+            EmblemDataModel emblem = value.Emblem;
             if (emblem != null)
             {
                 guild.Emblem = this.emblemConverter.Convert(emblem, state);

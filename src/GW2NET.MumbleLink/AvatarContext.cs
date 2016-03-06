@@ -39,16 +39,19 @@ namespace GW2NET.MumbleLink
         /// <summary>Gets or sets the shard identifier of the current shard.</summary>
         public int ShardId { get; set; }
 
+        /// <inheritdoc />
         public static bool operator ==(AvatarContext left, AvatarContext right)
         {
             return Equals(left, right);
         }
 
+        /// <inheritdoc />
         public static bool operator !=(AvatarContext left, AvatarContext right)
         {
             return !Equals(left, right);
         }
 
+        /// <inheritdoc />
         public bool Equals(AvatarContext other)
         {
             if (ReferenceEquals(null, other))
@@ -83,11 +86,13 @@ namespace GW2NET.MumbleLink
             return true;
         }
 
+        /// <inheritdoc />
         public override bool Equals(object obj)
         {
             return this.Equals(obj as AvatarContext);
         }
 
+        /// <inheritdoc />
         [SuppressMessage("ReSharper", "NonReadonlyMemberInGetHashCode", Justification = "The field is private, and no public API modifies it after it is already set.")]
         public override int GetHashCode()
         {

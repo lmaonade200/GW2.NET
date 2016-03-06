@@ -1,15 +1,14 @@
-﻿// <copyright file="DetailsDTO.cs" company="GW2.NET Coding Team">
-// This product is licensed under the GNU General Public License version 2 (GPLv2). See the License in the project root folder or the following page: http://www.gnu.org/licenses/gpl-2.0.html
+﻿// <copyright file="DetailsDataModel.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
 
+#pragma warning disable 1591
 namespace GW2NET.Items.ApiModels
 {
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
     using System.Runtime.Serialization;
 
-    /// <summary>Defines the <see cref="DetailsDataModel" /> type.</summary>
-    /// <content>Contains data contract properties for all items.</content>
     [DataContract]
     [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1600:ElementsMustBeDocumented", Justification = "http://wiki.guildwars2.com/wiki/API:2/items")]
     public sealed partial class DetailsDataModel
@@ -19,9 +18,7 @@ namespace GW2NET.Items.ApiModels
         public string Type { get; set; }
     }
 
-    /// <summary>Defines the <see cref="DetailsDataModel" /> type.</summary>
-    /// <content>Contains data contract properties for upgradable items.</content>
-    [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1600:ElementsMustBeDocumented", Justification = "http://wiki.guildwars2.com/wiki/API:2/items")]
+   [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1600:ElementsMustBeDocumented", Justification = "http://wiki.guildwars2.com/wiki/API:2/items")]
     public sealed partial class DetailsDataModel
     {
         [DataMember(Name = "defense", Order = 2)]
@@ -37,8 +34,6 @@ namespace GW2NET.Items.ApiModels
         public int? SuffixItemId { get; set; }
     }
 
-    /// <summary>Defines the <see cref="DetailsDataModel" /> type.</summary>
-    /// <content>Contains data contract properties for upgrade items.</content>
     [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1600:ElementsMustBeDocumented", Justification = "http://wiki.guildwars2.com/wiki/API:2/items")]
     public sealed partial class DetailsDataModel
     {
@@ -46,8 +41,6 @@ namespace GW2NET.Items.ApiModels
         public InfixUpgradeDataModel InfixUpgrade { get; set; }
     }
 
-    /// <summary>Defines the <see cref="DetailsDataModel" /> type.</summary>
-    /// <content>Contains data contract properties for armor items.</content>
     [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1600:ElementsMustBeDocumented", Justification = "http://wiki.guildwars2.com/wiki/API:2/items")]
     public sealed partial class DetailsDataModel
     {
@@ -55,8 +48,6 @@ namespace GW2NET.Items.ApiModels
         public string WeightClass { get; set; }
     }
 
-    /// <summary>Defines the <see cref="DetailsDataModel" /> type.</summary>
-    /// <content>Contains data contract properties for bag items.</content>
     [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1600:ElementsMustBeDocumented", Justification = "http://wiki.guildwars2.com/wiki/API:2/items")]
     public sealed partial class DetailsDataModel
     {
@@ -67,8 +58,6 @@ namespace GW2NET.Items.ApiModels
         public int? Size { get; set; }
     }
 
-    /// <summary>Defines the <see cref="DetailsDataModel" /> type.</summary>
-    /// <content>Contains data contract properties for consumable items.</content>
     [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1600:ElementsMustBeDocumented", Justification = "http://wiki.guildwars2.com/wiki/API:2/items")]
     public sealed partial class DetailsDataModel
     {
@@ -88,8 +77,6 @@ namespace GW2NET.Items.ApiModels
         public string UnlockType { get; set; }
     }
 
-    /// <summary>Defines the <see cref="DetailsDataModel" /> type.</summary>
-    /// <content>Contains data contract properties for tool items.</content>
     [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1600:ElementsMustBeDocumented", Justification = "http://wiki.guildwars2.com/wiki/API:2/items")]
     public sealed partial class DetailsDataModel
     {
@@ -97,8 +84,6 @@ namespace GW2NET.Items.ApiModels
         public int? Charges { get; set; }
     }
 
-    /// <summary>Defines the <see cref="DetailsDataModel" /> type.</summary>
-    /// <content>Contains data contract properties for upgrade component items.</content>
     [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1600:ElementsMustBeDocumented", Justification = "http://wiki.guildwars2.com/wiki/API:2/items")]
     public sealed partial class DetailsDataModel
     {
@@ -115,8 +100,6 @@ namespace GW2NET.Items.ApiModels
         public string Suffix { get; set; }
     }
 
-    /// <summary>Defines the <see cref="DetailsDataModel" /> type.</summary>
-    /// <content>Contains data contract properties for weapon items.</content>
     [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1600:ElementsMustBeDocumented", Justification = "http://wiki.guildwars2.com/wiki/API:2/items")]
     public sealed partial class DetailsDataModel
     {
@@ -130,8 +113,6 @@ namespace GW2NET.Items.ApiModels
         public int? MinimumPower { get; set; }
     }
 
-    /// <summary>Defines the <see cref="DetailsDataModel"/> type.</summary>
-    /// <content>Contains data contract properties for transmutation items.</content>
     [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1600:ElementsMustBeDocumented", Justification = "http://wiki.guildwars2.com/wiki/API:2/items")]
     public sealed partial class DetailsDataModel
     {
@@ -139,17 +120,14 @@ namespace GW2NET.Items.ApiModels
         public int[] Skins { get; set; }
     }
 
-    /// <summary>Defines the <see cref="DetailsDataModel"/> type.</summary>
-    /// <content>Contains data contract properties for miniature items.</content>
-    [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1600:ElementsMustBeDocumented", Justification = "http://wiki.guildwars2.com/wiki/API:2/items")]
+   [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1600:ElementsMustBeDocumented", Justification = "http://wiki.guildwars2.com/wiki/API:2/items")]
     public sealed partial class DetailsDataModel
     {
         [DataMember(Name = "minipet_id", Order = 1)]
         public int MiniPetId { get; set; }
     }
 
-    /// <summary>Defines the <see cref="DetailsDTO"/> type.</summary>
-    /// <content> Contains data contract properties for all weapons.</content>
+    [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1600:ElementsMustBeDocumented", Justification = "http://wiki.guildwars2.com/wiki/API:2/items")]
     public sealed partial class DetailsDataModel
     {
         /// <summary>Gets or sets the damage class.</summary>

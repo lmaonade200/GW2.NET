@@ -10,8 +10,8 @@ namespace GW2NET.Authenticated.Converter
     using GW2NET.Characters;
     using GW2NET.Common;
 
-    /// <summary>Converts objects of type <see cref="CharacterDataContract" /> to objects of type <see cref="Character" />.</summary>
-    public sealed class CharacterConverter : IConverter<CharacterDataContract, Character>
+    /// <summary>Converts objects of type <see cref="CharacterDataModel" /> to objects of type <see cref="Character" />.</summary>
+    public sealed class CharacterConverter : IConverter<CharacterDataModel, Character>
     {
         private readonly IConverter<string, Gender> genderConverter;
 
@@ -49,7 +49,7 @@ namespace GW2NET.Authenticated.Converter
         }
 
         /// <inheritdoc />
-        public Character Convert(CharacterDataContract value, object state)
+        public Character Convert(CharacterDataModel value, object state)
         {
             if (value == null)
             {

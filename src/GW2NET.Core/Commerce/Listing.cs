@@ -33,6 +33,7 @@ namespace GW2NET.Commerce
                 Debug.Assert(this.buyOffers != null, "this.buyOffers != null");
                 return this.buyOffers;
             }
+
             set
             {
                 this.buyOffers = value ?? EmptyOffers;
@@ -53,6 +54,7 @@ namespace GW2NET.Commerce
                 Debug.Assert(this.sellOffers != null, "this.sellOffers != null");
                 return this.sellOffers;
             }
+
             set
             {
                 this.sellOffers = value ?? EmptyOffers;

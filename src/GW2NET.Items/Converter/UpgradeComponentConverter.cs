@@ -1,6 +1,6 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="UpgradeComponentConverter.cs" company="GW2.NET Coding Team">
-//   This product is licensed under the GNU General Public License version 2 (GPLv2). See the License in the project root folder or the following page: http://www.gnu.org/licenses/gpl-2.0.html
+// <copyright file="UpgradeComponentConverter.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
 // <summary>
 //   Converts objects of type <see cref="DetailsDTO" /> to objects of type <see cref="UpgradeComponent" />.
@@ -13,6 +13,8 @@ namespace GW2NET.Items.Converter
 
     using GW2NET.Common;
     using GW2NET.Items.ApiModels;
+    using GW2NET.Items.Common;
+    using GW2NET.Items.UpgradeComponents;
 
     public partial class UpgradeComponentConverter
     {
@@ -36,17 +38,17 @@ namespace GW2NET.Items.Converter
         {
             if (upgradeComponentFlagCollectionConverter == null)
             {
-                throw new ArgumentNullException("upgradeComponentFlagCollectionConverter");
+                throw new ArgumentNullException(nameof(upgradeComponentFlagCollectionConverter));
             }
 
             if (infusionSlotFlagCollectionConverter == null)
             {
-                throw new ArgumentNullException("infusionSlotFlagCollectionConverter");
+                throw new ArgumentNullException(nameof(infusionSlotFlagCollectionConverter));
             }
 
             if (infixUpgradeConverter == null)
             {
-                throw new ArgumentNullException("infixUpgradeConverter");
+                throw new ArgumentNullException(nameof(infixUpgradeConverter));
             }
 
             this.upgradeComponentFlagCollectionConverter = upgradeComponentFlagCollectionConverter;

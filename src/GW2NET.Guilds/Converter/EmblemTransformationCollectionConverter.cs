@@ -16,8 +16,8 @@ namespace GW2NET.Guilds.Converter
         private readonly IConverter<string, EmblemTransformations> emblemTransformationConverter;
 
         /// <summary>Initializes a new instance of the <see cref="EmblemTransformationCollectionConverter"/> class.</summary>
-        /// <param name="emblemTransformationConverter"></param>
-        /// <exception cref="ArgumentNullException">Thrown when </exception>
+        /// <param name="emblemTransformationConverter">The emblem transformation converter.</param>
+        /// <exception cref="ArgumentNullException">Thrown when the emblem transformation covnerter is null.</exception>
         public EmblemTransformationCollectionConverter(IConverter<string, EmblemTransformations> emblemTransformationConverter)
         {
             if (emblemTransformationConverter == null)

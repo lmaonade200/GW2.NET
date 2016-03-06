@@ -14,7 +14,7 @@ namespace GW2NET.Miscellaneous.ApiModels
 
     [DataContract]
     [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1600:ElementsMustBeDocumented", Justification = "http://wiki.guildwars2.com/wiki/API:2/colors")]
-    public sealed class ColorDataContract
+    public sealed class ColorDataModel
     {
         [DataMember(Name = "brightness", Order = 0)]
         public int Brightness { get; set; }

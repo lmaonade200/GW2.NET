@@ -6,22 +6,22 @@
 //   Provides the base class for armor types.
 // </summary>
 // --------------------------------------------------------------------------------------------------------------------
-namespace GW2NET.Items
+namespace GW2NET.Items.Armors
 {
     using System;
     using System.Collections.Generic;
     using System.Diagnostics;
 
     using GW2NET.ChatLinks;
+    using GW2NET.Items.Common;
     using GW2NET.Skins;
 
     /// <summary>Provides the base class for armor types.</summary>
     public abstract class Armor : Item, IUpgrade, IUpgradable, ISkinnable
     {
-        /// <summary>Backing field for <see cref="InfixUpgrade"/>.</summary>
-        private InfixUpgrade infixUpgrade = new InfixUpgrade();
-
         private static readonly InfusionSlot[] EmptyInfusionSlots = new InfusionSlot[0];
+
+        private InfixUpgrade infixUpgrade = new InfixUpgrade();
 
         private ICollection<InfusionSlot> infusionSlots = EmptyInfusionSlots;
 
@@ -62,6 +62,7 @@ namespace GW2NET.Items
                 Debug.Assert(this.infusionSlots != null, "this.infusionSlots != null");
                 return this.infusionSlots;
             }
+
             set
             {
                 this.infusionSlots = value ?? EmptyInfusionSlots;

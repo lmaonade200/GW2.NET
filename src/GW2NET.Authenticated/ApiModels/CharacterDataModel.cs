@@ -1,4 +1,4 @@
-﻿// <copyright file="CharacterDataContract.cs" company="GW2.NET Coding Team">
+﻿// <copyright file="CharacterDataModel.cs" company="GW2.NET Coding Team">
 // This product is licensed under the GNU General Public License version 2 (GPLv2). See the License in the project root folder or the following page: http://www.gnu.org/licenses/gpl-2.0.html
 // </copyright>
 
@@ -8,7 +8,7 @@ namespace GW2NET.Authenticated.ApiModels
 
     /// <summary>Represents the character data served by the Guild Wars 2 api.</summary>
     [DataContract]
-    public sealed class CharacterDataContract
+    public sealed class CharacterDataModel
     {
         /// <summary>Gets or sets the level.</summary>
         public int Level { get; set; }
