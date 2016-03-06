@@ -8,7 +8,7 @@ namespace GW2NET.Factories.Services
 
     using DryIoc;
 
-    using GW2NET.V2.Accounts;
+    using GW2NET.Authenticated;
 
     /// <summary>Provides access to the authorized part of the version 2 API.</summary>
     public class AuthorizedServices

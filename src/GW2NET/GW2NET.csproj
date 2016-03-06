@@ -43,6 +43,10 @@
   </PropertyGroup>
   <ItemGroup>
     <!-- A reference to the entire .NET Framework is automatically included -->
+    <ProjectReference Include="..\GW2NET.Authenticated\GW2NET.Authenticated.csproj">
+      <Project>{32c9d788-318f-4fb1-b4da-105fb89d2a6d}</Project>
+      <Name>GW2NET.Authenticated</Name>
+    </ProjectReference>
     <ProjectReference Include="..\GW2NET.Compression\GW2NET.Compression.csproj">
       <Project>{08d936e1-c097-4196-8128-c2493f8d7e47}</Project>
       <Name>GW2NET.Compression</Name>
@@ -76,14 +80,6 @@
     <ProjectReference Include="..\GW2NET.TradingPost\GW2NET.TradingPost.csproj">
       <Project>{5a7daa17-1b46-4913-8126-94ba4130e599}</Project>
       <Name>GW2NET.TradingPost</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\GW2NET.V2.Accounts.Characters\GW2NET.V2.Accounts.Characters.csproj">
-      <Project>{9d582bc4-d182-4373-a8d5-04607f4094b1}</Project>
-      <Name>GW2NET.V2.Accounts.Characters</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\GW2NET.V2.Account\GW2NET.V2.Accounts.csproj">
-      <Project>{2C83D314-3C3F-470B-A4CC-B6E3E1F48EA2}</Project>
-      <Name>GW2NET.V2.Accounts</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
