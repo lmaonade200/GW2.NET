@@ -1,0 +1,21 @@
+﻿<#@ template debug="false" hostspecific="false" language="C#" #>
+<#@ assembly name="System.Core" #>
+<#@ assembly name="System.Runtime" #>
+<#@ assembly name="$(ProjectDir)..\GW2NET.Core\bin\$(Configuration)\GW2NET.Core.dll" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="GW2NET.Items" #>
+<#@ output extension=".cs" #>
+<#
+    // Parameters (make sure these are correct)
+    var sourceType = "ItemDataModel";
+    var typeNamespace = "GW2NET.Items.ApiModels";
+	var targetNamespace = "GW2NET.Items";
+    var targetBaseType = typeof(Container);
+    var ns = "GW2NET.Items.Converter";
+
+	// These usually should be correct.
+	// Only change if you know what you are doing
+    var discriminator = "{0}.Details.Type";
+    string constructorVisibility = "public";
+#>
+<#@ include file="ConverterTemplate.t4" #>

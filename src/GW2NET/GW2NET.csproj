@@ -56,6 +56,10 @@
       <Project>{74c2f4a0-fdb0-4333-b128-acdce461ded2}</Project>
       <Name>GW2NET.Guilds</Name>
     </ProjectReference>
+    <ProjectReference Include="..\GW2NET.Items\GW2NET.Items.csproj">
+      <Project>{5583e674-fd1c-4f0a-a8fe-e20f1e789f70}</Project>
+      <Name>GW2NET.Items</Name>
+    </ProjectReference>
     <ProjectReference Include="..\GW2NET.MapInformation\GW2NET.MapInformation.csproj">
       <Project>{892b1961-7a94-4fed-a707-94d5f925b30a}</Project>
       <Name>GW2NET.MapInformation</Name>
@@ -80,18 +84,6 @@
     <ProjectReference Include="..\GW2NET.V2.Account\GW2NET.V2.Accounts.csproj">
       <Project>{2C83D314-3C3F-470B-A4CC-B6E3E1F48EA2}</Project>
       <Name>GW2NET.V2.Accounts</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\GW2NET.V2.Items\GW2NET.V2.Items.csproj">
-      <Project>{965994be-f908-4d34-af07-f8a6b527ffb7}</Project>
-      <Name>GW2NET.V2.Items</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\GW2NET.V2.Recipes\GW2NET.V2.Recipes.csproj">
-      <Project>{55897753-f4b5-48d1-8a01-20d54afde7dd}</Project>
-      <Name>GW2NET.V2.Recipes</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\GW2NET.V2.Skins\GW2NET.V2.Skins.csproj">
-      <Project>{9937ADF8-CEB8-48F2-9E12-C259CD454C17}</Project>
-      <Name>GW2NET.V2.Skins</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

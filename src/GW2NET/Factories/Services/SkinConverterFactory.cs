@@ -6,13 +6,13 @@ namespace GW2NET.Factories.V2
 {
     using System.Diagnostics;
     using GW2NET.Common;
+    using GW2NET.Items.ApiModels;
+    using GW2NET.Items.Converter;
     using GW2NET.Skins;
-    using GW2NET.V2.Skins.Converters;
-    using GW2NET.V2.Skins.Json;
 
-    public class SkinConverterFactory : ITypeConverterFactory<SkinDTO, Skin>
+    public class SkinConverterFactory : ITypeConverterFactory<SkinDataModel, Skin>
     {
-        public IConverter<SkinDTO, Skin> Create(string discriminator)
+        public IConverter<SkinDataModel, Skin> Create(string discriminator)
         {
             switch (discriminator)
             {

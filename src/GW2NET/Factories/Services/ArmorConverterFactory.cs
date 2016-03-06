@@ -7,12 +7,12 @@ namespace GW2NET.Factories.V2
     using System.Diagnostics;
     using GW2NET.Common;
     using GW2NET.Items;
-    using GW2NET.V2.Items.Converters;
-    using GW2NET.V2.Items.Json;
+    using GW2NET.Items.ApiModels;
+    using GW2NET.Items.Converter;
 
-    public class ArmorConverterFactory : ITypeConverterFactory<ItemDTO, Armor>
+    public class ArmorConverterFactory : ITypeConverterFactory<ItemDataModel, Armor>
     {
-        public IConverter<ItemDTO, Armor> Create(string discriminator)
+        public IConverter<ItemDataModel, Armor> Create(string discriminator)
         {
             switch (discriminator)
             {

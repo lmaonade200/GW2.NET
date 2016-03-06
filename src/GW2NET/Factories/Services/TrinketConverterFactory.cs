@@ -7,12 +7,12 @@ namespace GW2NET.Factories.V2
     using System.Diagnostics;
     using GW2NET.Common;
     using GW2NET.Items;
-    using GW2NET.V2.Items.Converters;
-    using GW2NET.V2.Items.Json;
+    using GW2NET.Items.ApiModels;
+    using GW2NET.Items.Converter;
 
-    public class TrinketConverterFactory : ITypeConverterFactory<ItemDTO, Trinket>
+    public class TrinketConverterFactory : ITypeConverterFactory<ItemDataModel, Trinket>
     {
-        public IConverter<ItemDTO, Trinket> Create(string discriminator)
+        public IConverter<ItemDataModel, Trinket> Create(string discriminator)
         {
             switch (discriminator)
             {

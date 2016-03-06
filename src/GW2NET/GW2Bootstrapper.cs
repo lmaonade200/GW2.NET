@@ -10,7 +10,6 @@
 namespace GW2NET
 {
     using System;
-    using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
     using System.IO;
     using System.Net.Http;
@@ -18,7 +17,6 @@ namespace GW2NET
     using DryIoc;
 
     using GW2NET.Caching;
-    using GW2NET.Colors;
     using GW2NET.Common;
     using GW2NET.Common.Converters;
     using GW2NET.Common.Messages;

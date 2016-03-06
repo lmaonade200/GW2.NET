@@ -8,14 +8,14 @@ namespace GW2NET.Factories.V2
     using System.Diagnostics;
     using GW2NET.Common;
     using GW2NET.Items;
-    using GW2NET.V2.Items.Converters;
-    using GW2NET.V2.Items.Json;
+    using GW2NET.Items.ApiModels;
+    using GW2NET.Items.Converter;
 
-    public class ConsumableConverterFactory : ITypeConverterFactory<ItemDTO, Consumable>
+    public class ConsumableConverterFactory : ITypeConverterFactory<ItemDataModel, Consumable>
     {
-        private readonly ITypeConverterFactory<ItemDTO, Unlocker> unlockerConverterFactory;
+        private readonly ITypeConverterFactory<ItemDataModel, Unlocker> unlockerConverterFactory;
 
-        public ConsumableConverterFactory(ITypeConverterFactory<ItemDTO, Unlocker> unlockerConverterFactory)
+        public ConsumableConverterFactory(ITypeConverterFactory<ItemDataModel, Unlocker> unlockerConverterFactory)
         {
             if (unlockerConverterFactory == null)
             {
@@ -25,7 +25,7 @@ namespace GW2NET.Factories.V2
             this.unlockerConverterFactory = unlockerConverterFactory;
         }
 
-        public IConverter<ItemDTO, Consumable> Create(string discriminator)
+        public IConverter<ItemDataModel, Consumable> Create(string discriminator)
         {
             switch (discriminator)
             {

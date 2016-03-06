@@ -21,6 +21,8 @@ namespace GW2NET.Factories.Services
     using GW2NET.Guilds.ApiModels;
     using GW2NET.Guilds.Converter;
     using GW2NET.Items;
+    using GW2NET.Items.ApiModels;
+    using GW2NET.Items.Converter;
     using GW2NET.MapInformation;
     using GW2NET.MapInformation.ApiModels;
     using GW2NET.MapInformation.Converter;
@@ -31,15 +33,7 @@ namespace GW2NET.Factories.Services
     using GW2NET.Quaggans;
     using GW2NET.Recipes;
     using GW2NET.Skins;
-    using GW2NET.V2.Items;
-    using GW2NET.V2.Items.Converters;
-    using GW2NET.V2.Items.Json;
-    using GW2NET.V2.Recipes;
-    using GW2NET.V2.Recipes.Converters;
-    using GW2NET.V2.Recipes.Json;
-    using GW2NET.V2.Skins;
     using GW2NET.V2.Skins.Converters;
-    using GW2NET.V2.Skins.Json;
     using GW2NET.Worlds;
 
     using IocContainer = DryIoc.Container;
@@ -171,9 +165,9 @@ namespace GW2NET.Factories.Services
                         Arg.Of<IResponseConverter>(),
                         Arg.Of<ICache<int, Item>>(),
                         Arg.Of<IConverter<int, int>>(),
-                        Arg.Of<IConverter<ItemDTO, Item>>())));
+                        Arg.Of<IConverter<ItemDataModel, Item>>())));
 
-                this.iocContainer.Register<IConverter<ItemDTO, Item>, ItemConverter>();
+                this.iocContainer.Register<IConverter<ItemDataModel, Item>, ItemConverter>();
                 this.iocContainer.Register<IConverter<ICollection<string>, ItemRestrictions>, ItemRestrictionCollectionConverter>();
                 this.iocContainer.Register<IConverter<string, ItemRestrictions>, ItemRestrictionConverter>();
                 this.iocContainer.Register<IConverter<ICollection<string>, ItemFlags>, ItemFlagCollectionConverter>();
@@ -181,7 +175,7 @@ namespace GW2NET.Factories.Services
                 this.iocContainer.Register<IConverter<ICollection<string>, GameTypes>, GameTypeCollectionConverter>();
                 this.iocContainer.Register<IConverter<string, GameTypes>, GameTypeConverter>();
                 this.iocContainer.Register<IConverter<string, ItemRarity>, ItemRarityConverter>();
-                this.iocContainer.Register<ITypeConverterFactory<ItemDTO, Item>, ItemConverterFactory>();
+                this.iocContainer.Register<ITypeConverterFactory<ItemDataModel, Item>, ItemConverterFactory>();
 
                 return this.iocContainer.Resolve<ItemRepository>();
             }
@@ -237,15 +231,15 @@ namespace GW2NET.Factories.Services
                         Arg.Of<IResponseConverter>(),
                         Arg.Of<ICache<int, Recipe>>(),
                         Arg.Of<IConverter<int, int>>(),
-                        Arg.Of<IConverter<RecipeDTO, Recipe>>())));
+                        Arg.Of<IConverter<RecipeDataModel, Recipe>>())));
                 this.iocContainer.Register<RecipeConverter>();
-                this.iocContainer.Register<IConverter<ICollection<IngredientDTO>, ICollection<ItemQuantity>>, CollectionConverter<IngredientDTO, ItemQuantity>>();
-                this.iocContainer.Register<IConverter<IngredientDTO, ItemQuantity>, ItemQuantityConverter>();
+                this.iocContainer.Register<IConverter<ICollection<IngredientDataModel>, ICollection<ItemQuantity>>, CollectionConverter<IngredientDataModel, ItemQuantity>>();
+                this.iocContainer.Register<IConverter<IngredientDataModel, ItemQuantity>, ItemQuantityConverter>();
                 this.iocContainer.Register<IConverter<ICollection<string>, RecipeFlags>, RecipeFlagCollectionConverter>();
                 this.iocContainer.Register<IConverter<string, RecipeFlags>, RecipeFlagConverter>();
                 this.iocContainer.Register<IConverter<ICollection<string>, CraftingDisciplines>, CraftingDisciplineCollectionConverter>();
                 this.iocContainer.Register<IConverter<string, CraftingDisciplines>, CraftingDisciplineConverter>();
-                this.iocContainer.Register<ITypeConverterFactory<RecipeDTO, Recipe>, RecipeConverterFactory>();
+                this.iocContainer.Register<ITypeConverterFactory<RecipeDataModel, Recipe>, RecipeConverterFactory>();
 
                 return this.iocContainer.Resolve<RecipeRepository>();
             }
@@ -262,13 +256,13 @@ namespace GW2NET.Factories.Services
                         Arg.Of<IResponseConverter>(),
                         Arg.Of<ICache<int, Skin>>(),
                         Arg.Of<IConverter<int, int>>(),
-                        Arg.Of<IConverter<SkinDTO, Skin>>())));
-                this.iocContainer.Register<IConverter<SkinDTO, Skin>, SkinConverter>();
+                        Arg.Of<IConverter<SkinDataModel, Skin>>())));
+                this.iocContainer.Register<IConverter<SkinDataModel, Skin>, SkinConverter>();
                 this.iocContainer.Register<IConverter<ICollection<string>, SkinFlags>, SkinFlagCollectionConverter>();
                 this.iocContainer.Register<IConverter<string, SkinFlags>, SkinFlagConverter>();
                 this.iocContainer.Register<IConverter<ICollection<string>, ItemRestrictions>, ItemRestrictionCollectionConverter>();
                 this.iocContainer.Register<IConverter<string, ItemRestrictions>, ItemRestrictionConverter>();
-                this.iocContainer.Register<ITypeConverterFactory<SkinDTO, Skin>, SkinConverterFactory>();
+                this.iocContainer.Register<ITypeConverterFactory<SkinDataModel, Skin>, SkinConverterFactory>();
 
                 return this.iocContainer.Resolve<SkinRepository>();
             }

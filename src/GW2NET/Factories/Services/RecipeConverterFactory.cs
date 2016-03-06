@@ -6,14 +6,13 @@ namespace GW2NET.Factories.V2
 {
     using System.Diagnostics;
     using GW2NET.Common;
+    using GW2NET.Items.ApiModels;
+    using GW2NET.Items.Converter;
     using GW2NET.Recipes;
-    using GW2NET.V2.Recipes;
-    using GW2NET.V2.Recipes.Converters;
-    using GW2NET.V2.Recipes.Json;
 
-    public class RecipeConverterFactory : ITypeConverterFactory<RecipeDTO, Recipe>
+    public class RecipeConverterFactory : ITypeConverterFactory<RecipeDataModel, Recipe>
     {
-        public IConverter<RecipeDTO, Recipe> Create(string discriminator)
+        public IConverter<RecipeDataModel, Recipe> Create(string discriminator)
         {
             switch (discriminator)
             {

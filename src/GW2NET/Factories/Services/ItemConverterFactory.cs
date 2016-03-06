@@ -8,16 +8,16 @@ namespace GW2NET.Factories.V2
     using GW2NET.Common;
     using GW2NET.Common.Converters;
     using GW2NET.Items;
-    using GW2NET.V2.Items.Converters;
-    using GW2NET.V2.Items.Json;
+    using GW2NET.Items.ApiModels;
+    using GW2NET.Items.Converter;
 
-    public class ItemConverterFactory : ITypeConverterFactory<ItemDTO, Item>
+    public class ItemConverterFactory : ITypeConverterFactory<ItemDataModel, Item>
     {
-        public IConverter<ItemDTO, Item> Create(string discriminator)
+        public IConverter<ItemDataModel, Item> Create(string discriminator)
         {
             var infusionSlotFlagCollectionConverter = new InfusionSlotFlagCollectionConverter(new InfusionSlotFlagConverter());
-            var infusionSlotCollectionConverter = new CollectionConverter<InfusionSlotDTO, InfusionSlot>(new InfusionSlotConverter(infusionSlotFlagCollectionConverter));
-            var combatAttributeCollectionConverter = new CollectionConverter<AttributeDTO, CombatAttribute>(new CombatAttributeConverter(new CombatAttributeConverterFactory()));
+            var infusionSlotCollectionConverter = new CollectionConverter<InfusionSlotDataModel, InfusionSlot>(new InfusionSlotConverter(infusionSlotFlagCollectionConverter));
+            var combatAttributeCollectionConverter = new CollectionConverter<AttributeDataModel, CombatAttribute>(new CombatAttributeConverter(new CombatAttributeConverterFactory()));
             var infixUpgradeConverter = new InfixUpgradeConverter(combatAttributeCollectionConverter, new CombatBuffConverter());
             switch (discriminator)
             {

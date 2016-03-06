@@ -1,0 +1,270 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <MinimumVisualStudioVersion>12.0</MinimumVisualStudioVersion>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{5583E674-FD1C-4F0A-A8FE-E20F1E789F70}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>GW2NET.Items</RootNamespace>
+    <AssemblyName>GW2NET.Items</AssemblyName>
+    <DefaultLanguage>en-US</DefaultLanguage>
+    <FileAlignment>512</FileAlignment>
+    <ProjectTypeGuids>{786C830F-07A1-408B-BD7F-6EE04809D6DB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <TargetFrameworkProfile>Profile151</TargetFrameworkProfile>
+    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <!-- A reference to the entire .NET Framework is automatically included -->
+    <Content Include="Converter\ArmorConverters.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>ArmorConverters.cs</LastGenOutput>
+    </Content>
+    <Content Include="Converter\ArmorSkinConverters.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>ArmorSkinConverters1.cs</LastGenOutput>
+    </Content>
+    <Content Include="Converter\CombatAttributeConverters.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>CombatAttributeConverters.cs</LastGenOutput>
+    </Content>
+    <Content Include="Converter\ConsumableConverters.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>ConsumableConverters.cs</LastGenOutput>
+    </Content>
+    <Content Include="Converter\ContainerConverters.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>ContainerConverters.cs</LastGenOutput>
+    </Content>
+    <Content Include="Converter\GatheringToolConverters.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>GatheringToolConverters.cs</LastGenOutput>
+    </Content>
+    <Content Include="Converter\GatheringToolSkinConverters.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>GatheringToolSkinConverters1.cs</LastGenOutput>
+    </Content>
+    <Content Include="Converter\GizmoConverters.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>GizmoConverters.cs</LastGenOutput>
+    </Content>
+    <Content Include="Converter\ItemConverters.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>ItemConverters.cs</LastGenOutput>
+    </Content>
+    <Content Include="Converter\RecipeConverters.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>RecipeConverters1.cs</LastGenOutput>
+    </Content>
+    <Content Include="Converter\SkinConverters.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>SkinConverters1.cs</LastGenOutput>
+    </Content>
+    <Content Include="Converter\ToolConverters.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>ToolConverters.cs</LastGenOutput>
+    </Content>
+    <Content Include="Converter\TrinkerConverters.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>TrinkerConverters.cs</LastGenOutput>
+    </Content>
+    <Content Include="Converter\UnlockerConverters.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>UnlockerConverters.cs</LastGenOutput>
+    </Content>
+    <Content Include="Converter\UpgradeComponentConverters.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>UpgradeComponentConverters.cs</LastGenOutput>
+    </Content>
+    <Content Include="Converter\WeaponConverters.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>WeaponConverters.cs</LastGenOutput>
+    </Content>
+    <Content Include="Converter\WeaponSkinConverters.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>WeaponSkinConverters1.cs</LastGenOutput>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="ApiModels\AttributeDataModel.cs" />
+    <Compile Include="ApiModels\BuffDataModel.cs" />
+    <Compile Include="ApiModels\DetailsDataModel.cs" />
+    <Compile Include="ApiModels\InfixUpgradeDataModel.cs" />
+    <Compile Include="ApiModels\InfusionSlotDataModel.cs" />
+    <Compile Include="ApiModels\IngredientDataModel.cs" />
+    <Compile Include="ApiModels\ItemDataModel.cs" />
+    <Compile Include="ApiModels\RecipeDataModel.cs" />
+    <Compile Include="ApiModels\SkinDataModel.cs" />
+    <Compile Include="Converter\ArmorConverter.cs" />
+    <Compile Include="Converter\ArmorConverters.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ArmorConverters.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Converter\ArmorSkinConverter.cs" />
+    <Compile Include="Converter\ArmorSkinConverters1.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ArmorSkinConverters.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Converter\BackpackConverter.cs" />
+    <Compile Include="Converter\BagConverter.cs" />
+    <Compile Include="Converter\CombatAttributeConverter.cs" />
+    <Compile Include="Converter\CombatAttributeConverters.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>CombatAttributeConverters.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Converter\CombatBuffConverter.cs" />
+    <Compile Include="Converter\ConsumableConverters.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ConsumableConverters.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Converter\ContainerConverters.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ContainerConverters.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Converter\CraftingDisciplineCollectionConverter.cs" />
+    <Compile Include="Converter\CraftingDisciplineConverter.cs" />
+    <Compile Include="Converter\CraftingRecipeUnlockerConverter.cs" />
+    <Compile Include="Converter\DamageTypeConverter.cs" />
+    <Compile Include="Converter\DyeUnlockerConverter.cs" />
+    <Compile Include="Converter\FoodConverter.cs" />
+    <Compile Include="Converter\GameTypeCollectionConverter.cs" />
+    <Compile Include="Converter\GameTypeConverter.cs" />
+    <Compile Include="Converter\GatheringToolConverter.cs" />
+    <Compile Include="Converter\GatheringToolConverters.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>GatheringToolConverters.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Converter\GatheringToolSkinConverters1.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>GatheringToolSkinConverters.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Converter\GenericConsumableConverter.cs" />
+    <Compile Include="Converter\GizmoConverters.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>GizmoConverters.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Converter\ImmediateConsumableConverter.cs" />
+    <Compile Include="Converter\InfixUpgradeConverter.cs" />
+    <Compile Include="Converter\InfusionSlotConverter.cs" />
+    <Compile Include="Converter\InfusionSlotFlagCollectionConverter.cs" />
+    <Compile Include="Converter\InfusionSlotFlagConverter.cs" />
+    <Compile Include="Converter\ItemConverter.cs" />
+    <Compile Include="Converter\ItemConverters.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ItemConverters.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Converter\ItemFlagCollectionConverter.cs" />
+    <Compile Include="Converter\ItemFlagConverter.cs" />
+    <Compile Include="Converter\ItemQuantityConverter.cs" />
+    <Compile Include="Converter\ItemRarityConverter.cs" />
+    <Compile Include="Converter\MiniatureConverter.cs" />
+    <Compile Include="Converter\RecipeConverter.cs" />
+    <Compile Include="Converter\RecipeConverters1.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>RecipeConverters.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Converter\RecipeFlagCollectionConverter.cs" />
+    <Compile Include="Converter\RecipeFlagConverter.cs" />
+    <Compile Include="Converter\SalvageToolConverter.cs" />
+    <Compile Include="Converter\SkinConverter.cs" />
+    <Compile Include="Converter\SkinConverters1.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>SkinConverters.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Converter\SkinFlagCollectionConverter.cs" />
+    <Compile Include="Converter\SkinFlagConverter.cs" />
+    <Compile Include="Converter\ToolConverters.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ToolConverters.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Converter\TransmutationConverter.cs" />
+    <Compile Include="Converter\TrinkerConverters.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>TrinkerConverters.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Converter\TrinketConverter.cs" />
+    <Compile Include="Converter\UnlockerConverters.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>UnlockerConverters.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Converter\UpgradeComponentConverter.cs" />
+    <Compile Include="Converter\UpgradeComponentConverters.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>UpgradeComponentConverters.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Converter\UpgradeComponentFlagCollectionConverter.cs" />
+    <Compile Include="Converter\UpgradeComponentFlagConverter.cs" />
+    <Compile Include="Converter\UtilityConverter.cs" />
+    <Compile Include="Converter\WeaponConverter.cs" />
+    <Compile Include="Converter\WeaponConverters.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>WeaponConverters.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Converter\WeaponSkinConverter.cs" />
+    <Compile Include="Converter\WeaponSkinConverters1.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>WeaponSkinConverters.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Converter\WeightClassConverter.cs" />
+    <Compile Include="ItemRepository.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RecipeRepository.cs" />
+    <Compile Include="SkinRepository.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Converter\ConverterTemplate.t4" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\GW2NET.Core\GW2NET.Core.csproj">
+      <Project>{05f3d999-0470-4123-8c80-af4ac2385e7c}</Project>
+      <Name>GW2NET.Core</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

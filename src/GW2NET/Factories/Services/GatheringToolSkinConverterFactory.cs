@@ -1,19 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace GW2NET.Factories.V2
+﻿namespace GW2NET.Factories.V2
 {
     using System.Diagnostics;
     using Common;
-    using GW2NET.V2.Skins.Converters;
-    using GW2NET.V2.Skins.Json;
+
+    using GW2NET.Items.ApiModels;
+    using GW2NET.Items.Converter;
+
     using Skins;
-    public class GatheringToolSkinConverterFactory : ITypeConverterFactory<SkinDTO, GatheringToolSkin>
+    public class GatheringToolSkinConverterFactory : ITypeConverterFactory<SkinDataModel, GatheringToolSkin>
     {
-        public IConverter<SkinDTO, GatheringToolSkin> Create(string discriminator)
+        public IConverter<SkinDataModel, GatheringToolSkin> Create(string discriminator)
         {
             switch (discriminator)
             {
