@@ -56,6 +56,10 @@
       <Project>{892b1961-7a94-4fed-a707-94d5f925b30a}</Project>
       <Name>GW2NET.MapInformation</Name>
     </ProjectReference>
+    <ProjectReference Include="..\GW2NET.Miscellaneous\GW2NET.Miscellaneous.csproj">
+      <Project>{f6acb1b0-d8c3-4c93-a117-a70dc2c29c62}</Project>
+      <Name>GW2NET.Miscellaneous</Name>
+    </ProjectReference>
     <ProjectReference Include="..\GW2NET.Newtonsoft\GW2NET.Newtonsoft.csproj">
       <Project>{11bb8977-33fe-4789-bd5b-d977b0bf5ecf}</Project>
       <Name>GW2NET.Newtonsoft</Name>
@@ -73,14 +77,6 @@
       <Project>{2C83D314-3C3F-470B-A4CC-B6E3E1F48EA2}</Project>
       <Name>GW2NET.V2.Accounts</Name>
     </ProjectReference>
-    <ProjectReference Include="..\GW2NET.V2.Builds\GW2NET.V2.Builds.csproj">
-      <Project>{5f2c2514-10b0-4b5b-b227-edd406377396}</Project>
-      <Name>GW2NET.V2.Builds</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\GW2NET.V2.Colors\GW2NET.V2.Colors.csproj">
-      <Project>{d5fd21bd-9d1f-4129-b3dd-fcdc0afd0830}</Project>
-      <Name>GW2NET.V2.Colors</Name>
-    </ProjectReference>
     <ProjectReference Include="..\GW2NET.V2.Commerce.Exchange\GW2NET.V2.Commerce.Exchange.csproj">
       <Project>{40a8f55c-97bc-4652-a60e-9f4ea5d49fda}</Project>
       <Name>GW2NET.V2.Commerce.Exchange</Name>
@@ -93,17 +89,9 @@
       <Project>{0f72000c-a997-471f-a353-5988828a5255}</Project>
       <Name>GW2NET.V2.Commerce.Prices</Name>
     </ProjectReference>
-    <ProjectReference Include="..\GW2NET.V2.Files\GW2NET.V2.Files.csproj">
-      <Project>{7376BF02-3192-479B-82E8-EC0B15DA55C1}</Project>
-      <Name>GW2NET.V2.Files</Name>
-    </ProjectReference>
     <ProjectReference Include="..\GW2NET.V2.Items\GW2NET.V2.Items.csproj">
       <Project>{965994be-f908-4d34-af07-f8a6b527ffb7}</Project>
       <Name>GW2NET.V2.Items</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\GW2NET.V2.Quaggans\GW2NET.V2.Quaggans.csproj">
-      <Project>{1de9b06c-24a1-497d-bfa9-65eb9e361c71}</Project>
-      <Name>GW2NET.V2.Quaggans</Name>
     </ProjectReference>
     <ProjectReference Include="..\GW2NET.V2.Recipes\GW2NET.V2.Recipes.csproj">
       <Project>{55897753-f4b5-48d1-8a01-20d54afde7dd}</Project>
@@ -112,10 +100,6 @@
     <ProjectReference Include="..\GW2NET.V2.Skins\GW2NET.V2.Skins.csproj">
       <Project>{9937ADF8-CEB8-48F2-9E12-C259CD454C17}</Project>
       <Name>GW2NET.V2.Skins</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\GW2NET.V2.Worlds\GW2NET.V2.Worlds.csproj">
-      <Project>{1d9eee65-d035-4acb-9f08-883a59331a6a}</Project>
-      <Name>GW2NET.V2.Worlds</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

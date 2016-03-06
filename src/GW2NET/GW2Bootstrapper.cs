@@ -27,7 +27,6 @@ namespace GW2NET
     using GW2NET.Factories;
     using GW2NET.Factories.Services;
     using GW2NET.Rendering;
-    using GW2NET.V2.Colors;
 
     /// <summary>Provides access to Guild Wars 2 data sources and services.</summary>
     [SuppressMessage("ReSharper", "InconsistentNaming", Justification = "Naming is intended.")]
