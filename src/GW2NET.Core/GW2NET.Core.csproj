@@ -81,7 +81,8 @@
     <Compile Include="Common\DiscoverableExtensions.cs" />
     <Compile Include="Common\IApiService.cs" />
     <Compile Include="Common\ICachedRepository{TKey,TDataContract,TValue}.cs" />
-    <Compile Include="Common\IDiscoverable.cs" />
+    <Compile Include="Common\IDiscoverable{TIn,TOut}.cs" />
+    <Compile Include="Common\IDiscoverable{T}.cs" />
     <Compile Include="Common\IRepository.cs" />
     <Compile Include="Common\KeyUtilities.cs" />
     <Compile Include="Common\LinqExtensions.cs" />

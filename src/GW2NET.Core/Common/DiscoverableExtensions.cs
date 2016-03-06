@@ -13,20 +13,22 @@ namespace GW2NET.Common
     public static class DiscoverableExtensions
     {
         /// <summary>Gets a set of identifiers from the Guild Wars 2 api.</summary>
-        /// <typeparam name="T">The identifiers type.</typeparam>
+        /// <typeparam name="TIn">The type of identifieron the api server.</typeparam>
+        /// <typeparam name="TOut">The type of identifer in the local application.</typeparam>
         /// <param name="discoverable">The discoverable repository.</param>
         /// <returns>An <see cref="IEnumerable{T}"/> containing the discovered identifiers.</returns>
-        public static Task<IEnumerable<T>> DiscoverAsync<T>(this IDiscoverable<T> discoverable)
+        public static Task<IEnumerable<TOut>> DiscoverAsync<TIn, TOut>(this IDiscoverable<TIn, TOut> discoverable)
         {
             return DiscoverAsync(discoverable, CancellationToken.None);
         }
 
         /// <summary>Gets a set of identifiers from the Guild Wars 2 api.</summary>
-        /// <typeparam name="T">The identifiers type.</typeparam>
+        /// <typeparam name="TIn">The type of identifieron the api server.</typeparam>
+        /// <typeparam name="TOut">The type of identifer in the local application.</typeparam>
         /// <param name="discoverable">The discoverable repository.</param>
         /// <param name="cancellationToken">A token signalling the cancellation of the operation.</param>
         /// <returns>An <see cref="IEnumerable{T}"/> containing the discovered identifiers.</returns>
-        public static async Task<IEnumerable<T>> DiscoverAsync<T>(this IDiscoverable<T> discoverable, CancellationToken cancellationToken)
+        public static async Task<IEnumerable<TOut>> DiscoverAsync<TIn, TOut>(this IDiscoverable<TIn, TOut> discoverable, CancellationToken cancellationToken)
         {
             HttpRequestMessage request = discoverable.ServiceLocation.Build();
 
