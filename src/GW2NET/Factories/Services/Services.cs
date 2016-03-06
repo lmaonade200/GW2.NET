@@ -18,6 +18,8 @@ namespace GW2NET.Factories.Services
     using GW2NET.Factories.V2;
     using GW2NET.Files;
     using GW2NET.Guilds;
+    using GW2NET.Guilds.ApiModels;
+    using GW2NET.Guilds.Converter;
     using GW2NET.Items;
     using GW2NET.MapInformation;
     using GW2NET.MapInformation.ApiModels;
@@ -29,7 +31,6 @@ namespace GW2NET.Factories.Services
     using GW2NET.Quaggans;
     using GW2NET.Recipes;
     using GW2NET.Skins;
-    using GW2NET.V1.Guilds;
     using GW2NET.V2.Items;
     using GW2NET.V2.Items.Converters;
     using GW2NET.V2.Items.Json;

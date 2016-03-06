@@ -52,6 +52,10 @@
       <Project>{05f3d999-0470-4123-8c80-af4ac2385e7c}</Project>
       <Name>GW2NET.Core</Name>
     </ProjectReference>
+    <ProjectReference Include="..\GW2NET.Guilds\GW2NET.Guilds.csproj">
+      <Project>{74c2f4a0-fdb0-4333-b128-acdce461ded2}</Project>
+      <Name>GW2NET.Guilds</Name>
+    </ProjectReference>
     <ProjectReference Include="..\GW2NET.MapInformation\GW2NET.MapInformation.csproj">
       <Project>{892b1961-7a94-4fed-a707-94d5f925b30a}</Project>
       <Name>GW2NET.MapInformation</Name>
@@ -65,9 +69,9 @@
       <Name>GW2NET.Newtonsoft</Name>
       <Private>True</Private>
     </ProjectReference>
-    <ProjectReference Include="..\GW2NET.V1.Guilds\GW2NET.V1.Guilds.csproj">
-      <Project>{48dbec9e-c97b-412e-ad3a-03658f76cdfc}</Project>
-      <Name>GW2NET.V1.Guilds</Name>
+    <ProjectReference Include="..\GW2NET.TradingPost\GW2NET.TradingPost.csproj">
+      <Project>{5a7daa17-1b46-4913-8126-94ba4130e599}</Project>
+      <Name>GW2NET.TradingPost</Name>
     </ProjectReference>
     <ProjectReference Include="..\GW2NET.V2.Accounts.Characters\GW2NET.V2.Accounts.Characters.csproj">
       <Project>{9d582bc4-d182-4373-a8d5-04607f4094b1}</Project>
@@ -76,18 +80,6 @@
     <ProjectReference Include="..\GW2NET.V2.Account\GW2NET.V2.Accounts.csproj">
       <Project>{2C83D314-3C3F-470B-A4CC-B6E3E1F48EA2}</Project>
       <Name>GW2NET.V2.Accounts</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\GW2NET.V2.Commerce.Exchange\GW2NET.V2.Commerce.Exchange.csproj">
-      <Project>{40a8f55c-97bc-4652-a60e-9f4ea5d49fda}</Project>
-      <Name>GW2NET.V2.Commerce.Exchange</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\GW2NET.V2.Commerce.Listings\GW2NET.V2.Commerce.Listings.csproj">
-      <Project>{ca6d86a9-f12e-45d4-a878-57f2714a0a51}</Project>
-      <Name>GW2NET.V2.Commerce.Listings</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\GW2NET.V2.Commerce.Prices\GW2NET.V2.Commerce.Prices.csproj">
-      <Project>{0f72000c-a997-471f-a353-5988828a5255}</Project>
-      <Name>GW2NET.V2.Commerce.Prices</Name>
     </ProjectReference>
     <ProjectReference Include="..\GW2NET.V2.Items\GW2NET.V2.Items.csproj">
       <Project>{965994be-f908-4d34-af07-f8a6b527ffb7}</Project>

@@ -13,9 +13,9 @@ namespace GW2NET.Factories.Services
     using GW2NET.Commerce;
     using GW2NET.Common;
     using GW2NET.Common.Converters;
-    using GW2NET.V2.Commerce.Exchange;
-    using GW2NET.V2.Commerce.Listings;
-    using GW2NET.V2.Commerce.Prices;
+    using GW2NET.TradingPost;
+    using GW2NET.TradingPost.ApiModels;
+    using GW2NET.TradingPost.Converter;
 
     /// <summary>Provides access to commerce data sources based on the /v2/ api.</summary>
     public class CommerceFactory
@@ -41,7 +41,7 @@ namespace GW2NET.Factories.Services
 
         private void InitCurrencyExchange()
         {
-            this.iocContainer.Register<IConverter<ExchangeDataContract, Exchange>, ExchangeConverter>();
+            this.iocContainer.Register<IConverter<ExchangeDataModel, Exchange>, ExchangeConverter>();
         }
 
         private void InitListings()
@@ -52,11 +52,11 @@ namespace GW2NET.Factories.Services
                     Arg.Of<IResponseConverter>(),
                     Arg.Of<ICache<int, Listing>>(),
                     Arg.Of<IConverter<int, int>>(),
-                    Arg.Of<IConverter<ListingDataContract, Listing>>())));
+                    Arg.Of<IConverter<ListingDataModel, Listing>>())));
 
-            this.iocContainer.Register<IConverter<ListingDataContract, Listing>, ListingConverter>();
-            this.iocContainer.Register<IConverter<ListingOfferDataContract, Offer>, OfferConverter>();
-            this.iocContainer.Register(Made.Of(() => new CollectionConverter<ListingOfferDataContract, Offer>(Arg.Of<IConverter<ListingOfferDataContract, Offer>>())));
+            this.iocContainer.Register<IConverter<ListingDataModel, Listing>, ListingConverter>();
+            this.iocContainer.Register<IConverter<ListingOfferDataModel, Offer>, OfferConverter>();
+            this.iocContainer.Register(Made.Of(() => new CollectionConverter<ListingOfferDataModel, Offer>(Arg.Of<IConverter<ListingOfferDataModel, Offer>>())));
         }
 
         private void InitAggregateListing()
@@ -67,10 +67,10 @@ namespace GW2NET.Factories.Services
                     Arg.Of<IResponseConverter>(),
                     Arg.Of<ICache<int, AggregateListing>>(),
                     Arg.Of<IConverter<int, int>>(),
-                    Arg.Of<IConverter<AggregateListingDataContract, AggregateListing>>())));
+                    Arg.Of<IConverter<AggregateListingDataModel, AggregateListing>>())));
 
-            this.iocContainer.Register<IConverter<AggregateListingDataContract, AggregateListing>, AggregateListingConverter>();
-            this.iocContainer.Register<IConverter<AggregateOfferDataContract, AggregateOffer>, AggregateOfferConverter>();
+            this.iocContainer.Register<IConverter<AggregateListingDataModel, AggregateListing>, AggregateListingConverter>();
+            this.iocContainer.Register<IConverter<AggregateOfferDataModel, AggregateOffer>, AggregateOfferConverter>();
         }
 
         /// <summary>Gets access to the gem exchange data source.</summary>
