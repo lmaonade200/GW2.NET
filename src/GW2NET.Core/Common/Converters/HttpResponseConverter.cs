@@ -5,7 +5,6 @@
 namespace GW2NET.Common.Converters
 {
     using System;
-    using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.Globalization;
     using System.IO;
@@ -36,14 +35,7 @@ namespace GW2NET.Common.Converters
             IEnumerable<TInput> response = await this.GetContentAsync<IEnumerable<TInput>>(responseMessage);
             ApiMetadata metadata = this.GetMetadata(responseMessage);
 
-            ConcurrentBag<TOutput> items = new ConcurrentBag<TOutput>();
-
-            Parallel.ForEach(response, item =>
-             {
-                 items.Add(innerConverter.Convert(item, metadata));
-             });
-
-            return items;
+            return await Task.WhenAll(response.Select(r => Task.Run(() => innerConverter.Convert(r, metadata))));
         }
 
         public async Task<TOutput> ConvertElementAsync<TInput, TOutput>(HttpResponseMessage responseMessage, IConverter<TInput, TOutput> innerConverter)
