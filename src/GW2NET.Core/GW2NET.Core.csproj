@@ -43,6 +43,8 @@
     <Compile Include="Achievements\Achievement.cs" />
     <Compile Include="Achievements\AchievementBit.cs" />
     <Compile Include="Achievements\AchievementFlags.cs" />
+    <Compile Include="Achievements\Group.cs" />
+    <Compile Include="Achievements\Category.cs" />
     <Compile Include="Achievements\ItemBit.cs" />
     <Compile Include="Achievements\ItemReward.cs" />
     <Compile Include="Achievements\ItemSetAchievement.cs" />
@@ -90,6 +92,7 @@
     <Compile Include="Common\Converters\HttpResponseConverter.cs" />
     <Compile Include="Common\Converters\ItemRestrictionCollectionConverter.cs" />
     <Compile Include="Common\Converters\ItemRestrictionConverter.cs" />
+    <Compile Include="Common\Converters\StringToGuidConverter.cs" />
     <Compile Include="Common\DiscoverableExtensions.cs" />
     <Compile Include="Common\IApiService.cs" />
     <Compile Include="Common\ICachedRepository{TKey,TDataContract,TValue}.cs" />
