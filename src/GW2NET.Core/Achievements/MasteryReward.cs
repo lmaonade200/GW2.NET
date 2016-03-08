@@ -4,7 +4,7 @@
 
 namespace GW2NET.Achievements
 {
-    class MasteryReward : Reward
+    public class MasteryReward : Reward
     {
         public string Region { get; set; }
     }
