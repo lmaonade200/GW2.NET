@@ -1,11 +1,7 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="CollectionConverter.cs" company="GW2.NET Coding Team">
-//   This product is licensed under the GNU General Public License version 2 (GPLv2). See the License in the project root folder or the following page: http://www.gnu.org/licenses/gpl-2.0.html
+﻿// <copyright file="CollectionConverter.cs" company="GW2.NET Coding Team">
+// This product is licensed under the GNU General Public License version 2 (GPLv2). See the License in the project root folder or the following page: http://www.gnu.org/licenses/gpl-2.0.html
 // </copyright>
-// <summary>
-//   Converts objects of type <see cref="ICollection{T}" /> to objects of type <see cref="ICollection{T}" />.
-// </summary>
-// --------------------------------------------------------------------------------------------------------------------
+
 namespace GW2NET.Common.Converters
 {
     using System;
@@ -15,7 +11,7 @@ namespace GW2NET.Common.Converters
     /// <summary>Converts objects of type <see cref="ICollection{T}"/> to objects of type <see cref="ICollection{T}"/>.</summary>
     /// <typeparam name="TInput">The type of the input.</typeparam>
     /// <typeparam name="TOutput">The type of the output.</typeparam>
-    public sealed class CollectionConverter<TInput, TOutput> : IConverter<ICollection<TInput>, ICollection<TOutput>>
+    public sealed class CollectionConverter<TInput, TOutput> : IConverter<IEnumerable<TInput>, IEnumerable<TOutput>>
     {
         private readonly IConverter<TInput, TOutput> collectionItemConverter;
 
@@ -26,21 +22,21 @@ namespace GW2NET.Common.Converters
         {
             if (collectionItemConverter == null)
             {
-                throw new ArgumentNullException("collectionItemConverter");
+                throw new ArgumentNullException(nameof(collectionItemConverter));
             }
 
             this.collectionItemConverter = collectionItemConverter;
         }
 
         /// <inheritdoc />
-        public ICollection<TOutput> Convert(ICollection<TInput> value, object state)
+        public IEnumerable<TOutput> Convert(IEnumerable<TInput> value, object state)
         {
             if (value == null)
             {
-                throw new ArgumentNullException("value");
+                throw new ArgumentNullException(nameof(value));
             }
 
-            var values = new List<TOutput>(value.Count);
+            List<TOutput> values = new List<TOutput>();
             values.AddRange(value.Select(item => this.collectionItemConverter.Convert(item, value)));
             return values;
         }
