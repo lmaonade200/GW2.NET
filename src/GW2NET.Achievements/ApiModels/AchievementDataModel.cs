@@ -22,7 +22,7 @@ namespace GW2NET.Achievements.ApiModels
 
         public string[] Flags { get; set; }
 
-        public KeyValuePair<int, int>[] Tiers { get; set; }
+        public TierDataModel[] Tiers { get; set; }
 
         public AchievementRewardDataModel[] Rewards { get; set; }
 

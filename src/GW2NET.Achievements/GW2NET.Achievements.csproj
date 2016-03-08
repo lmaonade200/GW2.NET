@@ -44,11 +44,15 @@
     <Compile Include="ApiModels\AchievementDataModel.cs" />
     <Compile Include="AchievementRepository.cs" />
     <Compile Include="ApiModels\AchievementRewardDataModel.cs" />
+    <Compile Include="ApiModels\TierDataModel.cs" />
+    <Compile Include="Converter\AchievementConverter.cs" />
+    <Compile Include="Converter\BitsConverter.cs" />
+    <Compile Include="Converter\FlagsConverter.cs" />
+    <Compile Include="Converter\RewardsConverter.cs" />
+    <Compile Include="Converter\TierCollectionConverter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Converter\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <None Include="GW2NET.Achievements.nuspec" />
     <AdditionalFiles Include="$(SolutionDir)stylecop.json" />
