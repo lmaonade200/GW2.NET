@@ -12,37 +12,34 @@ namespace GW2NET.Achievements
     /// </remarks>
     public class Achievement
     {
-        /// <summary>The achievement id.</summary>
+        /// <summary>Gets or sets the achievement id.</summary>
         public int Id { get; set; }
 
-        /// <summary>(Optional) The achievement icon.</summary>
+        /// <summary>Gets or sets the achievement icon. (Optional)</summary>
         public string Icon { get; set; }
 
-        /// <summary>The achievement name.</summary>
+        /// <summary>Gets or sets the achievement name.</summary>
         public string Name { get; set; }
 
-        /// <summary>The achievement description.</summary>
+        /// <summary>Gets or sets the achievement description.</summary>
         public string Description { get; set; }
 
-        /// <summary>The achievement requirements.</summary>
+        /// <summary>Gets or sets the achievement requirements.</summary>
         public string Requirement { get; set; }
 
-        /// <summary>The achievement type.</summary>
-        public AchievementType Type { get; set; }
-
-        /// <summary>The achievement categories.</summary>
+        /// <summary>Gets or sets the achievement categories.</summary>
         public AchievementFlags Flags { get; set; }
 
-        /// <summary>The achievement tiers.</summary>
+        /// <summary>Gets or sets the achievement tiers.</summary>
         public IEnumerable<Tier> Tiers { get; set; }
 
-        /// <summary>(Optional) The achievement rewards.</summary>
+        /// <summary>Gets or sets the achievement rewards. (Optional)</summary>
         public IEnumerable<Reward> Rewards { get; set; }
 
-        /// <summary>(Optional) Additional information pretending the achievement of the achievement.</summary>
-        public IEnumerable<AchievementBit>[] Bits { get; set; }
+        /// <summary>Gets or sets additional information pretending the achievement of the achievement. (Optional)</summary>
+        public IEnumerable<AchievementBit> Bits { get; set; }
 
-        /// <summary>The maximum number of AP that can be rewarded by the achievement.</summary>
+        /// <summary>Gets or sets the maximum number of AP that can be rewarded by the achievement. (Optional)</summary>
         public int? PointCap { get; set; }
     }
 }
