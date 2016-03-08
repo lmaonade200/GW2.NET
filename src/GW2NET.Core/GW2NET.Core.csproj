@@ -45,13 +45,13 @@
     <Compile Include="Achievements\AchievementFlags.cs" />
     <Compile Include="Achievements\ItemBit.cs" />
     <Compile Include="Achievements\ItemReward.cs" />
+    <Compile Include="Achievements\ItemSetAchievement.cs" />
     <Compile Include="Achievements\MasteryReward.cs" />
     <Compile Include="Achievements\MinipetBit.cs" />
     <Compile Include="Achievements\Reward.cs" />
     <Compile Include="Achievements\SkinBit.cs" />
     <Compile Include="Achievements\TextBit.cs" />
     <Compile Include="Achievements\Tier.cs" />
-    <Compile Include="Achievements\AchievementType.cs" />
     <Compile Include="Builds\Build.cs" />
     <Compile Include="Builds\IBuildRepository.cs" />
     <Compile Include="Caching\ICache{TKey,TValue}.cs" />
@@ -129,6 +129,7 @@
     <Compile Include="Common\Serializers\ISerializer.cs" />
     <Compile Include="Common\Serializers\ISerializerFactory.cs" />
     <Compile Include="Common\ServiceException.cs" />
+    <Compile Include="Common\StringExtensions.cs" />
     <Compile Include="Common\UrlEncodedForm.cs" />
     <Compile Include="DynamicEvents\CylinderLocation.cs" />
     <Compile Include="DynamicEvents\DynamicEvent.cs" />
