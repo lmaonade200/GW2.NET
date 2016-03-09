@@ -1,11 +1,7 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="Armor.cs" company="GW2.NET Coding Team">
-//   This product is licensed under the GNU General Public License version 2 (GPLv2). See the License in the project root folder or the following page: http://www.gnu.org/licenses/gpl-2.0.html
+﻿// <copyright file="Armor.cs" company="GW2.NET Coding Team">
+// This product is licensed under the GNU General Public License version 2 (GPLv2). See the License in the project root folder or the following page: http://www.gnu.org/licenses/gpl-2.0.html
 // </copyright>
-// <summary>
-//   Provides the base class for armor types.
-// </summary>
-// --------------------------------------------------------------------------------------------------------------------
+
 namespace GW2NET.Items.Armors
 {
     using System;
@@ -23,7 +19,7 @@ namespace GW2NET.Items.Armors
 
         private InfixUpgrade infixUpgrade = new InfixUpgrade();
 
-        private ICollection<InfusionSlot> infusionSlots = EmptyInfusionSlots;
+        private IEnumerable<InfusionSlot> infusionSlots = EmptyInfusionSlots;
 
         /// <summary>Gets or sets the default skin. This is a navigation property. Use the value of <see cref="DefaultSkinId"/> to obtain a reference.</summary>
         public virtual Skin DefaultSkin { get; set; }
@@ -55,7 +51,7 @@ namespace GW2NET.Items.Armors
         }
 
         /// <summary>Gets or sets the item's infusion slots.</summary>
-        public virtual ICollection<InfusionSlot> InfusionSlots
+        public virtual IEnumerable<InfusionSlot> InfusionSlots
         {
             get
             {

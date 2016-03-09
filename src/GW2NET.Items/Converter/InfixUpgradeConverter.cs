@@ -1,11 +1,6 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="InfixUpgradeConverter.cs" company="PlaceholderCompany">
+﻿// <copyright file="InfixUpgradeConverter.cs" company="PlaceholderCompany">
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
-// <summary>
-//   Converts objects of type <see cref="InfixUpgradeDTO" /> to objects of type <see cref="InfixUpgrade" />.
-// </summary>
-// --------------------------------------------------------------------------------------------------------------------
 
 namespace GW2NET.Items.Converter
 {
@@ -19,7 +14,7 @@ namespace GW2NET.Items.Converter
     /// <summary>Converts objects of type <see cref="InfixUpgradeDataModel" /> to objects of type <see cref="InfixUpgrade" />.</summary>
     public sealed class InfixUpgradeConverter : IConverter<InfixUpgradeDataModel, InfixUpgrade>
     {
-        private readonly IConverter<ICollection<AttributeDataModel>, ICollection<CombatAttribute>>
+        private readonly IConverter<IEnumerable<AttributeDataModel>, IEnumerable<CombatAttribute>>
             combatAttributeCollectionConverter;
 
         private readonly IConverter<BuffDataModel, CombatBuff> combatBuffConverter;
@@ -28,7 +23,7 @@ namespace GW2NET.Items.Converter
         /// <param name="combatAttributeCollectionConverter">The converter for <see cref="ICollection{CombatAttribute}" />.</param>
         /// <param name="combatBuffConverter">The converter for <see cref="CombatBuff" />.</param>
         public InfixUpgradeConverter(
-            IConverter<ICollection<AttributeDataModel>, ICollection<CombatAttribute>> combatAttributeCollectionConverter,
+            IConverter<IEnumerable<AttributeDataModel>, IEnumerable<CombatAttribute>> combatAttributeCollectionConverter,
             IConverter<BuffDataModel, CombatBuff> combatBuffConverter)
         {
             if (combatAttributeCollectionConverter == null)

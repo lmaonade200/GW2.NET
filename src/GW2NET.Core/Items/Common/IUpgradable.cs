@@ -1,11 +1,7 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="IUpgradable.cs" company="GW2.NET Coding Team">
-//   This product is licensed under the GNU General Public License version 2 (GPLv2). See the License in the project root folder or the following page: http://www.gnu.org/licenses/gpl-2.0.html
+﻿// <copyright file="IUpgradable.cs" company="GW2.NET Coding Team">
+// This product is licensed under the GNU General Public License version 2 (GPLv2). See the License in the project root folder or the following page: http://www.gnu.org/licenses/gpl-2.0.html
 // </copyright>
-// <summary>
-//   Provides the interface for items that can be upgraded.
-// </summary>
-// --------------------------------------------------------------------------------------------------------------------
+
 namespace GW2NET.Items.Common
 {
     using System.Collections.Generic;
@@ -14,7 +10,7 @@ namespace GW2NET.Items.Common
     public interface IUpgradable
     {
         /// <summary>Gets or sets the item's infusion slots.</summary>
-        ICollection<InfusionSlot> InfusionSlots { get; set; }
+        IEnumerable<InfusionSlot> InfusionSlots { get; set; }
 
         /// <summary>Gets or sets the item's secondary suffix item. This is a navigation property. Use the value of <see cref="SecondarySuffixItemId"/> to obtain a reference.</summary>
         Item SecondarySuffixItem { get; set; }

@@ -1,11 +1,7 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="ArmorConverter.cs" company="PlaceholderCompany">
+﻿// <copyright file="ArmorConverter.cs" company="PlaceholderCompany">
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
-// <summary>
-//   Converts objects of type <see cref="DetailsDTO" /> to objects of type <see cref="Armor" />.
-// </summary>
-// --------------------------------------------------------------------------------------------------------------------
+
 namespace GW2NET.Items.Converter
 {
     using System;
@@ -21,7 +17,7 @@ namespace GW2NET.Items.Converter
     {
         private readonly IConverter<InfixUpgradeDataModel, InfixUpgrade> infixUpgradeConverter;
 
-        private readonly IConverter<ICollection<InfusionSlotDataModel>, ICollection<InfusionSlot>> infusionSlotCollectionConverter;
+        private readonly IConverter<IEnumerable<InfusionSlotDataModel>, IEnumerable<InfusionSlot>> infusionSlotCollectionConverter;
 
         private readonly IConverter<string, WeightClass> weightClassConverter;
 
@@ -33,7 +29,7 @@ namespace GW2NET.Items.Converter
         public ArmorConverter(
             ITypeConverterFactory<ItemDataModel, Armor> converterFactory,
             IConverter<string, WeightClass> weightClassConverter,
-            IConverter<ICollection<InfusionSlotDataModel>, ICollection<InfusionSlot>> infusionSlotCollectionConverter,
+            IConverter<IEnumerable<InfusionSlotDataModel>, IEnumerable<InfusionSlot>> infusionSlotCollectionConverter,
             IConverter<InfixUpgradeDataModel, InfixUpgrade> infixUpgradeConverter)
             : this(converterFactory)
         {

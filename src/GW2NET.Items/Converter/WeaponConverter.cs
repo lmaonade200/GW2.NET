@@ -1,11 +1,6 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="WeaponConverter.cs" company="PlaceholderCompany">
+﻿// <copyright file="WeaponConverter.cs" company="PlaceholderCompany">
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
-// <summary>
-//   Converts objects of type <see cref="DetailsDTO" /> to objects of type <see cref="Weapon" />.
-// </summary>
-// --------------------------------------------------------------------------------------------------------------------
 
 namespace GW2NET.Items.Converter
 {
@@ -23,7 +18,7 @@ namespace GW2NET.Items.Converter
 
         private readonly IConverter<InfixUpgradeDataModel, InfixUpgrade> infixUpgradeConverter;
 
-        private readonly IConverter<ICollection<InfusionSlotDataModel>, ICollection<InfusionSlot>>
+        private readonly IConverter<IEnumerable<InfusionSlotDataModel>, IEnumerable<InfusionSlot>>
             infusionSlotCollectionConverter;
 
         /// <summary>Initializes a new instance of the <see cref="WeaponConverter" /> class.</summary>
@@ -34,7 +29,7 @@ namespace GW2NET.Items.Converter
         public WeaponConverter(
             ITypeConverterFactory<ItemDataModel, Weapon> converterFactory,
             IConverter<string, DamageType> damageTypeConverter,
-            IConverter<ICollection<InfusionSlotDataModel>, ICollection<InfusionSlot>> infusionSlotCollectionConverter,
+            IConverter<IEnumerable<InfusionSlotDataModel>, IEnumerable<InfusionSlot>> infusionSlotCollectionConverter,
             IConverter<InfixUpgradeDataModel, InfixUpgrade> infixUpgradeConverter)
             : this(converterFactory)
         {

@@ -1,11 +1,7 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="InfixUpgrade.cs" company="GW2.NET Coding Team">
-//   This product is licensed under the GNU General Public License version 2 (GPLv2). See the License in the project root folder or the following page: http://www.gnu.org/licenses/gpl-2.0.html
+﻿// <copyright file="InfixUpgrade.cs" company="GW2.NET Coding Team">
+// This product is licensed under the GNU General Public License version 2 (GPLv2). See the License in the project root folder or the following page: http://www.gnu.org/licenses/gpl-2.0.html
 // </copyright>
-// <summary>
-//   Represents an item's infixed combat upgrades.
-// </summary>
-// --------------------------------------------------------------------------------------------------------------------
+
 namespace GW2NET.Items.Common
 {
     using System.Collections.Generic;
@@ -16,10 +12,10 @@ namespace GW2NET.Items.Common
     {
         private static readonly CombatAttribute[] EmptyCombatAttributes = new CombatAttribute[0];
 
-        private ICollection<CombatAttribute> attributes = EmptyCombatAttributes;
+        private IEnumerable<CombatAttribute> attributes = EmptyCombatAttributes;
 
         /// <summary>Gets or sets the combat attribute modifiers.</summary>
-        public virtual ICollection<CombatAttribute> Attributes
+        public virtual IEnumerable<CombatAttribute> Attributes
         {
             get
             {

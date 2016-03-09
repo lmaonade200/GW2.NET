@@ -22,7 +22,7 @@ namespace GW2NET.Items.Trinkets
 
         private InfixUpgrade infixUpgrade = new InfixUpgrade();
 
-        private ICollection<InfusionSlot> infusionSlots = EmptyInfusionSlots;
+        private IEnumerable<InfusionSlot> infusionSlots = EmptyInfusionSlots;
 
         /// <inheritdoc />
         public virtual InfixUpgrade InfixUpgrade
@@ -45,7 +45,7 @@ namespace GW2NET.Items.Trinkets
         }
 
         /// <summary>Gets or sets the item's infusion slots.</summary>
-        public virtual ICollection<InfusionSlot> InfusionSlots
+        public virtual IEnumerable<InfusionSlot> InfusionSlots
         {
             get
             {

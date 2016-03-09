@@ -103,6 +103,7 @@
     <Compile Include="Common\LinqExtensions.cs" />
     <Compile Include="Common\Messages\ApiCultures.cs" />
     <Compile Include="Common\Messages\ApiMessageBuilder.cs" />
+    <Compile Include="Common\Messages\ApiMessageHandler.cs" />
     <Compile Include="Common\Messages\ApiVersion.cs" />
     <Compile Include="Common\Messages\AuthenticatedMessageHandler.cs" />
     <Compile Include="Common\Messages\IBaseBuilder.cs" />
@@ -438,6 +439,12 @@
     <Analyzer Include="..\..\packages\StyleCop.Analyzers.1.0.0\analyzers\dotnet\cs\Newtonsoft.Json.dll" />
     <Analyzer Include="..\..\packages\StyleCop.Analyzers.1.0.0\analyzers\dotnet\cs\StyleCop.Analyzers.CodeFixes.dll" />
     <Analyzer Include="..\..\packages\StyleCop.Analyzers.1.0.0\analyzers\dotnet\cs\StyleCop.Analyzers.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="Polly, Version=4.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Polly.4.0.0\lib\portable-net45+netcore45+wpa81+wp8\Polly.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

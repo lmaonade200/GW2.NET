@@ -1,11 +1,7 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="TrinketConverter.cs" company="PlaceholderCompany">
+﻿// <copyright file="TrinketConverter.cs" company="PlaceholderCompany">
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
-// <summary>
-//   Converts objects of type <see cref="DetailsDTO" /> to objects of type <see cref="Trinket" />.
-// </summary>
-// --------------------------------------------------------------------------------------------------------------------
+
 namespace GW2NET.Items.Converter
 {
     using System;
@@ -20,7 +16,7 @@ namespace GW2NET.Items.Converter
     {
         private readonly IConverter<InfixUpgradeDataModel, InfixUpgrade> infixUpgradeConverter;
 
-        private readonly IConverter<ICollection<InfusionSlotDataModel>, ICollection<InfusionSlot>> infusionSlotCollectionConverter;
+        private readonly IConverter<IEnumerable<InfusionSlotDataModel>, IEnumerable<InfusionSlot>> infusionSlotCollectionConverter;
 
         /// <summary>Initializes a new instance of the <see cref="TrinketConverter"/> class.</summary>
         /// <param name="converterFactory"></param>
@@ -28,7 +24,7 @@ namespace GW2NET.Items.Converter
         /// <param name="infixUpgradeConverter">The converter for <see cref="InfixUpgrade"/>.</param>
         public TrinketConverter(
             ITypeConverterFactory<ItemDataModel, Trinket> converterFactory,
-            IConverter<ICollection<InfusionSlotDataModel>, ICollection<InfusionSlot>> infusionSlotCollectionConverter,
+            IConverter<IEnumerable<InfusionSlotDataModel>, IEnumerable<InfusionSlot>> infusionSlotCollectionConverter,
             IConverter<InfixUpgradeDataModel, InfixUpgrade> infixUpgradeConverter)
             : this(converterFactory)
         {

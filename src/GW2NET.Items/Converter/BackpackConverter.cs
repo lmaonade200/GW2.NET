@@ -1,11 +1,7 @@
-﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="BackpackConverter.cs" company="PlaceholderCompany">
+﻿// <copyright file="BackpackConverter.cs" company="PlaceholderCompany">
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
-// <summary>
-//   Converts objects of type <see cref="DetailsDTO" /> to objects of type <see cref="Backpack" />.
-// </summary>
-// --------------------------------------------------------------------------------------------------------------------
+
 namespace GW2NET.Items.Converter
 {
     using System;
@@ -20,12 +16,12 @@ namespace GW2NET.Items.Converter
     {
         private readonly IConverter<InfixUpgradeDataModel, InfixUpgrade> infixUpgradeConverter;
 
-        private readonly IConverter<ICollection<InfusionSlotDataModel>, ICollection<InfusionSlot>> infusionSlotCollectionConverter;
+        private readonly IConverter<IEnumerable<InfusionSlotDataModel>, IEnumerable<InfusionSlot>> infusionSlotCollectionConverter;
 
         /// <summary>Initializes a new instance of the <see cref="BackpackConverter"/> class.</summary>
         /// <param name="infusionSlotCollectionConverter">The converter for <see cref="ICollection{InfusionSlot}"/>.</param>
         /// <param name="infixUpgradeConverter">The converter for <see cref="InfixUpgrade"/>.</param>
-        public BackpackConverter(IConverter<ICollection<InfusionSlotDataModel>, ICollection<InfusionSlot>> infusionSlotCollectionConverter, IConverter<InfixUpgradeDataModel, InfixUpgrade> infixUpgradeConverter)
+        public BackpackConverter(IConverter<IEnumerable<InfusionSlotDataModel>, IEnumerable<InfusionSlot>> infusionSlotCollectionConverter, IConverter<InfixUpgradeDataModel, InfixUpgrade> infixUpgradeConverter)
         {
             if (infusionSlotCollectionConverter == null)
             {
