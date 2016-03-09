@@ -30,18 +30,27 @@ namespace GW2NET
     [SuppressMessage("ReSharper", "InconsistentNaming", Justification = "Naming is intended.")]
     public class GW2Bootstrapper
     {
+        private readonly byte numberofRetries;
+
         private readonly Container container;
 
         /// <summary>Initializes a new instance of the <see cref="GW2Bootstrapper"/> class.</summary>
         public GW2Bootstrapper()
-            : this(string.Empty)
+            : this(3, string.Empty)
+        {
+        }
+
+        public GW2Bootstrapper(byte numberOfRetries)
+            : this(numberOfRetries, string.Empty)
         {
         }
 
         /// <summary>Initializes a new instance of the <see cref="GW2Bootstrapper"/> class.</summary>
         /// <param name="apiKey">The api key.</param>
-        public GW2Bootstrapper(string apiKey)
+        public GW2Bootstrapper(byte numberofRetries, string apiKey)
         {
+            this.numberofRetries = numberofRetries;
+
             // Create the container
             this.container = new Container();
 
@@ -116,13 +125,18 @@ namespace GW2NET
                     Arg.Of<IConverter<Stream, Stream>>("GzipInflator"))));
 
             // Register MessageHandlers
-            this.container.Register<HttpMessageHandler, HttpClientHandler>(
+            this.container.RegisterInstance(this.numberofRetries, Reuse.Transient, serviceKey: "numberOfRetries");
+
+            this.container.Register<HttpMessageHandler, ApiMessageHandler>(
+                Made.Of(
+                    () => new ApiMessageHandler(
+                        Arg.Of<byte>("numberOfRetries"))),
                 Reuse.Singleton,
-                serviceKey: "BaseMessageHandler");
+                serviceKey: "UnAuthenticatedMessageHandler");
 
             // Register the HttpClients
             this.container.Register(
-                Made.Of(() => new HttpClient(Arg.Of<HttpMessageHandler>("BaseMessageHandler"), Arg.Of<bool>("DisposeHandler"))
+                Made.Of(() => new HttpClient(Arg.Of<HttpMessageHandler>("UnAuthenticatedMessageHandler"), Arg.Of<bool>("DisposeHandler"))
                 {
                     BaseAddress = Arg.Of<Uri>("RepositoryUri")
                 }),
@@ -130,7 +144,7 @@ namespace GW2NET
                 serviceKey: "RepositoryClient");
 
             this.container.Register(
-                Made.Of(() => new HttpClient(Arg.Of<HttpMessageHandler>("BaseMessageHandler"), Arg.Of<bool>("DisposeHandler"))
+                Made.Of(() => new HttpClient(Arg.Of<HttpMessageHandler>("UnAuthenticatedMessageHandler"), Arg.Of<bool>("DisposeHandler"))
                 {
                     BaseAddress = Arg.Of<Uri>("RenderingUri")
                 }),
@@ -149,15 +163,22 @@ namespace GW2NET
             {
                 this.container.RegisterInstance(apiKey, Reuse.Transient, serviceKey: "ApiKey");
                 this.container.Register<HttpMessageHandler, AuthenticatedMessageHandler>(
-                    Made.Of(() => new AuthenticatedMessageHandler(Arg.Of<HttpMessageHandler>("AuthenticatedMessageHandler"), Arg.Of<string>("ApiKey"))),
-                    Reuse.Singleton);
+                    Made.Of(
+                        () => new AuthenticatedMessageHandler(
+                            Arg.Of<HttpMessageHandler>("UnAuthenticatedMessageHandler"),
+                            Arg.Of<string>("ApiKey"))),
+                    Reuse.Singleton,
+                    serviceKey: "AuthenticatedMessageHandler");
 
                 this.container.Register(
-                    Made.Of(() => new HttpClient(Arg.Of<HttpMessageHandler>("AuthenticatedMessageHandler"), Arg.Of<bool>("DisposeHandler"))
-                    {
-                        BaseAddress = Arg.Of<Uri>("RepositoryUri")
-                    }),
-                    Reuse.Transient,
+                    Made.Of(
+                        () => new HttpClient(
+                            Arg.Of<HttpMessageHandler>("AuthenticatedMessageHandler"), 
+                            Arg.Of<bool>("DisposeHandler"))
+                        {
+                            BaseAddress = Arg.Of<Uri>("RepositoryUri")
+                        }),
+                    Reuse.Singleton,
                     serviceKey: "AuthenticatedRepositoryClient");
             }
             else
