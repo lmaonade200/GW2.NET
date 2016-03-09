@@ -232,7 +232,7 @@ namespace GW2NET.Factories.Services
                         Arg.Of<IConverter<int, int>>(),
                         Arg.Of<IConverter<RecipeDataModel, Recipe>>())));
                 this.iocContainer.Register<RecipeConverter>();
-                this.iocContainer.Register<IConverter<ICollection<IngredientDataModel>, ICollection<ItemQuantity>>, CollectionConverter<IngredientDataModel, ItemQuantity>>();
+                this.iocContainer.Register<IConverter<IEnumerable<IngredientDataModel>, IEnumerable<ItemQuantity>>, CollectionConverter<IngredientDataModel, ItemQuantity>>();
                 this.iocContainer.Register<IConverter<IngredientDataModel, ItemQuantity>, ItemQuantityConverter>();
                 this.iocContainer.Register<IConverter<ICollection<string>, RecipeFlags>, RecipeFlagCollectionConverter>();
                 this.iocContainer.Register<IConverter<string, RecipeFlags>, RecipeFlagConverter>();
