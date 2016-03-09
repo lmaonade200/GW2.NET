@@ -5,10 +5,17 @@
 namespace GW2NET.Factories.Services
 {
     using System;
+    using System.Net.Http;
 
     using DryIoc;
 
+    using GW2NET.Accounts;
     using GW2NET.Authenticated;
+    using GW2NET.Authenticated.ApiModels;
+    using GW2NET.Authenticated.Converter;
+    using GW2NET.Caching;
+    using GW2NET.Common;
+    using GW2NET.Common.Converters;
 
     /// <summary>Provides access to the authorized part of the version 2 API.</summary>
     public class AuthorizedServices
@@ -28,6 +35,16 @@ namespace GW2NET.Factories.Services
         {
             get
             {
+                this.container.Register<AccountRepository>(
+                    Made.Of(
+                        () => new AccountRepository(
+                            Arg.Of<HttpClient>("AuthenticatedRepositoryClient"),
+                            Arg.Of<IResponseConverter>(),
+                            Arg.Of<ICache<Guid, Account>>(),
+                            Arg.Of<IConverter<AccountDataModel, Account>>())));
+
+                this.container.Register<IConverter<AccountDataModel, Account>, AccountConverter>();
+
                 return this.container.Resolve<AccountRepository>();
             }
         }
