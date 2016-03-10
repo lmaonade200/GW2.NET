@@ -43,6 +43,7 @@
     <Compile Include="Achievements\Achievement.cs" />
     <Compile Include="Achievements\AchievementBit.cs" />
     <Compile Include="Achievements\AchievementFlags.cs" />
+    <Compile Include="Achievements\DailyAchievement.cs" />
     <Compile Include="Achievements\Group.cs" />
     <Compile Include="Achievements\Category.cs" />
     <Compile Include="Achievements\ItemBit.cs" />
@@ -50,10 +51,14 @@
     <Compile Include="Achievements\ItemSetAchievement.cs" />
     <Compile Include="Achievements\MasteryReward.cs" />
     <Compile Include="Achievements\MinipetBit.cs" />
+    <Compile Include="Achievements\PveDailyAchievement.cs" />
+    <Compile Include="Achievements\PvpDailyAchievement.cs" />
     <Compile Include="Achievements\Reward.cs" />
     <Compile Include="Achievements\SkinBit.cs" />
+    <Compile Include="Achievements\SpecialDailyAchievement.cs" />
     <Compile Include="Achievements\TextBit.cs" />
     <Compile Include="Achievements\Tier.cs" />
+    <Compile Include="Achievements\WvwDailyAchievement.cs" />
     <Compile Include="Builds\Build.cs" />
     <Compile Include="Builds\IBuildRepository.cs" />
     <Compile Include="Caching\ICache{TKey,TValue}.cs" />

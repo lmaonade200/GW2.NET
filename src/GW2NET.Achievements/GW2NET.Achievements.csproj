@@ -42,6 +42,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AchievementCategoryRepository.cs" />
+    <Compile Include="AchievementDailyRepository.cs" />
     <Compile Include="ApiModels\AchievementCategoryDataModel.cs" />
     <Compile Include="ApiModels\AchievementGroupDataModel.cs" />
     <Compile Include="AchievementGroupsRepository.cs" />
@@ -53,9 +54,14 @@
     <Compile Include="Converter\AchievementConverter.cs" />
     <Compile Include="Converter\AchievementGroupConverter.cs" />
     <Compile Include="Converter\BitsConverter.cs" />
+    <Compile Include="Converter\DailyAchievementsConverter.cs" />
+    <Compile Include="Converter\DailyAchivementConverter.cs" />
     <Compile Include="Converter\FlagsConverter.cs" />
     <Compile Include="Converter\RewardsConverter.cs" />
     <Compile Include="Converter\TierCollectionConverter.cs" />
+    <Compile Include="ApiModels\DailyAchievementDataModel.cs" />
+    <Compile Include="ApiModels\DailyAchievementsDataModel.cs" />
+    <Compile Include="ApiModels\LevelDataModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup />

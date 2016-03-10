@@ -17,7 +17,7 @@ namespace GW2NET.Achievements
     /// <summary>Provides access to to the achievements at the Guild Wars 2 api.</summary>
     public class AchievementRepository : CachedRepository<int, Achievement>, IDiscoverable<int>, ICachedRepository<int, AchievementDataModel, Achievement>, ILocalizable
     {
-        /// <summary>Initializes a new instance of the <see cref="CachedRepository{TKey,TValue}"/> class.</summary>
+        /// <summary>Initializes a new instance of the <see cref="AchievementRepository"/> class.</summary>
         /// <param name="httpClient">The <see cref="HttpClient"/> to make connections with the GW2 api.</param>
         /// <param name="responseConverter">The <see cref="IResponseConverter"/> converting an <see cref="HttpResponseMessage"/> for further processing.</param>
         /// <param name="cache">The cache used to store objects.</param>
