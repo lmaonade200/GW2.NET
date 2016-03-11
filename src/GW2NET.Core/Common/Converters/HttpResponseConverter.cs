@@ -15,6 +15,7 @@ namespace GW2NET.Common.Converters
 
     using GW2NET.Common.Serializers;
 
+    /// <summary>Converts a <see cref="HttpRequestMessage"/> into a suitable local representation.</summary>
     public class HttpResponseConverter : IResponseConverter
     {
         private readonly ISerializerFactory serializerFactory;
@@ -23,6 +24,10 @@ namespace GW2NET.Common.Converters
 
         private readonly IConverter<Stream, Stream> gzipInflator;
 
+        /// <summary>Initializes a new instance of the <see cref="HttpResponseConverter"/> class.</summary>
+        /// <param name="serializerFactory">The serializes factory used to select the serializes for successful responses.</param>
+        /// <param name="errorSerializerFactory">The serializes factory used to select the serializes for error responses.</param>
+        /// <param name="gzipInflator">A converter to unzip a compressed <see cref="Stream"/>.</param>
         public HttpResponseConverter(ISerializerFactory serializerFactory, ISerializerFactory errorSerializerFactory, IConverter<Stream, Stream> gzipInflator)
         {
             this.serializerFactory = serializerFactory;
@@ -30,14 +35,25 @@ namespace GW2NET.Common.Converters
             this.errorSerializerFactory = errorSerializerFactory;
         }
 
-        public async Task<IEnumerable<TOutput>> ConvertSetAsync<TInput, TOutput>(HttpResponseMessage responseMessage, IConverter<TInput, TOutput> innerConverter)
+        /// <inheritdoc />
+        public async Task<IPartialCollection<TOutput>> ConvertSetAsync<TInput, TOutput>(HttpResponseMessage responseMessage, IConverter<TInput, TOutput> innerConverter)
         {
             IEnumerable<TInput> response = await this.GetContentAsync<IEnumerable<TInput>>(responseMessage);
             ApiMetadata metadata = this.GetMetadata(responseMessage);
 
-            return await Task.WhenAll(response.Select(r => Task.Run(() => innerConverter.Convert(r, metadata))));
+            IPartialCollection<TOutput> returnCollection = new PartialCollection<TOutput>();
+
+            foreach (TOutput item in await Task.WhenAll(response.Select(r => Task.Run(() => innerConverter.Convert(r, metadata)))))
+            {
+                returnCollection.Add(item);
+            }
+
+            returnCollection.TotalCount = metadata.ResultTotal;
+
+            return returnCollection;
         }
 
+        /// <inheritdoc />
         public async Task<TOutput> ConvertElementAsync<TInput, TOutput>(HttpResponseMessage responseMessage, IConverter<TInput, TOutput> innerConverter)
         {
             TInput response = await this.GetContentAsync<TInput>(responseMessage);
@@ -57,7 +73,7 @@ namespace GW2NET.Common.Converters
             {
                 if (contentEncoding.FirstOrDefault().Equals("gzip", StringComparison.OrdinalIgnoreCase))
                 {
-                    Stream uncompressed = compressionConverter.Convert(contentStream, null);
+                    Stream uncompressed = compressionConverter.Convert(contentStream);
                     if (uncompressed == null)
                     {
                         throw new InvalidOperationException("Could not read stream.");

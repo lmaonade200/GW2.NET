@@ -56,28 +56,50 @@ namespace GW2NET.Common
         }
 
         /// <summary>Gets items from the Guild Wars 2 api.</summary>
-        /// <typeparam name="TKey">The type of key used to identify items.</typeparam>
         /// <typeparam name="TDataContract">The type of data returned by the api.</typeparam>
         /// <typeparam name="TValue">The type of data to convert the api data into.</typeparam>
         /// <param name="repository">The repository used to make connections and store the data.</param>
         /// <returns>An <see cref="IEnumerable{T}"/> of type <see cref="TValue"/> with data from the api.</returns>
-        public static Task<IEnumerable<TValue>> GetAsync<TKey, TDataContract, TValue>(this IRepository<TDataContract, TValue> repository)
+        public static Task<IEnumerable<TValue>> GetAsync<TDataContract, TValue>(this IRepository<TDataContract, TValue> repository)
         {
-            return GetAsync<TKey, TDataContract, TValue>(repository, CancellationToken.None);
+            return GetAsync(repository, CancellationToken.None);
         }
 
         /// <summary>Gets items from the Guild Wars 2 api.</summary>
-        /// <typeparam name="TKey">The type of key used to identify items.</typeparam>
         /// <typeparam name="TDataContract">The type of data returned by the api.</typeparam>
         /// <typeparam name="TValue">The type of data to convert the api data into.</typeparam>
         /// <param name="repository">The repository used to make connections and store the data.</param>
         /// <param name="cancellationToken">A token signalling the cancellation of the operation.</param>
         /// <returns>An <see cref="IEnumerable{T}"/> of type <see cref="TValue"/> with data from the api.</returns>
-        public static async Task<IEnumerable<TValue>> GetAsync<TKey, TDataContract, TValue>(this IRepository<TDataContract, TValue> repository, CancellationToken cancellationToken)
+        public static async Task<IEnumerable<TValue>> GetAsync<TDataContract, TValue>(this IRepository<TDataContract, TValue> repository, CancellationToken cancellationToken)
         {
-            IEnumerable<TKey> serviceIds = await ((IDiscoverable<TKey>)repository).DiscoverAsync(cancellationToken);
+            // Create the first page request
+            IPartialCollection<TValue> firstResponse = await GetItemsFromApiAsync(0, repository, cancellationToken);
 
-            return await repository.GetAsync(serviceIds, cancellationToken);
+            if (firstResponse.TotalCount <= 200)
+            {
+                return firstResponse.AsEnumerable();
+            }
+
+            // If the total count was greater than 200 we need to do additional requests
+            List<TValue> returnCollection = new List<TValue>(firstResponse.TotalCount);
+            returnCollection.AddRange(firstResponse);
+
+            int pageCount = (firstResponse.TotalCount - 200) / 200;
+            if ((firstResponse.TotalCount - 200) % 200 > 0)
+            {
+                pageCount += 1;
+            }
+
+            IList<Task<IPartialCollection<TValue>>> queryTasks = new List<Task<IPartialCollection<TValue>>>(pageCount);
+            for (int i = 0; i < pageCount; i++)
+            {
+                queryTasks.Add(GetItemsFromApiAsync(i + 1, repository, cancellationToken));
+            }
+
+            returnCollection.AddRange((await Task.WhenAll(queryTasks)).SelectMany(list => list));
+
+            return returnCollection;
         }
 
         /// <summary>Gets a set of items with the specified ids from the Guild Wars 2 api.</summary>
@@ -122,8 +144,8 @@ namespace GW2NET.Common
         /// <param name="idList">The list of ids to query.</param>
         /// <param name="repository">The repository containing client and converters</param>
         /// <param name="cancellationToken">A token signalling the cancellation of the operation.</param>
-        /// <returns>An <see cref="IEnumerable{T}"/> of type <see cref="TValue"/> with data from the api.</returns>
-        private static async Task<IEnumerable<TValue>> GetItemsFromApiAsync<TKey, TDataContract, TValue>(IEnumerable<TKey> idList, IRepository<TDataContract, TValue> repository, CancellationToken cancellationToken)
+        /// <returns>An <see cref="IPartialCollection{T}"/> of type <see cref="TValue"/> with data from the api.</returns>
+        private static async Task<IPartialCollection<TValue>> GetItemsFromApiAsync<TKey, TDataContract, TValue>(IEnumerable<TKey> idList, IRepository<TDataContract, TValue> repository, CancellationToken cancellationToken)
         {
             IParameterizedBuilder request = repository.ServiceLocation;
             ILocalizable localizableRepository = repository as ILocalizable;
@@ -133,6 +155,27 @@ namespace GW2NET.Common
             }
 
             request.WithIdentifiers(idList);
+
+            return await repository.ResponseConverter.ConvertSetAsync(await repository.Client.SendAsync(request.Build(), cancellationToken), repository.ModelConverter);
+        }
+
+        /// <summary>Calls the Guild Wars 2 api and gets the items on the specified page.</summary>
+        /// <typeparam name="TDataContract">The type of data returned by the api.</typeparam>
+        /// <typeparam name="TValue">The type of data to convert the api data into.</typeparam>
+        /// <param name="page">The page to query.</param>
+        /// <param name="repository">The repository containing client and converters</param>
+        /// <param name="cancellationToken">A token signalling the cancellation of the operation.</param>
+        /// <returns>An <see cref="IPartialCollection{T}"/> of type <see cref="TValue"/> with data from the api.</returns>
+        private static async Task<IPartialCollection<TValue>> GetItemsFromApiAsync<TDataContract, TValue>(int page, IRepository<TDataContract, TValue> repository, CancellationToken cancellationToken)
+        {
+            IParameterizedBuilder request = repository.ServiceLocation;
+            ILocalizable localizableRepository = repository as ILocalizable;
+            if (localizableRepository != null)
+            {
+                request.ForCulture(localizableRepository.Culture);
+            }
+
+            request.OnPage(page).WithSize(200);
 
             return await repository.ResponseConverter.ConvertSetAsync(await repository.Client.SendAsync(request.Build(), cancellationToken), repository.ModelConverter);
         }
