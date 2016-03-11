@@ -18,7 +18,7 @@ namespace GW2NET.Common.Converters
         /// <param name="responseMessage">The response message recieved from the <see cref="HttpClient"/>.</param>
         /// <param name="innerConverter">The inner converter used to convert data contracts into data objects.</param>
         /// <returns>An <see cref="IEnumerable{T}"/> containing objects of type <see cref="TOutput"/>.</returns>
-        Task<IPartialCollection<TOutput>> ConvertSetAsync<TInput, TOutput>(HttpResponseMessage responseMessage, IConverter<TInput, TOutput> innerConverter);
+        Task<ISlice<TOutput>> ConvertSetAsync<TInput, TOutput>(HttpResponseMessage responseMessage, IConverter<TInput, TOutput> innerConverter);
 
         /// <summary>
         /// Converts an <see cref="HttpResponseMessage"/> into a single object of type <see cref="TOutput"/>.</summary>

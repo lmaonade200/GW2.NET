@@ -74,7 +74,7 @@ namespace GW2NET.Common
         public static async Task<IEnumerable<TValue>> GetAsync<TDataContract, TValue>(this IRepository<TDataContract, TValue> repository, CancellationToken cancellationToken)
         {
             // Create the first page request
-            IPartialCollection<TValue> firstResponse = await GetItemsFromApiAsync(0, repository, cancellationToken);
+            ISlice<TValue> firstResponse = await GetItemsFromApiAsync(0, repository, cancellationToken);
 
             if (firstResponse.TotalCount <= 200)
             {
@@ -91,7 +91,7 @@ namespace GW2NET.Common
                 pageCount += 1;
             }
 
-            IList<Task<IPartialCollection<TValue>>> queryTasks = new List<Task<IPartialCollection<TValue>>>(pageCount);
+            IList<Task<ISlice<TValue>>> queryTasks = new List<Task<ISlice<TValue>>>(pageCount);
             for (int i = 0; i < pageCount; i++)
             {
                 queryTasks.Add(GetItemsFromApiAsync(i + 1, repository, cancellationToken));
@@ -144,8 +144,8 @@ namespace GW2NET.Common
         /// <param name="idList">The list of ids to query.</param>
         /// <param name="repository">The repository containing client and converters</param>
         /// <param name="cancellationToken">A token signalling the cancellation of the operation.</param>
-        /// <returns>An <see cref="IPartialCollection{T}"/> of type <see cref="TValue"/> with data from the api.</returns>
-        private static async Task<IPartialCollection<TValue>> GetItemsFromApiAsync<TKey, TDataContract, TValue>(IEnumerable<TKey> idList, IRepository<TDataContract, TValue> repository, CancellationToken cancellationToken)
+        /// <returns>An <see cref="ISlice{T}"/> of type <see cref="TValue"/> with data from the api.</returns>
+        private static async Task<ISlice<TValue>> GetItemsFromApiAsync<TKey, TDataContract, TValue>(IEnumerable<TKey> idList, IRepository<TDataContract, TValue> repository, CancellationToken cancellationToken)
         {
             IParameterizedBuilder request = repository.ServiceLocation;
             ILocalizable localizableRepository = repository as ILocalizable;
@@ -165,8 +165,8 @@ namespace GW2NET.Common
         /// <param name="page">The page to query.</param>
         /// <param name="repository">The repository containing client and converters</param>
         /// <param name="cancellationToken">A token signalling the cancellation of the operation.</param>
-        /// <returns>An <see cref="IPartialCollection{T}"/> of type <see cref="TValue"/> with data from the api.</returns>
-        private static async Task<IPartialCollection<TValue>> GetItemsFromApiAsync<TDataContract, TValue>(int page, IRepository<TDataContract, TValue> repository, CancellationToken cancellationToken)
+        /// <returns>An <see cref="ISlice{T}"/> of type <see cref="TValue"/> with data from the api.</returns>
+        private static async Task<ISlice<TValue>> GetItemsFromApiAsync<TDataContract, TValue>(int page, IRepository<TDataContract, TValue> repository, CancellationToken cancellationToken)
         {
             IParameterizedBuilder request = repository.ServiceLocation;
             ILocalizable localizableRepository = repository as ILocalizable;

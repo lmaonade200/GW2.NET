@@ -8,7 +8,7 @@ namespace GW2NET.Common
 
     /// <summary>Represents the slice of a bigger collection.</summary>
     /// <typeparam name="T">The type of the collection</typeparam>
-    public class PartialCollection<T> : Collection<T>, IPartialCollection<T>
+    public class Slice<T> : Collection<T>, ISlice<T>
     {
         public int TotalCount { get; set; }
     }

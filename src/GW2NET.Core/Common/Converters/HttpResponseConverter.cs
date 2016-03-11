@@ -36,21 +36,21 @@ namespace GW2NET.Common.Converters
         }
 
         /// <inheritdoc />
-        public async Task<IPartialCollection<TOutput>> ConvertSetAsync<TInput, TOutput>(HttpResponseMessage responseMessage, IConverter<TInput, TOutput> innerConverter)
+        public async Task<ISlice<TOutput>> ConvertSetAsync<TInput, TOutput>(HttpResponseMessage responseMessage, IConverter<TInput, TOutput> innerConverter)
         {
             IEnumerable<TInput> response = await this.GetContentAsync<IEnumerable<TInput>>(responseMessage);
             ApiMetadata metadata = this.GetMetadata(responseMessage);
 
-            IPartialCollection<TOutput> returnCollection = new PartialCollection<TOutput>();
+            ISlice<TOutput> returnSlice = new Slice<TOutput>();
 
             foreach (TOutput item in await Task.WhenAll(response.Select(r => Task.Run(() => innerConverter.Convert(r, metadata)))))
             {
-                returnCollection.Add(item);
+                returnSlice.Add(item);
             }
 
-            returnCollection.TotalCount = metadata.ResultTotal;
+            returnSlice.TotalCount = metadata.ResultTotal;
 
-            return returnCollection;
+            return returnSlice;
         }
 
         /// <inheritdoc />

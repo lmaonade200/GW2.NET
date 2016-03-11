@@ -103,8 +103,8 @@
     <Compile Include="Common\ICachedRepository{TKey,TDataContract,TValue}.cs" />
     <Compile Include="Common\IDiscoverable{TIn,TOut}.cs" />
     <Compile Include="Common\IDiscoverable{T}.cs" />
-    <Compile Include="Common\IPartialCollection{T}.cs" />
     <Compile Include="Common\IRepository.cs" />
+    <Compile Include="Common\ISlice{T}.cs" />
     <Compile Include="Common\KeyUtilities.cs" />
     <Compile Include="Common\LinqExtensions.cs" />
     <Compile Include="Common\Messages\ApiCultures.cs" />
@@ -117,7 +117,6 @@
     <Compile Include="Common\Messages\IPagedBuilder.cs" />
     <Compile Include="Common\Messages\IParameterizedBuilder.cs" />
     <Compile Include="Common\Messages\IVersionedBuilder.cs" />
-    <Compile Include="Common\PartialCollection{T}.cs" />
     <Compile Include="Common\RepositoryBase.cs" />
     <Compile Include="Common\RepositoryExtensions.cs" />
     <Compile Include="Common\Converters\ConverterAdapter.cs" />
@@ -140,6 +139,7 @@
     <Compile Include="Common\Serializers\ISerializer.cs" />
     <Compile Include="Common\Serializers\ISerializerFactory.cs" />
     <Compile Include="Common\ServiceException.cs" />
+    <Compile Include="Common\Slice{T}.cs" />
     <Compile Include="Common\StringExtensions.cs" />
     <Compile Include="Common\UrlEncodedForm.cs" />
     <Compile Include="DynamicEvents\CylinderLocation.cs" />

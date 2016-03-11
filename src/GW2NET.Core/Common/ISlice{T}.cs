@@ -4,7 +4,7 @@
 
     /// <summary>Defines a slice of a bigger collection.</summary>
     /// <typeparam name="T">The type of the collection</typeparam>
-    public interface IPartialCollection<T> : ICollection<T>
+    public interface ISlice<T> : ICollection<T>
     {
         /// <summary>Gets or sets the total number of items a collection could have.</summary>
         /// <remarks>
