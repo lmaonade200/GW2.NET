@@ -39,8 +39,8 @@ namespace GW2NET.Common
         {
             ILocalizable localizableRepository = repository as ILocalizable;
             TValue item = localizableRepository != null
-                              ? repository.Cache.GetByIdentifier(identifier).SingleOrDefault(i => Equals(((ILocalizable)i).Culture, localizableRepository.Culture))
-                              : repository.Cache.GetByIdentifier(identifier).SingleOrDefault();
+                              ? repository.Cache[identifier].SingleOrDefault(i => Equals(((ILocalizable)i).Culture, localizableRepository.Culture))
+                              : repository.Cache[identifier].SingleOrDefault();
 
             // To avoid boxing, the best way to compare generics for equality is with EqualityComparer<T>.Default.
             // This respects IEquatable<T> (without boxing) as well as object.Equals, and handles all the Nullable<T> "lifted" nuances.
@@ -52,7 +52,7 @@ namespace GW2NET.Common
 
             TValue apiItem = await ((IRepository<TDataContract, TValue>)repository).GetAsync(identifier, cancellationToken);
 
-            repository.Cache.Add(identifier, item);
+            repository.Cache.AddToKey(identifier, item);
 
             return apiItem;
         }
@@ -111,8 +111,8 @@ namespace GW2NET.Common
             foreach (TKey id in ids)
             {
                 TValue item = localizableRepository != null
-                                  ? repository.Cache.GetByIdentifier(id).SingleOrDefault(i => Equals(((ILocalizable)i).Culture, localizableRepository.Culture))
-                                  : repository.Cache.GetByIdentifier(id).SingleOrDefault();
+                                  ? repository.Cache[id].SingleOrDefault(i => Equals(((ILocalizable)i).Culture, localizableRepository.Culture))
+                                  : repository.Cache[id].SingleOrDefault();
 
                 // To avoid boxing, the best way to compare generics for equality is with EqualityComparer<T>.Default.
                 // This respects IEquatable<T> (without boxing) as well as object.Equals, and handles all the Nullable<T> "lifted" nuances.
@@ -140,7 +140,7 @@ namespace GW2NET.Common
             // Add items to the cache
             foreach (KeyValuePair<TKey, TValue> item in itemsDictionary)
             {
-                repository.Cache.Add(item.Key, item.Value);
+                repository.Cache.AddToKey(item.Key, item.Value);
             }
 
             // Make sure we always return a fresh list so the user cannot modify the collection in this method

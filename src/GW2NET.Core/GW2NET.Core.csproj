@@ -99,7 +99,6 @@
     <Compile Include="Common\Converters\ItemRestrictionConverter.cs" />
     <Compile Include="Common\Converters\StringToGuidConverter.cs" />
     <Compile Include="Common\DiscoverableExtensions.cs" />
-    <Compile Include="Common\IApiService.cs" />
     <Compile Include="Common\ICachedRepository{TKey,TDataContract,TValue}.cs" />
     <Compile Include="Common\IDiscoverable{TIn,TOut}.cs" />
     <Compile Include="Common\IDiscoverable{T}.cs" />
