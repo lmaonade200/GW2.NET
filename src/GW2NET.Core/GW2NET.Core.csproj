@@ -61,7 +61,7 @@
     <Compile Include="Achievements\WvwDailyAchievement.cs" />
     <Compile Include="Builds\Build.cs" />
     <Compile Include="Builds\IBuildRepository.cs" />
-    <Compile Include="Caching\ICache{TKey,TValue}.cs" />
+    <Compile Include="Caching\ICache{TKey,TElement}.cs" />
     <Compile Include="Caching\MemoryCache.cs" />
     <Compile Include="Characters\Character.cs" />
     <Compile Include="Characters\Gender.cs" />
