@@ -4,12 +4,26 @@
 
 namespace GW2NET.Common
 {
+    using System.Collections.Generic;
     using System.Collections.ObjectModel;
 
     /// <summary>Represents the slice of a bigger collection.</summary>
     /// <typeparam name="T">The type of the collection</typeparam>
     public class Slice<T> : Collection<T>, ISlice<T>
     {
+        /// <summary>Initializes a new instance of the <see cref="Slice{T}"/> class.</summary>
+        public Slice()
+        {
+        }
+
+        /// <summary>Initializes a new instance of the <see cref="Slice{T}"/> class.</summary>
+        /// <param name="items">The list that is wrapped by the new collection.</param>
+        public Slice(IList<T> items)
+            : base(items)
+        {
+        }
+
+        /// <inhieritdoc />
         public int TotalCount { get; set; }
     }
 }
