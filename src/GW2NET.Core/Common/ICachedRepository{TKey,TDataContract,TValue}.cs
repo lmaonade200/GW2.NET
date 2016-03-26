@@ -12,7 +12,7 @@ namespace GW2NET.Common
     /// <typeparam name="TValue">The type of data to convert into.</typeparam>
     public interface ICachedRepository<TKey, in TDataContract, TValue> : IRepository<TDataContract, TValue>
     {
-        /// <summary>Gets the cache used as backing storage.</summary>
-        ICache<TKey, TValue> Cache { get; }
+        /// <summary>Gets or sets the cache used as backing storage.</summary>
+        ICache<TKey, TValue> Cache { get; set; }
     }
 }

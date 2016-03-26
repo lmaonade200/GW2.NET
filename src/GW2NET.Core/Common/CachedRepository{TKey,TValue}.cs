@@ -31,6 +31,6 @@ namespace GW2NET.Common
         }
 
         /// <summary>Gets ot sets the cache used to retrieve not yet obsolete objects.</summary>
-        public ICache<TKey, TValue> Cache { get; }
+        public ICache<TKey, TValue> Cache { get; set; }
     }
 }

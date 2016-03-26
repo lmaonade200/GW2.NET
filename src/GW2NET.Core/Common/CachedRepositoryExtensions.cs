@@ -52,7 +52,7 @@ namespace GW2NET.Common
 
             TValue apiItem = await ((IRepository<TDataContract, TValue>)repository).GetAsync(identifier, cancellationToken);
 
-            repository.Cache.AddToKey(identifier, item);
+            repository.Cache = repository.Cache.AddToKey(identifier, item);
 
             return apiItem;
         }
@@ -135,7 +135,7 @@ namespace GW2NET.Common
 
             Task<IEnumerable<TValue>> apiItemsTask = ((IRepository<TDataContract, TValue>)repository).GetAsync(idsToQuery, cancellationToken);
 
-            Dictionary<TKey, TValue> itemsDictionary = idsToQuery.Zip(await apiItemsTask, (id, item) => new KeyValuePair<TKey, TValue>(id, item)).ToDictionary(k => k.Key, v => v.Value);
+            IList<KeyValuePair<TKey, TValue>> itemsDictionary = idsToQuery.Zip(await apiItemsTask, (id, item) => new KeyValuePair<TKey, TValue>(id, item)).ToList();
 
             // Add items to the cache
             foreach (KeyValuePair<TKey, TValue> item in itemsDictionary)
