@@ -5,7 +5,7 @@
     <MinimumVisualStudioVersion>12.0</MinimumVisualStudioVersion>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{892B1961-7A94-4FED-A707-94D5F925B30A}</ProjectGuid>
+    <ProjectGuid>{F83D52A5-8F5D-4D94-8850-923DA640F21A}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>GW2NET.MapInformation</RootNamespace>
@@ -24,7 +24,6 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>bin\Debug\GW2NET.MapInformation.XML</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -36,37 +35,21 @@
   </PropertyGroup>
   <ItemGroup>
     <!-- A reference to the entire .NET Framework is automatically included -->
-    <None Include="project.json" />
+    <None Include="GW2NET.MapInformation.nuspec" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ApiModels\ContinentDataModel.cs" />
     <Compile Include="ApiModels\MapDataModel.cs" />
+    <Compile Include="ApiModels\WorldDataModel.cs" />
     <Compile Include="ContinentRepository.cs" />
     <Compile Include="Converter\ContinentConverter.cs" />
-    <Compile Include="Converter\RectangleConverter.cs" />
-    <Compile Include="ApiModels\WorldDataModel.cs" />
     <Compile Include="Converter\MapConverter.cs" />
+    <Compile Include="Converter\RectangleConverter.cs" />
     <Compile Include="Converter\Vector2DConverter.cs" />
     <Compile Include="Converter\WorldConverter.cs" />
     <Compile Include="MapRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="WorldRepository.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="GW2NET.MapInformation.nuspec" />
-    <AdditionalFiles Include="$(SolutionDir)stylecop.json" />
-    <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <Analyzer Include="..\..\packages\StyleCop.Analyzers.1.0.0\analyzers\dotnet\cs\Newtonsoft.Json.dll" />
-    <Analyzer Include="..\..\packages\StyleCop.Analyzers.1.0.0\analyzers\dotnet\cs\StyleCop.Analyzers.CodeFixes.dll" />
-    <Analyzer Include="..\..\packages\StyleCop.Analyzers.1.0.0\analyzers\dotnet\cs\StyleCop.Analyzers.dll" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\GW2NET.Core\GW2NET.Core.csproj">
-      <Project>{05f3d999-0470-4123-8c80-af4ac2385e7c}</Project>
-      <Name>GW2NET.Core</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
