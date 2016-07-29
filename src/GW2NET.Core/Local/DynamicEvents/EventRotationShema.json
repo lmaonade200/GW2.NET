@@ -1,0 +1,24 @@
+
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "properties": {
+      "event_id": {
+        "type": "string"
+      },
+      "starting_time": {
+        "type": "string"
+      },
+      "rotation_delta": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "event_id",
+      "starting_time",
+      "rotation_delta"
+    ]
+  }
+}
